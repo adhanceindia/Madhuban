@@ -1,0 +1,20 @@
+<svg width="900" height="1100" viewBox="0 0 900 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1100" fill="#102216"/>
+  <rect width="900" height="1100" fill="url(#hall)"/>
+  <rect x="116" y="762" width="668" height="180" rx="40" fill="#EFE6D9"/>
+  <rect x="154" y="804" width="148" height="94" rx="28" fill="#FFFFFF"/>
+  <rect x="376" y="804" width="148" height="94" rx="28" fill="#FFFFFF"/>
+  <rect x="598" y="804" width="148" height="94" rx="28" fill="#FFFFFF"/>
+  <circle cx="228" cy="708" r="44" fill="#F5E2B6"/>
+  <circle cx="450" cy="648" r="64" fill="#F7EACC"/>
+  <circle cx="672" cy="708" r="44" fill="#F5E2B6"/>
+  <path d="M254 340H646V594H254V340Z" fill="#F8F2E6"/>
+  <path d="M316 404H584V594H316V404Z" fill="#DDBE85"/>
+  <defs>
+    <linearGradient id="hall" x1="450" y1="0" x2="450" y2="1100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#35593A"/>
+      <stop offset="0.42" stop-color="#203622"/>
+      <stop offset="1" stop-color="#102216"/>
+    </linearGradient>
+  </defs>
+</svg>

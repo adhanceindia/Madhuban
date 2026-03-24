@@ -1,14 +1,17 @@
 # Madhuban Garden Resort Website
 
 ## Scope
+
 These instructions apply to the entire repository rooted at this directory.
 
 ## Project Overview
+
 - Build a full-stack resort website for **Madhuban Garden Resort** in **Agar Malwa District, Madhya Pradesh, India**.
 - Domain: `madhubangarden.com`
 - This is a client project. Build clean, production-grade code. No shortcuts.
 
 ## Current Build Phase
+
 - **Phase 1: Frontend with dummy data only**
 - Build all pages with static or dummy data first.
 - Do not connect the real database yet.
@@ -16,33 +19,37 @@ These instructions apply to the entire repository rooted at this directory.
 - Goal: get the full UI approved by the client before backend work begins.
 
 ## UI Design Reference
+
 - All screen designs, layouts, and visual references are inside the `/UI design/` folder at the project root.
 - Before building any page or component, open and read the relevant file in `/UI design/` first.
 - Match the design as closely as possible.
 - Do not invent layouts that are not in the design files.
 
 ## Required Tech Stack
+
 Do not deviate from this stack:
 
-| Layer | Tool |
-| --- | --- |
-| Framework | Next.js 14 (App Router) |
-| Styling | Tailwind CSS |
-| UI Components | shadcn/ui |
-| Animations | Framer Motion |
-| Icons | Lucide React |
-| Database | Supabase (PostgreSQL) |
-| ORM | Prisma |
-| Validation | Zod |
-| Auth | Supabase Auth |
-| Payments | Razorpay |
-| Email | Resend |
-| Caching | Upstash Redis |
-| iCal Sync | node-ical + ical-generator |
-| Hosting | Vercel |
+| Layer         | Tool                       |
+| ------------- | -------------------------- |
+| Framework     | Next.js 14 (App Router)    |
+| Styling       | Tailwind CSS               |
+| UI Components | shadcn/ui                  |
+| Animations    | Framer Motion              |
+| Icons         | Lucide React               |
+| Database      | Supabase (PostgreSQL)      |
+| ORM           | Prisma                     |
+| Validation    | Zod                        |
+| Auth          | Supabase Auth              |
+| Payments      | Razorpay                   |
+| Email         | Resend                     |
+| Caching       | Upstash Redis              |
+| iCal Sync     | node-ical + ical-generator |
+| Hosting       | Vercel                     |
 
 ## Design System
+
 ### Theme
+
 - Style: Crayons Light Green
 - Feel: light, fresh, natural, premium, peaceful, lush, resort-like
 - Do not make the site feel corporate or generic.
@@ -50,6 +57,7 @@ Do not deviate from this stack:
 - Do not use Inter, Roboto, or Arial.
 
 ### Colors
+
 - Primary: `#4CAF50`
 - Background: `#f5f9f0`
 - Accent: `#2e7d32`
@@ -57,6 +65,7 @@ Do not deviate from this stack:
 - White: `#ffffff`
 
 ### Design Rules
+
 - Mobile-first and fully responsive
 - Smooth Framer Motion page transitions
 - Use Next.js `Image` for optimized images
@@ -65,28 +74,32 @@ Do not deviate from this stack:
 - Layouts should feel light, airy, and nature-inspired
 
 ## Tagline
+
 Use this exact tagline across the site, including hero section, meta description, and OG tags:
 
 > "The most peaceful & lush green premises in Agar Malwa District."
 
 ## Pages To Build
-| Route | Page | Priority |
-| --- | --- | --- |
-| `/` | Homepage | High |
-| `/rooms` | All Rooms (19) | High |
-| `/rooms/[slug]` | Individual Room | High |
-| `/wedding` | Wedding Venue | High |
-| `/contact` | Contact + Query Form | High |
-| `/banquet` | Banquet Hall | Medium |
-| `/restaurant` | Indoor + Outdoor Restaurant | Medium |
-| `/pool` | Swimming Pool | Medium |
-| `/events` | Small Events + Parties | Medium |
-| `/gallery` | Image Gallery | Medium |
-| `/attractions` | Nearby Attractions | Low |
-| `/admin` | Admin Dashboard (protected) | Low |
+
+| Route           | Page                        | Priority |
+| --------------- | --------------------------- | -------- |
+| `/`             | Homepage                    | High     |
+| `/rooms`        | All Rooms (19)              | High     |
+| `/rooms/[slug]` | Individual Room             | High     |
+| `/wedding`      | Wedding Venue               | High     |
+| `/contact`      | Contact + Query Form        | High     |
+| `/banquet`      | Banquet Hall                | Medium   |
+| `/restaurant`   | Indoor + Outdoor Restaurant | Medium   |
+| `/pool`         | Swimming Pool               | Medium   |
+| `/events`       | Small Events + Parties      | Medium   |
+| `/gallery`      | Image Gallery               | Medium   |
+| `/attractions`  | Nearby Attractions          | Low      |
+| `/admin`        | Admin Dashboard (protected) | Low      |
 
 ## Homepage Sections
+
 Build homepage sections in this order:
+
 1. Hero: full-screen, tagline, Book Now CTA, background resort image
 2. Quick Highlights: Rooms, Banquet, Pool, Restaurant icon cards
 3. Wedding Feature: big bold section with "Make your wedding unforgettable"
@@ -99,6 +112,7 @@ Build homepage sections in this order:
 10. Footer: links, contact, WhatsApp button, social links
 
 ## Core Services
+
 - Hotel Rooms: 19 rooms, likely increasing later
 - Banquet Hall: 1 hall, likely increasing later
 - Indoor Restaurant
@@ -106,6 +120,7 @@ Build homepage sections in this order:
 - Swimming Pool: 1
 
 ## Addons And Events
+
 - Birthday Parties
 - Small Parties
 - Catering
@@ -114,6 +129,7 @@ Build homepage sections in this order:
 - Corporate Meets & Conferences
 
 ## Amenities
+
 - Indoor Parking
 - Free WiFi
 - Laundry Service
@@ -121,6 +137,7 @@ Build homepage sections in this order:
 - Complimentary Breakfast
 
 ## Major Selling Point
+
 - Wedding Venue is the number one revenue driver.
 - The `/wedding` page must be the most polished and detailed page on the site.
 - Feature the wedding offering prominently on the homepage.
@@ -128,7 +145,9 @@ Build homepage sections in this order:
 - Show venue photos, capacity, and packages in the final implementation.
 
 ## Booking System
+
 Planned booking flow:
+
 1. User selects room plus check-in and check-out dates
 2. System checks availability via `/api/availability` and Supabase later
 3. User fills guest details: name, phone, email
@@ -138,11 +157,13 @@ Planned booking flow:
 5. Show confirmation on screen and send email via Resend
 
 ### Payment Requirements
+
 - Gateway: Razorpay
 - Support UPI, Cards, Net Banking, Wallets
 - Webhook route: `/api/payments/webhook`
 
 ## iCal Sync Requirements
+
 - Do not use Djubo or any paid channel manager.
 - Build a custom iCal-based sync system.
 - Our system must expose an iCal feed at `madhubangarden.com/api/ical/export`
@@ -154,6 +175,7 @@ Planned booking flow:
 - Cache availability in Upstash Redis
 
 ## Planned Database Schema
+
 ```sql
 rooms (
   id, slug, name, type, description,
@@ -194,9 +216,11 @@ reviews (
 ```
 
 ## Admin Dashboard
+
 Protect `/admin` using Supabase Auth with email plus OTP login.
 
 Sections to build later:
+
 - Bookings: view all, filter by date/status/source, update status
 - Availability: calendar view, manually block/unblock dates
 - Inquiries: view all wedding and event inquiries, mark as contacted
@@ -205,6 +229,7 @@ Sections to build later:
 - iCal Sync: show last sync time, manual trigger button, sync logs
 
 ## API Routes
+
 ```txt
 GET  /api/availability?room_id=&check_in=&check_out=
 POST /api/bookings
@@ -217,6 +242,7 @@ POST /api/cron/sync-ical
 ```
 
 ## Environment Variables
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -236,6 +262,7 @@ CRON_SECRET=
 ```
 
 ## What Not To Do
+
 - Do not use WordPress or any CMS
 - Do not use the Pages Router
 - Use the App Router only
@@ -251,6 +278,7 @@ CRON_SECRET=
 - Always check `/UI design/` before implementing
 
 ## Project Info
+
 - Client: Madhuban Garden Resort, Agar Malwa District, MP
 - Agency: Xternal Media
 - Domain: `madhubangarden.com`

@@ -1,0 +1,119 @@
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { motion, useReducedMotion } from 'framer-motion'
+
+import { EditorialCtaPanel } from '@/components/shared/editorial-cta-panel'
+import { EditorialPageHero } from '@/components/shared/editorial-page-hero'
+import { SectionHeading } from '@/components/shared/section-heading'
+import { SiteIcon } from '@/components/shared/site-icon'
+import { Button } from '@/components/ui/button'
+import { attractions, attractionsPage } from '@/lib/dummy-data'
+import { createEditorialMotion } from '@/lib/motion'
+import { cn } from '@/lib/utils'
+
+export function AttractionsPageView() {
+  const reduceMotion = useReducedMotion()
+  const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
+
+  return (
+    <div className="-mt-[92px] overflow-x-clip bg-[#fbf9f4]">
+      <EditorialPageHero
+        hero={attractionsPage.hero}
+        minHeightClassName="min-h-[68svh]"
+        imageAlt="Nearby attractions and travel mood around Madhuban Garden Resort"
+      >
+        <Button
+          asChild
+          size="lg"
+          className="h-auto rounded-full bg-[#ba7517] px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white hover:bg-[#a46612]"
+        >
+          <Link href="/rooms">
+            Plan Your Stay
+            <SiteIcon icon="ArrowRight" className="size-4" />
+          </Link>
+        </Button>
+      </EditorialPageHero>
+
+      <motion.section
+        initial={false}
+        whileInView="show"
+        viewport={{ once: true, amount: 0.18 }}
+        variants={sectionVariants}
+        className="bg-[#fbf9f4] py-20 sm:py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Spiritual Day Trips"
+            title="Temple destinations often paired with a peaceful Madhuban stay."
+            description="These nearby attractions give guests an easy way to combine a quiet resort base with meaningful family travel across the region."
+            centered
+          />
+
+          <div className="mt-14 space-y-10">
+            {attractions.map((attraction, index) => (
+              <motion.article
+                key={attraction.name}
+                variants={itemVariants}
+                className="rounded-[2.2rem] bg-[#f5f3ee] px-4 py-4 shadow-[0_18px_55px_rgba(27,28,25,0.05)] sm:px-6 sm:py-6"
+              >
+                <div className="grid gap-8 lg:grid-cols-[0.58fr_0.42fr] lg:items-center">
+                  <div className={cn(index % 2 === 1 && 'lg:order-2')}>
+                    <div className="relative aspect-[16/11] overflow-hidden rounded-[1.7rem]">
+                      <Image
+                        src={attraction.image}
+                        alt={attraction.name}
+                        fill
+                        sizes="(min-width: 1024px) 54vw, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className={cn('px-2 py-2', index % 2 === 1 && 'lg:order-1')}
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#ba7517]">
+                      Nearby Attraction
+                    </p>
+                    <h2 className="mt-4 text-balance text-4xl italic leading-tight text-foreground sm:text-5xl">
+                      {attraction.name}
+                    </h2>
+                    <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm text-[#356609]">
+                      <SiteIcon icon="MapPin" className="size-4" />
+                      {attraction.distance}
+                    </div>
+                    <p className="text-foreground/68 mt-6 text-base leading-8">
+                      {attraction.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      <motion.section
+        initial={false}
+        whileInView="show"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={sectionVariants}
+        className="bg-[#eef4e7] py-20 sm:py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <EditorialCtaPanel
+            eyebrow="Plan Your Visit"
+            title={attractionsPage.visitPlanTitle}
+            description={attractionsPage.visitPlanDescription}
+            primaryHref="/rooms"
+            primaryLabel="Explore Rooms"
+            secondaryHref="/contact"
+            secondaryLabel="Contact Resort"
+          />
+        </div>
+      </motion.section>
+    </div>
+  )
+}

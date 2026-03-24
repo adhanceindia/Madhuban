@@ -1,0 +1,21 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#EEF5EA"/>
+  <rect width="1200" height="900" fill="url(#paint0_linear)"/>
+  <rect x="112" y="160" width="976" height="582" rx="34" fill="#FCFCF8"/>
+  <rect x="160" y="434" width="502" height="214" rx="28" fill="#D8E7C4"/>
+  <rect x="160" y="372" width="502" height="108" rx="24" fill="#C4D8AA"/>
+  <rect x="716" y="274" width="310" height="126" rx="28" fill="#E5ECDD"/>
+  <rect x="716" y="430" width="310" height="178" rx="28" fill="#D6E4CB"/>
+  <rect x="752" y="468" width="104" height="104" rx="18" fill="#F7FBF2"/>
+  <rect x="878" y="468" width="112" height="104" rx="18" fill="#F7FBF2"/>
+  <path d="M98 738C166 620 285 539 414 508C369 623 289 712 177 778L98 738Z" fill="#7AA060"/>
+  <path d="M1098 736C1028 612 897 530 760 510C801 628 888 715 1005 780L1098 736Z" fill="#7AA060"/>
+  <text x="126" y="110" fill="#294935" font-family="Georgia, serif" font-size="56" font-style="italic">Family Suite</text>
+  <text x="126" y="160" fill="#4B6A57" font-family="Arial, sans-serif" font-size="22" letter-spacing="2">Spacious suite placeholder</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="600" y1="0" x2="600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FBF2"/>
+      <stop offset="1" stop-color="#DEECDA"/>
+    </linearGradient>
+  </defs>
+</svg>

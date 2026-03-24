@@ -1,0 +1,23 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" fill="#17311F"/>
+  <rect width="1600" height="1000" fill="url(#banquetThreeBg)"/>
+  <path d="M0 786C148 732 281 717 434 744C596 773 715 844 883 846C1056 848 1184 774 1349 756C1431 747 1514 753 1600 777V1000H0V786Z" fill="#1F472E"/>
+  <rect x="250" y="178" width="1100" height="564" rx="38" fill="#F7F4EC" fill-opacity="0.94"/>
+  <rect x="314" y="246" width="972" height="428" rx="28" fill="#DFE4D5"/>
+  <rect x="482" y="284" width="636" height="232" rx="26" fill="#2B5A3B"/>
+  <rect x="606" y="318" width="388" height="94" rx="18" fill="#F3E0A6"/>
+  <rect x="454" y="560" width="136" height="62" rx="18" fill="#FCFAF6"/>
+  <rect x="640" y="560" width="136" height="62" rx="18" fill="#FCFAF6"/>
+  <rect x="826" y="560" width="136" height="62" rx="18" fill="#FCFAF6"/>
+  <rect x="1012" y="560" width="136" height="62" rx="18" fill="#FCFAF6"/>
+  <circle cx="800" cy="208" r="42" fill="#F2D48F"/>
+  <text x="154" y="120" fill="#FFFFFF" font-family="Georgia, serif" font-size="60" font-style="italic">Flexible Seating</text>
+  <text x="154" y="892" fill="#EFF5E8" font-family="Georgia, serif" font-size="28">Configured for receptions, conferences, dining, and formal event flow</text>
+  <defs>
+    <linearGradient id="banquetThreeBg" x1="800" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#335A3B"/>
+      <stop offset="0.54" stop-color="#23472F"/>
+      <stop offset="1" stop-color="#14261A"/>
+    </linearGradient>
+  </defs>
+</svg>

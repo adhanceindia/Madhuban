@@ -1,0 +1,23 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" fill="#24402C"/>
+  <rect width="1600" height="1000" fill="url(#eventsOneBg)"/>
+  <circle cx="1262" cy="160" r="116" fill="#F1D48E" fill-opacity="0.3"/>
+  <path d="M0 780C150 732 298 722 451 754C602 787 719 846 876 850C1059 855 1201 785 1367 770C1445 762 1520 765 1600 780V1000H0V780Z" fill="#1F472E"/>
+  <rect x="236" y="218" width="1128" height="488" rx="36" fill="#F8F5ED" fill-opacity="0.94"/>
+  <rect x="296" y="278" width="1008" height="362" rx="26" fill="#E6E7D8"/>
+  <circle cx="454" cy="268" r="44" fill="#D7A55A"/>
+  <circle cx="532" cy="230" r="30" fill="#EBC97E"/>
+  <circle cx="614" cy="256" r="38" fill="#CFB16B"/>
+  <rect x="822" y="350" width="300" height="174" rx="26" fill="#FFF9EE"/>
+  <rect x="414" y="520" width="196" height="74" rx="20" fill="#FFF9EE"/>
+  <rect x="646" y="520" width="196" height="74" rx="20" fill="#FFF9EE"/>
+  <text x="154" y="126" fill="#FFFFFF" font-family="Georgia, serif" font-size="60" font-style="italic">Birthday Parties</text>
+  <text x="154" y="892" fill="#EDF5E6" font-family="Georgia, serif" font-size="28">Festive setups, soft decor, and guest-friendly celebration comfort</text>
+  <defs>
+    <linearGradient id="eventsOneBg" x1="800" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3A5A3D"/>
+      <stop offset="0.56" stop-color="#29452F"/>
+      <stop offset="1" stop-color="#18251C"/>
+    </linearGradient>
+  </defs>
+</svg>

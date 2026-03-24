@@ -1,0 +1,20 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#F1EFE6"/>
+  <rect width="1200" height="900" fill="url(#paint0_linear)"/>
+  <circle cx="956" cy="182" r="90" fill="#EED8A6" fill-opacity="0.42"/>
+  <path d="M0 718C162 654 304 634 442 660C574 684 704 739 840 742C955 744 1077 710 1200 660V900H0V718Z" fill="#365A34"/>
+  <rect x="358" y="302" width="486" height="284" rx="24" fill="#E8D6B5"/>
+  <rect x="486" y="194" width="230" height="392" rx="22" fill="#D9B27B"/>
+  <rect x="542" y="244" width="118" height="108" rx="16" fill="#F9F1DF"/>
+  <path d="M600 118L738 250H462L600 118Z" fill="#BB7A3B"/>
+  <rect x="566" y="372" width="68" height="214" rx="18" fill="#8C4B26"/>
+  <circle cx="600" cy="300" r="24" fill="#F7E7BF"/>
+  <text x="110" y="118" fill="#56412A" font-family="Georgia, serif" font-size="56" font-style="italic">Mahakaleshwar Temple</text>
+  <text x="110" y="168" fill="#7E674B" font-family="Arial, sans-serif" font-size="22" letter-spacing="2">Temple day-trip placeholder</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="600" y1="0" x2="600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FAF8F0"/>
+      <stop offset="1" stop-color="#E5DBC7"/>
+    </linearGradient>
+  </defs>
+</svg>

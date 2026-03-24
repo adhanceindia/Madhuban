@@ -1,0 +1,22 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" fill="#1A2D27"/>
+  <rect width="1600" height="1000" fill="url(#poolThreeBg)"/>
+  <circle cx="1244" cy="168" r="112" fill="#EBCB7B" fill-opacity="0.34"/>
+  <path d="M0 774C166 726 329 716 488 750C642 783 761 844 916 848C1093 853 1230 784 1396 768C1468 761 1537 763 1600 776V1000H0V774Z" fill="#1F4733"/>
+  <rect x="132" y="560" width="1336" height="188" rx="32" fill="#2A6E7D"/>
+  <path d="M132 616C220 587 310 584 402 608C525 639 618 705 736 712C892 721 1016 637 1166 624C1267 615 1364 648 1468 706V748H132V616Z" fill="#3C8D98"/>
+  <rect x="132" y="498" width="1336" height="76" rx="24" fill="#D9D0BA"/>
+  <circle cx="356" cy="350" r="58" fill="#3E6A49"/>
+  <circle cx="438" cy="318" r="42" fill="#568160"/>
+  <circle cx="518" cy="352" r="52" fill="#486F53"/>
+  <rect x="1082" y="394" width="246" height="90" rx="24" fill="#F6F1E4" fill-opacity="0.82"/>
+  <text x="152" y="128" fill="#FFFFFF" font-family="Georgia, serif" font-size="60" font-style="italic">Evening Pool Mood</text>
+  <text x="152" y="892" fill="#ECF4E6" font-family="Georgia, serif" font-size="28">A quieter after-sunset atmosphere for guests winding down at Madhuban</text>
+  <defs>
+    <linearGradient id="poolThreeBg" x1="800" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#355A49"/>
+      <stop offset="0.58" stop-color="#234336"/>
+      <stop offset="1" stop-color="#151E19"/>
+    </linearGradient>
+  </defs>
+</svg>

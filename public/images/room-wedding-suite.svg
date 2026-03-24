@@ -1,0 +1,20 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#F4F2E9"/>
+  <rect width="1200" height="900" fill="url(#paint0_linear)"/>
+  <rect x="118" y="160" width="964" height="582" rx="36" fill="#FCFBF7"/>
+  <rect x="172" y="428" width="488" height="222" rx="28" fill="#E7D4BB"/>
+  <rect x="172" y="366" width="488" height="114" rx="24" fill="#D9B98D"/>
+  <rect x="712" y="246" width="314" height="172" rx="28" fill="#E6E6DE"/>
+  <rect x="712" y="450" width="314" height="168" rx="28" fill="#D7E3CF"/>
+  <circle cx="870" cy="332" r="52" fill="#F0E2C5"/>
+  <path d="M94 736C165 618 288 537 425 508C377 625 291 714 173 779L94 736Z" fill="#8AA668"/>
+  <path d="M1096 740C1025 616 896 532 758 511C801 629 889 718 1003 784L1096 740Z" fill="#8AA668"/>
+  <text x="124" y="108" fill="#4C3922" font-family="Georgia, serif" font-size="56" font-style="italic">Wedding Suite</text>
+  <text x="124" y="158" fill="#82674B" font-family="Arial, sans-serif" font-size="22" letter-spacing="2">Bridal-ready suite placeholder</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="600" y1="0" x2="600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBF7EF"/>
+      <stop offset="1" stop-color="#EBE2CF"/>
+    </linearGradient>
+  </defs>
+</svg>
