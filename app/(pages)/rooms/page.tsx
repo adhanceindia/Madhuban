@@ -6,6 +6,10 @@ import { resort } from '@/lib/dummy-data'
 export const metadata: Metadata = {
   title: 'Our Rooms & Suites',
   description: `${resort.tagline} Explore the current room and suite collection at Madhuban Garden Resort.`,
+  openGraph: {
+    title: 'Our Rooms & Suites | Madhuban Garden Resort',
+    description: `${resort.tagline} Explore the current room and suite collection at Madhuban Garden Resort.`,
+  },
 }
 
 export default function RoomsPage() {

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 
 import { FloatingWhatsAppButton } from '@/components/layout/floating-whatsapp-button'
+import { PageTransitionWrapper } from '@/components/layout/page-transition-wrapper'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteNavbar } from '@/components/layout/site-navbar'
 import { resort } from '@/lib/dummy-data'
@@ -52,7 +53,9 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-background font-body text-foreground antialiased">
         <SiteNavbar />
-        <main className="relative">{children}</main>
+        <main className="relative">
+          <PageTransitionWrapper>{children}</PageTransitionWrapper>
+        </main>
         <SiteFooter />
         <FloatingWhatsAppButton />
       </body>

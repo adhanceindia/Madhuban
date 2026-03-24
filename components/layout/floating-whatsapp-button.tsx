@@ -8,6 +8,9 @@ import { resort } from '@/lib/dummy-data'
 
 export function FloatingWhatsAppButton() {
   const phone = resort.whatsapp.replace(/\D/g, '')
+  const message = encodeURIComponent(
+    "Hi, I'm interested in booking at Madhuban Garden Resort.",
+  )
 
   return (
     <motion.div
@@ -17,7 +20,7 @@ export function FloatingWhatsAppButton() {
       className="fixed bottom-24 right-5 z-50 lg:bottom-5"
     >
       <Link
-        href={`https://wa.me/${phone}`}
+        href={`https://wa.me/${phone}?text=${message}`}
         target="_blank"
         rel="noreferrer"
         aria-label="Chat on WhatsApp"

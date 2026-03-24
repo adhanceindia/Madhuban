@@ -6,6 +6,10 @@ import { resort } from '@/lib/dummy-data'
 export const metadata: Metadata = {
   title: 'Wedding Venue',
   description: `Begin your forever at Madhuban Garden Resort. ${resort.tagline}`,
+  openGraph: {
+    title: 'Wedding Venue | Madhuban Garden Resort',
+    description: `Begin your forever at Madhuban Garden Resort. ${resort.tagline}`,
+  },
 }
 
 export default function WeddingPage() {

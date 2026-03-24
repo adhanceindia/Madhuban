@@ -6,6 +6,10 @@ import { resort } from '@/lib/dummy-data'
 export const metadata: Metadata = {
   title: 'Swimming Pool',
   description: `See the swimming pool experience at Madhuban Garden Resort, including timings and leisure details. ${resort.tagline}`,
+  openGraph: {
+    title: 'Swimming Pool | Madhuban Garden Resort',
+    description: `See the swimming pool experience at Madhuban Garden Resort, including timings and leisure details. ${resort.tagline}`,
+  },
 }
 
 export default function PoolPage() {

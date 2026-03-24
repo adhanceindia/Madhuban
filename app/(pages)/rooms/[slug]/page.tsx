@@ -29,6 +29,10 @@ export function generateMetadata({ params }: RoomDetailPageProps): Metadata {
   return {
     title: room.name,
     description: `${room.description} ${resort.tagline}`,
+    openGraph: {
+      title: `${room.name} | Madhuban Garden Resort`,
+      description: `${room.description} ${resort.tagline}`,
+    },
   }
 }
 
