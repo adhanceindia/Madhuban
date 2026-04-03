@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 
 import { AttractionsPageView } from '@/components/attractions/attractions-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Nearby Attractions',
-  description: `Explore temple visits and nearby destinations while staying at Madhuban Garden Resort. ${resort.tagline}`,
-  openGraph: {
-    title: 'Nearby Attractions | Madhuban Garden Resort',
-    description: `Explore temple visits and nearby destinations while staying at Madhuban Garden Resort. ${resort.tagline}`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Nearby Attractions',
+    description: `Explore temple visits and nearby destinations while staying at Madhuban Garden Resort. ${site.tagline}`,
+    openGraph: {
+      title: 'Nearby Attractions | Madhuban Garden Resort',
+      description: `Explore temple visits and nearby destinations while staying at Madhuban Garden Resort. ${site.tagline}`,
+    },
+  }
 }
 
 export default function AttractionsPage() {

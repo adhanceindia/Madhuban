@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import type { MediaAsset } from '@/lib/dummy-data'
+import type { MediaAsset } from '@/lib/page-content'
 
 export function EditorialPhotoStrip({ items }: { items: MediaAsset[] }) {
   return (
@@ -9,9 +9,9 @@ export function EditorialPhotoStrip({ items }: { items: MediaAsset[] }) {
         {items.map((item) => (
           <article
             key={item.src}
-            className="bg-white/76 w-[18rem] shrink-0 rounded-[2rem] p-3 shadow-[0_22px_60px_rgba(27,28,25,0.08)] backdrop-blur sm:w-[21rem] lg:w-[24rem]"
+            className="bg-white/76 w-[18rem] shrink-0 rounded-card p-3 shadow-[0_22px_60px_rgba(27,28,25,0.08)] backdrop-blur sm:w-[21rem] lg:w-[24rem]"
           >
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.4rem]">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-card-inner">
               <Image
                 src={item.src}
                 alt={item.alt}
@@ -28,7 +28,7 @@ export function EditorialPhotoStrip({ items }: { items: MediaAsset[] }) {
                   </h3>
                 ) : null}
                 {item.caption ? (
-                  <p className="text-foreground/64 mt-3 text-sm leading-7">
+                  <p className="text-foreground/70 mt-3 text-sm leading-7">
                     {item.caption}
                   </p>
                 ) : null}

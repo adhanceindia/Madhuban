@@ -6,52 +6,20 @@
 
 @layer base {
   :root {
-    --background: #f5f9f0;
-    --foreground: #1a1a1a;
-    --card: #ffffff;
-    --card-foreground: #1a1a1a;
-    --popover: #ffffff;
-    --popover-foreground: #1a1a1a;
-    --primary: #4caf50;
-    --primary-foreground: #ffffff;
-    --secondary: #ecf4e6;
-    --secondary-foreground: #1a1a1a;
-    --muted: #edf3e8;
-    --muted-foreground: #4b5c49;
-    --accent: #2e7d32;
-    --accent-foreground: #ffffff;
-    --destructive: #b42318;
-    --destructive-foreground: #ffffff;
-    --border: #d6e4d0;
-    --input: #d6e4d0;
-    --ring: #4caf50;
-    --chart-1: #4caf50;
-    --chart-2: #2e7d32;
-    --chart-3: #89c47d;
-    --chart-4: #dcead3;
-    --chart-5: #7e8f74;
     --radius: 1rem;
-    --sidebar: #ffffff;
-    --sidebar-foreground: #1a1a1a;
-    --sidebar-primary: #4caf50;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ecf4e6;
-    --sidebar-accent-foreground: #1a1a1a;
-    --sidebar-border: #d6e4d0;
-    --sidebar-ring: #4caf50;
   }
   * {
     @apply border-border outline-ring/50;
   }
   html {
-    @apply bg-background font-body text-foreground;
+    @apply scroll-smooth;
   }
   body {
     @apply bg-background text-foreground;
     min-height: 100vh;
     background-image:
-      radial-gradient(circle at top, rgba(76, 175, 80, 0.18), transparent 30%),
-      linear-gradient(180deg, #fbfdf8 0%, #f5f9f0 100%);
+      radial-gradient(circle at top, rgba(56, 106, 14, 0.12), transparent 30%),
+      linear-gradient(180deg, #fbfdf8 0%, #f8f9f4 100%);
   }
   h1,
   h2,
@@ -64,10 +32,6 @@
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;

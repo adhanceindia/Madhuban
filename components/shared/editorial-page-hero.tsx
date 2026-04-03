@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 
-import type { RouteHero } from '@/lib/dummy-data'
+import type { RouteHero } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
@@ -49,7 +49,7 @@ export function EditorialPageHero({
 
       <div className="relative z-10 mx-auto flex w-full max-w-7xl px-4 pb-16 pt-36 sm:px-6 lg:px-8">
         <div className="max-w-4xl">
-          <p className="text-white/78 text-sm font-semibold uppercase tracking-[0.38em]">
+          <p className="text-white/78 text-sm font-semibold uppercase tracking-eyebrow">
             {hero.eyebrow}
           </p>
           {hero.overlayWord ? (

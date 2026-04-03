@@ -4,10 +4,10 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { MessageCircle } from 'lucide-react'
 
-import { resort } from '@/lib/dummy-data'
+import type { SiteContent } from '@/lib/types'
 
-export function FloatingWhatsAppButton() {
-  const phone = resort.whatsapp.replace(/\D/g, '')
+export function FloatingWhatsAppButton({ siteContent }: { siteContent: SiteContent }) {
+  const phone = siteContent.whatsapp.replace(/\D/g, '')
   const message = encodeURIComponent(
     "Hi, I'm interested in booking at Madhuban Garden Resort.",
   )
@@ -17,7 +17,7 @@ export function FloatingWhatsAppButton() {
       initial={false}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: 0.2, duration: 0.3 }}
-      className="fixed bottom-24 right-5 z-50 lg:bottom-5"
+      className="fixed bottom-24 right-5 z-40 lg:bottom-5"
     >
       <Link
         href={`https://wa.me/${phone}?text=${message}`}

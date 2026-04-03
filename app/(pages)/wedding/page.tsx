@@ -1,17 +1,23 @@
 import type { Metadata } from 'next'
 
 import { WeddingPageView } from '@/components/wedding/wedding-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Wedding Venue',
-  description: `Begin your forever at Madhuban Garden Resort. ${resort.tagline}`,
-  openGraph: {
-    title: 'Wedding Venue | Madhuban Garden Resort',
-    description: `Begin your forever at Madhuban Garden Resort. ${resort.tagline}`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Wedding Venue',
+    description: `Begin your forever at Madhuban Garden Resort. ${site.tagline}`,
+    openGraph: {
+      title: 'Wedding Venue | Madhuban Garden Resort',
+      description: `Begin your forever at Madhuban Garden Resort. ${site.tagline}`,
+    },
+  }
 }
 
-export default function WeddingPage() {
-  return <WeddingPageView />
+export default async function WeddingPage() {
+  const siteContent = await getSiteContent()
+
+  return <WeddingPageView siteContent={siteContent} />
 }

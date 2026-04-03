@@ -9,7 +9,7 @@ import { EditorialPageHero } from '@/components/shared/editorial-page-hero'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
-import { attractions, attractionsPage } from '@/lib/dummy-data'
+import { attractions, attractionsPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
@@ -18,7 +18,7 @@ export function AttractionsPageView() {
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
 
   return (
-    <div className="-mt-[92px] overflow-x-clip bg-[#fbf9f4]">
+    <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={attractionsPage.hero}
         minHeightClassName="min-h-[68svh]"
@@ -27,7 +27,7 @@ export function AttractionsPageView() {
         <Button
           asChild
           size="lg"
-          className="h-auto rounded-full bg-[#ba7517] px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white hover:bg-[#a46612]"
+          className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="/rooms">
             Plan Your Stay
@@ -41,7 +41,7 @@ export function AttractionsPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-[#fbf9f4] py-20 sm:py-24"
+        className="bg-background py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -56,11 +56,11 @@ export function AttractionsPageView() {
               <motion.article
                 key={attraction.name}
                 variants={itemVariants}
-                className="rounded-[2.2rem] bg-[#f5f3ee] px-4 py-4 shadow-[0_18px_55px_rgba(27,28,25,0.05)] sm:px-6 sm:py-6"
+                className="rounded-card bg-warm-gray px-4 py-4 shadow-[0_18px_55px_rgba(27,28,25,0.05)] sm:px-6 sm:py-6"
               >
                 <div className="grid gap-8 lg:grid-cols-[0.58fr_0.42fr] lg:items-center">
                   <div className={cn(index % 2 === 1 && 'lg:order-2')}>
-                    <div className="relative aspect-[16/11] overflow-hidden rounded-[1.7rem]">
+                    <div className="relative aspect-[16/11] overflow-hidden rounded-card-md">
                       <Image
                         src={attraction.image}
                         alt={attraction.name}
@@ -74,17 +74,17 @@ export function AttractionsPageView() {
                   <div
                     className={cn('px-2 py-2', index % 2 === 1 && 'lg:order-1')}
                   >
-                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#ba7517]">
+                    <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
                       Nearby Attraction
                     </p>
                     <h2 className="mt-4 text-balance text-4xl italic leading-tight text-foreground sm:text-5xl">
                       {attraction.name}
                     </h2>
-                    <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm text-[#356609]">
+                    <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm text-primary-deep">
                       <SiteIcon icon="MapPin" className="size-4" />
                       {attraction.distance}
                     </div>
-                    <p className="text-foreground/68 mt-6 text-base leading-8">
+                    <p className="text-foreground/70 mt-6 text-base leading-8">
                       {attraction.description}
                     </p>
                   </div>
@@ -100,7 +100,7 @@ export function AttractionsPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.3 }}
         variants={sectionVariants}
-        className="bg-[#eef4e7] py-20 sm:py-24"
+        className="bg-primary-light py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <EditorialCtaPanel

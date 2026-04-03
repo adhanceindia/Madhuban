@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 
 import { PoolPageView } from '@/components/pool/pool-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Swimming Pool',
-  description: `See the swimming pool experience at Madhuban Garden Resort, including timings and leisure details. ${resort.tagline}`,
-  openGraph: {
-    title: 'Swimming Pool | Madhuban Garden Resort',
-    description: `See the swimming pool experience at Madhuban Garden Resort, including timings and leisure details. ${resort.tagline}`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Swimming Pool',
+    description: `See the swimming pool experience at Madhuban Garden Resort, including timings and leisure details. ${site.tagline}`,
+    openGraph: {
+      title: 'Swimming Pool | Madhuban Garden Resort',
+      description: `See the swimming pool experience at Madhuban Garden Resort, including timings and leisure details. ${site.tagline}`,
+    },
+  }
 }
 
 export default function PoolPage() {

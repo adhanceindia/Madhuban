@@ -4,12 +4,12 @@ import { BedDouble, Users } from 'lucide-react'
 
 import { RoomAmenityIcon } from '@/components/rooms/room-amenity-icon'
 import { Button } from '@/components/ui/button'
-import type { Room } from '@/lib/dummy-data'
+import type { RoomData } from '@/lib/types'
 import { formatIndianCurrency } from '@/lib/room-helpers'
 import { cn } from '@/lib/utils'
 
 type RoomCardProps = {
-  room: Room
+  room: RoomData
   priority?: boolean
   className?: string
 }
@@ -20,7 +20,7 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
   return (
     <article
       className={cn(
-        'group overflow-hidden rounded-[1.4rem] border border-[#c0dd97]/80 bg-[#fffdf8] shadow-[0_20px_55px_rgba(53,102,9,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(53,102,9,0.12)]',
+        'group overflow-hidden rounded-card-inner border border-card-accent/80 bg-warm-cream shadow-[0_20px_55px_rgba(53,102,9,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(53,102,9,0.12)]',
         className,
       )}
     >
@@ -35,7 +35,7 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="from-black/28 absolute inset-0 bg-gradient-to-t via-black/0 to-black/5" />
-          <span className="absolute left-5 top-5 rounded-full bg-[#fbf9f4]/95 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-[#356609] shadow-sm">
+          <span className="absolute left-5 top-5 z-10 rounded-full bg-warm-base/95 px-3 py-1 text-xs font-semibold uppercase tracking-label text-primary-deep shadow-sm">
             {room.type}
           </span>
         </div>
@@ -47,16 +47,16 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
             <h2 className="text-3xl italic leading-tight text-foreground">
               {room.name}
             </h2>
-            <p className="text-foreground/66 mt-3 text-sm leading-7">
+            <p className="text-foreground/70 mt-3 text-sm leading-7">
               {room.description}
             </p>
           </div>
 
           <div className="shrink-0 text-right">
-            <span className="block text-2xl font-bold text-[#ba7517]">
+            <span className="block text-2xl font-bold text-gold">
               {formatIndianCurrency(room.price_per_night)}
             </span>
-            <span className="text-foreground/48 text-[0.65rem] font-semibold uppercase tracking-[0.24em]">
+            <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
               per night
             </span>
           </div>
@@ -64,11 +64,11 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
 
         <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-foreground/70">
           <span className="inline-flex items-center gap-2">
-            <Users className="size-4 text-[#356609]" />
+            <Users className="size-4 text-primary-deep" />
             Sleeps {room.capacity}
           </span>
           <span className="inline-flex items-center gap-2">
-            <BedDouble className="size-4 text-[#356609]" />
+            <BedDouble className="size-4 text-primary-deep" />
             {room.bed_type}
           </span>
         </div>
@@ -77,7 +77,7 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
           {keyAmenities.map((amenity) => (
             <span
               key={amenity}
-              className="inline-flex items-center gap-2 rounded-full bg-[#eaf3de] px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[#356609]"
+              className="inline-flex items-center gap-2 rounded-full bg-badge-green px-3 py-1.5 text-xs font-semibold uppercase tracking-tag text-primary-deep"
             >
               <RoomAmenityIcon label={amenity} className="size-3.5" />
               {amenity}
@@ -89,14 +89,14 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
           <Button
             asChild
             variant="outline"
-            className="h-auto rounded-xl border-[#d9e2cf] bg-transparent px-4 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-foreground hover:bg-[#f3f0e9]"
+            className="h-auto rounded-xl border-content-border bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-label text-foreground hover:bg-warm-sand"
           >
             <Link href={`/rooms/${room.slug}`}>View Details</Link>
           </Button>
 
           <Button
             asChild
-            className="h-auto rounded-xl bg-[#386a0e] px-4 py-3 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white hover:bg-[#2f590b]"
+            className="h-auto rounded-xl bg-primary px-4 py-3 text-xs font-semibold uppercase tracking-label text-white hover:bg-primary-dark"
           >
             <Link href={`/rooms/${room.slug}#booking`}>Book Now</Link>
           </Button>

@@ -4,10 +4,10 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Facebook, Instagram, Leaf, MessageCircle } from 'lucide-react'
 
-import { resort } from '@/lib/dummy-data'
 import { quickLinks, serviceLinks } from '@/lib/site-nav'
+import type { SiteContent } from '@/lib/types'
 
-export function SiteFooter() {
+export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
   return (
     <motion.footer
       initial={false}
@@ -19,7 +19,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h2 className="text-sm uppercase tracking-[0.28em] text-white/70">
+            <h2 className="text-sm uppercase tracking-label text-white/70">
               About
             </h2>
             <div className="flex items-center gap-3">
@@ -30,18 +30,18 @@ export function SiteFooter() {
                 <p className="font-display text-3xl leading-none">
                   Madhuban Garden
                 </p>
-                <p className="text-xs uppercase tracking-[0.28em] text-white/70">
+                <p className="text-xs uppercase tracking-label text-white/70">
                   Resort
                 </p>
               </div>
             </div>
             <p className="mt-6 max-w-sm text-sm leading-7 text-white/80">
-              {resort.tagline}
+              {siteContent.tagline}
             </p>
           </div>
 
           <div>
-            <h2 className="text-sm uppercase tracking-[0.28em] text-white/70">
+            <h2 className="text-sm uppercase tracking-label text-white/70">
               Quick Links
             </h2>
             <div className="mt-6 grid gap-3">
@@ -58,7 +58,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h2 className="text-sm uppercase tracking-[0.28em] text-white/70">
+            <h2 className="text-sm uppercase tracking-label text-white/70">
               Services
             </h2>
             <div className="mt-6 grid gap-3">
@@ -75,15 +75,15 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h2 className="text-sm uppercase tracking-[0.28em] text-white/70">
+            <h2 className="text-sm uppercase tracking-label text-white/70">
               Contact
             </h2>
             <div className="mt-6 space-y-3 text-sm text-white/85">
-              <p>{resort.address}</p>
-              <p>{resort.phone}</p>
-              <p>{resort.email}</p>
+              <p>{siteContent.address}</p>
+              <p>{siteContent.phone}</p>
+              <p>{siteContent.email}</p>
               <Link
-                href={`https://wa.me/${resort.whatsapp.replace(/\D/g, '')}`}
+                href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 inline-flex items-center gap-2 text-white transition-colors hover:text-white/80"
@@ -101,10 +101,10 @@ export function SiteFooter() {
             reserved.
           </p>
           <div className="flex items-center gap-4 text-white/80">
-            <Link href={resort.instagram} aria-label="Instagram">
+            <Link href={siteContent.instagram} aria-label="Instagram">
               <Instagram className="size-5" />
             </Link>
-            <Link href={resort.facebook} aria-label="Facebook">
+            <Link href={siteContent.facebook} aria-label="Facebook">
               <Facebook className="size-5" />
             </Link>
           </div>

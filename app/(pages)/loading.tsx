@@ -2,7 +2,7 @@ import { Leaf } from 'lucide-react'
 
 export default function Loading() {
   return (
-    <div className="-mt-[92px] flex min-h-screen items-center justify-center bg-background">
+    <div className="-mt-navbar flex min-h-screen items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-6">
         <div className="flex size-16 animate-pulse items-center justify-center rounded-full bg-primary/12 text-primary-dark">
           <Leaf className="size-7" />

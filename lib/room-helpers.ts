@@ -1,4 +1,4 @@
-import { rooms, type Room } from '@/lib/dummy-data'
+import type { RoomData } from '@/lib/types'
 
 export const roomFilters = ['All', 'Deluxe', 'Suite', 'Standard'] as const
 
@@ -71,15 +71,7 @@ export function getDefaultBookingDates(baseDate = new Date()) {
   }
 }
 
-export function getRoomBySlug(slug: string) {
-  return rooms.find((room) => room.slug === slug)
-}
-
-export function getRelatedRooms(currentSlug: string, limit = 3) {
-  return rooms.filter((room) => room.slug !== currentSlug).slice(0, limit)
-}
-
-export function getRoomGalleryImages(room: Room, minimum = 4) {
+export function getRoomGalleryImages(room: RoomData, minimum = 4) {
   if (room.images.length >= minimum) {
     return room.images.slice(0, minimum)
   }

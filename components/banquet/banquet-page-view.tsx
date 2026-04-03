@@ -10,7 +10,7 @@ import { EditorialPhotoStrip } from '@/components/shared/editorial-photo-strip'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
-import { banquetPage } from '@/lib/dummy-data'
+import { banquetPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 
 export function BanquetPageView() {
@@ -19,7 +19,7 @@ export function BanquetPageView() {
     createEditorialMotion(reduceMotion)
 
   return (
-    <div className="-mt-[92px] overflow-x-clip bg-[#fbf9f4]">
+    <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={banquetPage.hero}
         minHeightClassName="min-h-[72svh]"
@@ -28,7 +28,7 @@ export function BanquetPageView() {
         <Button
           asChild
           size="lg"
-          className="h-auto rounded-full bg-[#ba7517] px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white hover:bg-[#a46612]"
+          className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="/contact#query-form">
             Enquire Now
@@ -42,13 +42,13 @@ export function BanquetPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-[#fbf9f4] py-20 sm:py-24"
+        className="bg-background py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.96fr_1.04fr] lg:items-center lg:gap-16">
             <motion.div variants={itemVariants}>
-              <div className="overflow-hidden rounded-[2rem] bg-white p-3 shadow-[0_28px_80px_rgba(27,28,25,0.08)]">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] sm:aspect-[16/11] lg:aspect-[4/5]">
+              <div className="overflow-hidden rounded-card bg-white p-3 shadow-[0_28px_80px_rgba(27,28,25,0.08)]">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-card-inner sm:aspect-[16/11] lg:aspect-[4/5]">
                   <Image
                     src={banquetPage.overviewImage}
                     alt="Banquet hall overview at Madhuban Garden Resort"
@@ -70,12 +70,12 @@ export function BanquetPageView() {
                 {banquetPage.stats.map((stat) => (
                   <div
                     key={stat.label}
-                    className="rounded-[1.5rem] bg-[#f5f3ee] px-4 py-5"
+                    className="rounded-card-inner bg-warm-gray px-4 py-5"
                   >
-                    <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#356609]/80">
+                    <p className="text-xs font-semibold uppercase tracking-label text-gold">
                       {stat.label}
                     </p>
-                    <p className="text-foreground/78 mt-3 text-sm leading-6">
+                    <p className="text-foreground/70 mt-3 text-sm leading-6">
                       {stat.value}
                     </p>
                   </div>
@@ -97,12 +97,12 @@ export function BanquetPageView() {
                 {banquetPage.facilities.map((facility) => (
                   <div
                     key={facility.label}
-                    className="flex items-center gap-4 rounded-[1.4rem] bg-[#eef4e7] px-4 py-4"
+                    className="flex items-center gap-4 rounded-card-inner bg-primary-light px-4 py-4"
                   >
-                    <span className="inline-flex size-10 items-center justify-center rounded-full bg-white text-[#356609]">
+                    <span className="inline-flex size-10 items-center justify-center rounded-full bg-white text-primary-deep">
                       <SiteIcon icon={facility.icon} className="size-5" />
                     </span>
-                    <span className="text-foreground/72 text-sm leading-6">
+                    <span className="text-foreground/70 text-sm leading-6">
                       {facility.label}
                     </span>
                   </div>
@@ -118,7 +118,7 @@ export function BanquetPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.16 }}
         variants={sectionVariants}
-        className="bg-[#eef4e7] py-20 sm:py-24"
+        className="bg-primary-light py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -136,15 +136,15 @@ export function BanquetPageView() {
               <motion.article
                 key={useCase.title}
                 variants={itemVariants}
-                className="rounded-[2rem] bg-white/85 p-7 shadow-[0_20px_55px_rgba(56,106,14,0.08)] backdrop-blur"
+                className="rounded-card bg-white/85 p-7 shadow-[0_20px_55px_rgba(56,106,14,0.08)] backdrop-blur"
               >
-                <span className="inline-flex size-14 items-center justify-center rounded-full bg-[#eaf3de] text-[#356609]">
+                <span className="inline-flex size-14 items-center justify-center rounded-full bg-primary-light text-primary-deep">
                   <SiteIcon icon={useCase.icon} className="size-6" />
                 </span>
                 <h3 className="mt-5 text-3xl italic text-foreground">
                   {useCase.title}
                 </h3>
-                <p className="text-foreground/66 mt-4 text-sm leading-7">
+                <p className="text-foreground/70 mt-4 text-sm leading-7">
                   {useCase.description}
                 </p>
               </motion.article>
@@ -158,7 +158,7 @@ export function BanquetPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.16 }}
         variants={sectionVariants}
-        className="bg-[#fbf9f4] py-20 sm:py-24"
+        className="bg-background py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -177,7 +177,7 @@ export function BanquetPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.3 }}
         variants={sectionVariants}
-        className="bg-[#f5f3ee] py-20 sm:py-24"
+        className="bg-warm-gray py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <EditorialCtaPanel

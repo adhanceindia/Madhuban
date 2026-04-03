@@ -1,17 +1,23 @@
 import type { Metadata } from 'next'
 
 import { GalleryPageView } from '@/components/gallery/gallery-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getGallery, getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Gallery',
-  description: `Explore rooms, weddings, events, leisure spaces, and resort atmosphere in the Madhuban Garden Resort gallery. ${resort.tagline}`,
-  openGraph: {
-    title: 'Gallery | Madhuban Garden Resort',
-    description: `Explore rooms, weddings, events, leisure spaces, and resort atmosphere in the Madhuban Garden Resort gallery. ${resort.tagline}`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Gallery',
+    description: `Explore rooms, weddings, events, leisure spaces, and resort atmosphere in the Madhuban Garden Resort gallery. ${site.tagline}`,
+    openGraph: {
+      title: 'Gallery | Madhuban Garden Resort',
+      description: `Explore rooms, weddings, events, leisure spaces, and resort atmosphere in the Madhuban Garden Resort gallery. ${site.tagline}`,
+    },
+  }
 }
 
-export default function GalleryPage() {
-  return <GalleryPageView />
+export default async function GalleryPage() {
+  const galleryItems = await getGallery()
+
+  return <GalleryPageView galleryItems={galleryItems} />
 }

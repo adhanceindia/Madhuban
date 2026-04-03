@@ -14,11 +14,11 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { resort } from '@/lib/dummy-data'
 import { cn } from '@/lib/utils'
 import { navLinks } from '@/lib/site-nav'
+import type { SiteContent } from '@/lib/types'
 
-export function SiteNavbar() {
+export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -58,7 +58,7 @@ export function SiteNavbar() {
             <span className="font-display text-2xl leading-none text-primary-dark sm:text-[1.7rem]">
               Madhuban Garden
             </span>
-            <span className="text-[0.68rem] uppercase tracking-[0.3em] text-foreground/50">
+            <span className="text-[0.68rem] uppercase tracking-eyebrow text-foreground/55">
               Resort
             </span>
           </span>
@@ -70,7 +70,7 @@ export function SiteNavbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                'border-b border-transparent pb-1 font-display text-lg italic tracking-wide text-foreground/72 transition-colors duration-200 hover:text-primary-dark',
+                'border-b border-transparent pb-1 font-display text-lg italic tracking-wide text-foreground/70 transition-colors duration-200 hover:text-primary-dark',
                 pathname === link.href &&
                   'border-primary-dark/25 text-primary-dark',
               )}
@@ -88,7 +88,7 @@ export function SiteNavbar() {
             className="rounded-full"
           >
             <Link
-              href={`https://wa.me/${resort.whatsapp.replace(/\D/g, '')}`}
+              href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
               target="_blank"
               rel="noreferrer"
               className="gap-2"
@@ -136,7 +136,7 @@ export function SiteNavbar() {
               <div className="mt-2 flex flex-col gap-3 sm:flex-row">
                 <Button asChild variant="outline" className="w-full justify-center rounded-full">
                   <Link
-                    href={`https://wa.me/${resort.whatsapp.replace(/\D/g, '')}`}
+                    href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noreferrer"
                     className="gap-2"
@@ -149,9 +149,13 @@ export function SiteNavbar() {
                   <Link href="/rooms">Book Now</Link>
                 </Button>
               </div>
-              <div className="flex items-center gap-4 pt-2 text-foreground/60">
-                <Instagram className="size-5" />
-                <Facebook className="size-5" />
+              <div className="flex items-center gap-4 pt-2 text-foreground/55">
+                <Link href={siteContent.instagram} target="_blank" rel="noreferrer" aria-label="Instagram">
+                  <Instagram className="size-5" />
+                </Link>
+                <Link href={siteContent.facebook} target="_blank" rel="noreferrer" aria-label="Facebook">
+                  <Facebook className="size-5" />
+                </Link>
               </div>
             </div>
           </motion.div>

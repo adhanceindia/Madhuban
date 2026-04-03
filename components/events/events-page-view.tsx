@@ -9,7 +9,7 @@ import { EditorialPageHero } from '@/components/shared/editorial-page-hero'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
-import { eventsPage } from '@/lib/dummy-data'
+import { eventsPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 
 export function EventsPageView() {
@@ -18,7 +18,7 @@ export function EventsPageView() {
     createEditorialMotion(reduceMotion)
 
   return (
-    <div className="-mt-[92px] overflow-x-clip bg-[#fbf9f4]">
+    <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={eventsPage.hero}
         minHeightClassName="min-h-[70svh]"
@@ -27,7 +27,7 @@ export function EventsPageView() {
         <Button
           asChild
           size="lg"
-          className="h-auto rounded-full bg-[#ba7517] px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white hover:bg-[#a46612]"
+          className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="/contact#query-form">
             Plan Your Event
@@ -41,7 +41,7 @@ export function EventsPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-[#fbf9f4] py-20 sm:py-24"
+        className="bg-background py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-16">
@@ -54,8 +54,8 @@ export function EventsPageView() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <div className="overflow-hidden rounded-[2rem] bg-white p-3 shadow-[0_28px_80px_rgba(27,28,25,0.08)]">
-                <div className="relative aspect-[16/11] overflow-hidden rounded-[1.5rem]">
+              <div className="overflow-hidden rounded-card bg-white p-3 shadow-[0_28px_80px_rgba(27,28,25,0.08)]">
+                <div className="relative aspect-[16/11] overflow-hidden rounded-card-inner">
                   <Image
                     src="/images/events-2.svg"
                     alt="Corporate and social event setup at Madhuban Garden Resort"
@@ -76,15 +76,15 @@ export function EventsPageView() {
               <motion.article
                 key={service.title}
                 variants={itemVariants}
-                className="rounded-[2rem] bg-[#f5f3ee] p-7 shadow-[0_16px_50px_rgba(27,28,25,0.05)]"
+                className="rounded-card bg-warm-gray p-7 shadow-[0_16px_50px_rgba(27,28,25,0.05)]"
               >
-                <span className="inline-flex size-14 items-center justify-center rounded-full bg-white text-[#356609]">
+                <span className="inline-flex size-14 items-center justify-center rounded-full bg-white text-primary-deep">
                   <SiteIcon icon={service.icon} className="size-6" />
                 </span>
                 <h3 className="mt-5 text-3xl italic text-foreground">
                   {service.title}
                 </h3>
-                <p className="text-foreground/66 mt-4 text-sm leading-7">
+                <p className="text-foreground/70 mt-4 text-sm leading-7">
                   {service.description}
                 </p>
               </motion.article>
@@ -98,7 +98,7 @@ export function EventsPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.3 }}
         variants={sectionVariants}
-        className="bg-[#eef4e7] py-20 sm:py-24"
+        className="bg-primary-light py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <EditorialCtaPanel

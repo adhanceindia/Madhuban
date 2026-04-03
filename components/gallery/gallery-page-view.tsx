@@ -14,13 +14,9 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  galleryItems,
-  galleryPage,
-  type GalleryCategory,
-  type GalleryItem,
-} from '@/lib/dummy-data'
+import { galleryPage, type GalleryCategory } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
+import type { GalleryItemData } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 type GalleryFilter = 'all' | GalleryCategory
@@ -34,17 +30,11 @@ const filterOptions: { label: string; value: GalleryFilter }[] = [
   { label: 'Restaurant', value: 'restaurant' },
 ]
 
-function getAspectClass(item: GalleryItem) {
-  if (item.size === 'portrait') return 'aspect-[4/5]'
-  if (item.size === 'landscape') return 'aspect-[5/3]'
-  return 'aspect-square'
-}
-
-function formatCategory(value: GalleryCategory) {
+function formatCategory(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
-export function GalleryPageView() {
+export function GalleryPageView({ galleryItems }: { galleryItems: GalleryItemData[] }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -78,7 +68,7 @@ export function GalleryPageView() {
     setSelectedIndex(nextIndex)
   }
 
-  function renderItem(item: GalleryItem, index: number, isMasonry = false) {
+  function renderItem(item: GalleryItemData, index: number, isMasonry = false) {
     return (
       <motion.button
         key={`${item.src}-${activeFilter}-${index}-${isMasonry ? 'm' : 'g'}`}
@@ -86,14 +76,14 @@ export function GalleryPageView() {
         variants={itemVariants}
         onClick={() => openAt(index)}
         className={cn(
-          'group w-full overflow-hidden rounded-[1.8rem] bg-white p-3 text-left shadow-[0_22px_60px_rgba(27,28,25,0.08)] transition-transform duration-300 hover:-translate-y-1',
+          'group w-full overflow-hidden rounded-card-md bg-white p-3 text-left shadow-[0_22px_60px_rgba(27,28,25,0.08)] transition-transform duration-300 hover:-translate-y-1',
           isMasonry && 'mb-6 break-inside-avoid',
         )}
       >
         <div
           className={cn(
-            'relative overflow-hidden rounded-[1.3rem]',
-            getAspectClass(item),
+            'relative overflow-hidden rounded-card-sm',
+            'aspect-square',
           )}
         >
           <Image
@@ -108,22 +98,19 @@ export function GalleryPageView() {
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,22,14,0.02),rgba(17,22,14,0.2))]" />
-          <span className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-[#356609] backdrop-blur">
+          <span className="absolute left-4 top-4 z-10 rounded-full bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-label text-primary-deep backdrop-blur">
             {formatCategory(item.category)}
           </span>
         </div>
         <div className="px-2 pb-2 pt-5">
-          <h3 className="text-2xl italic text-foreground">{item.title}</h3>
-          <p className="text-foreground/64 mt-3 text-sm leading-7">
-            {item.caption}
-          </p>
+          <h3 className="text-2xl italic text-foreground">{item.caption}</h3>
         </div>
       </motion.button>
     )
   }
 
   return (
-    <div className="-mt-[92px] overflow-x-clip bg-[#fbf9f4]">
+    <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={galleryPage.hero}
         minHeightClassName="min-h-[66svh]"
@@ -132,7 +119,7 @@ export function GalleryPageView() {
         <Button
           asChild
           size="lg"
-          className="h-auto rounded-full bg-[#ba7517] px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white hover:bg-[#a46612]"
+          className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <a href="#gallery-grid">Browse Gallery</a>
         </Button>
@@ -143,7 +130,7 @@ export function GalleryPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.12 }}
         variants={sectionVariants}
-        className="bg-[#fbf9f4] py-16 sm:py-20"
+        className="bg-background py-16 sm:py-20"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -162,8 +149,8 @@ export function GalleryPageView() {
                 className={cn(
                   'rounded-full px-5 py-2.5 text-sm font-medium transition-colors',
                   activeFilter === filter.value
-                    ? 'bg-[#386a0e] text-white shadow-[0_16px_35px_rgba(56,106,14,0.18)]'
-                    : 'text-foreground/72 bg-[#efede7] hover:bg-[#e5e3dd]',
+                    ? 'bg-primary text-white shadow-[0_16px_35px_rgba(56,106,14,0.18)]'
+                    : 'text-foreground/70 bg-filter-idle hover:bg-filter-hover',
                 )}
               >
                 {filter.label}
@@ -198,7 +185,7 @@ export function GalleryPageView() {
         {selectedItem ? (
           <DialogContent className="max-h-[92svh] overflow-y-auto border-none p-4 sm:p-6">
             <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-              <div className="relative aspect-[5/4] overflow-hidden rounded-[1.7rem] bg-[#eef4e7]">
+              <div className="relative aspect-[5/4] overflow-hidden rounded-card-md bg-primary-light">
                 <Image
                   src={selectedItem.src}
                   alt={selectedItem.alt}
@@ -209,14 +196,14 @@ export function GalleryPageView() {
               </div>
 
               <div className="px-2 py-2 sm:px-4">
-                <span className="inline-flex rounded-full bg-[#eef4e7] px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#356609]">
+                <span className="inline-flex rounded-full bg-primary-light px-3 py-1 text-xs font-semibold uppercase tracking-label text-primary-deep">
                   {formatCategory(selectedItem.category)}
                 </span>
-                <DialogTitle className="mt-5">{selectedItem.title}</DialogTitle>
+                <DialogTitle className="mt-5">{selectedItem.caption}</DialogTitle>
                 <DialogDescription className="mt-4">
                   {selectedItem.caption}
                 </DialogDescription>
-                <p className="text-foreground/54 mt-4 text-sm leading-7">
+                <p className="text-foreground/55 mt-4 text-sm leading-7">
                   Image {selectedIndex! + 1} of {filteredItems.length} in the
                   active gallery filter.
                 </p>

@@ -3,58 +3,24 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
-import {
-  ArrowRight,
-  BedDouble,
-  CalendarDays,
-  CarFront,
-  Coffee,
-  ConciergeBell,
-  Leaf,
-  MapPin,
-  PartyPopper,
-  Sparkles,
-  Star,
-  Trees,
-  type LucideIcon,
-  Users,
-  UtensilsCrossed,
-  Waves,
-  Wifi,
-} from 'lucide-react'
+import { ArrowRight, MapPin, Star } from 'lucide-react'
 
+import { SectionHeading } from '@/components/shared/section-heading'
+import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import {
   amenities,
   attractions,
   highlights,
   homeHero,
-  resort,
-  reviews,
-  rooms,
   services,
   weddingFeature,
-} from '@/lib/dummy-data'
+} from '@/lib/page-content'
+import type { RoomData, ReviewData, SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-const featuredRooms = rooms.slice(0, 3)
 const instagramPlaceholders = Array.from({ length: 6 }, (_, index) => index + 1)
 const easing = [0.22, 1, 0.36, 1] as const
-
-const iconRegistry: Record<string, LucideIcon> = {
-  BedDouble,
-  CalendarDays,
-  CarFront,
-  Coffee,
-  ConciergeBell,
-  PartyPopper,
-  Sparkles,
-  Trees,
-  Users,
-  UtensilsCrossed,
-  Waves,
-  Wifi,
-}
 
 function formatIndianCurrency(value: number) {
   return new Intl.NumberFormat('en-IN', {
@@ -64,51 +30,15 @@ function formatIndianCurrency(value: number) {
   }).format(value)
 }
 
-function SectionHeading({
-  eyebrow,
-  title,
-  description,
-  centered = false,
-}: {
-  eyebrow?: string
-  title: string
-  description?: string
-  centered?: boolean
-}) {
-  return (
-    <div className={cn('max-w-3xl', centered && 'mx-auto text-center')}>
-      {eyebrow ? (
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-primary-dark/80">
-          {eyebrow}
-        </p>
-      ) : null}
-      <h2 className="mt-3 text-4xl italic leading-tight text-foreground sm:text-5xl">
-        {title}
-      </h2>
-      {description ? (
-        <p className="mt-5 text-base leading-8 text-foreground/70 sm:text-lg">
-          {description}
-        </p>
-      ) : null}
-    </div>
-  )
-}
-
-function IconBadge({ icon, className }: { icon: string; className?: string }) {
-  const Icon = iconRegistry[icon] ?? Leaf
-
-  return <Icon className={className} />
-}
-
 function ReviewStars({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-1 text-[#c2872d]">
+    <div className="flex items-center gap-1 text-gold-400">
       {Array.from({ length: 5 }, (_, index) => (
         <Star
           key={`star-${index}`}
           className={cn(
             'size-4',
-            index < rating ? 'fill-current' : 'text-[#c2872d]/25',
+            index < rating ? 'fill-current' : 'text-gold-400/25',
           )}
         />
       ))}
@@ -116,7 +46,13 @@ function ReviewStars({ rating }: { rating: number }) {
   )
 }
 
-export function HomePageView() {
+type HomePageViewProps = {
+  featuredRooms: RoomData[]
+  reviews: ReviewData[]
+  siteContent: SiteContent
+}
+
+export function HomePageView({ featuredRooms, reviews, siteContent }: HomePageViewProps) {
   const reduceMotion = useReducedMotion()
 
   const sectionVariants = {
@@ -149,7 +85,7 @@ export function HomePageView() {
   }
 
   return (
-    <div className="-mt-[92px] overflow-x-clip">
+    <div className="-mt-navbar overflow-x-clip">
       <motion.section
         initial={false}
         animate="show"
@@ -170,11 +106,11 @@ export function HomePageView() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl px-4 pb-16 pt-36 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.4em] text-white/80">
+            <p className="text-sm font-semibold uppercase tracking-eyebrow text-white/80">
               {homeHero.eyebrow}
             </p>
             <h1 className="mt-6 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
-              {resort.tagline}
+              {siteContent.tagline}
             </h1>
             <p className="text-white/82 mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
               {homeHero.subtitle}
@@ -183,7 +119,7 @@ export function HomePageView() {
               <Button
                 asChild
                 size="lg"
-                className="h-auto rounded-full px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em]"
+                className="h-auto rounded-full px-8 py-4 text-sm font-semibold uppercase tracking-label"
               >
                 <Link href="/rooms">Book Now</Link>
               </Button>
@@ -191,7 +127,7 @@ export function HomePageView() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="bg-white/8 hover:bg-white/14 h-auto rounded-full border-white/35 px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white backdrop-blur-sm hover:text-white"
+                className="bg-white/8 hover:bg-white/14 h-auto rounded-full border-white/35 px-8 py-4 text-sm font-semibold uppercase tracking-label text-white backdrop-blur-sm hover:text-white"
               >
                 <Link href="#quick-highlights">Explore Resort</Link>
               </Button>
@@ -217,15 +153,15 @@ export function HomePageView() {
               <motion.article
                 key={highlight.title}
                 variants={itemVariants}
-                className="rounded-[2rem] border border-white/60 bg-white/85 p-6 shadow-[0_20px_55px_rgba(46,125,50,0.08)] backdrop-blur"
+                className="rounded-card border border-white/60 bg-white/85 p-6 shadow-[0_20px_55px_rgba(46,125,50,0.08)] backdrop-blur"
               >
                 <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary-dark">
-                  <IconBadge icon={highlight.icon} className="size-7" />
+                  <SiteIcon icon={highlight.icon} className="size-7" />
                 </div>
                 <h2 className="mt-5 text-2xl italic text-foreground">
                   {highlight.title}
                 </h2>
-                <p className="text-foreground/68 mt-3 text-sm leading-7">
+                <p className="text-foreground/70 mt-3 text-sm leading-7">
                   {highlight.description}
                 </p>
               </motion.article>
@@ -239,12 +175,12 @@ export function HomePageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
-        className="bg-[#f8fbf4] py-20 sm:py-24"
+        className="bg-warm-green py-20 sm:py-24"
       >
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-8">
           <motion.div
             variants={itemVariants}
-            className="relative overflow-hidden rounded-[2rem] shadow-[0_24px_70px_rgba(46,125,50,0.14)]"
+            className="relative overflow-hidden rounded-card shadow-[0_24px_70px_rgba(46,125,50,0.14)]"
           >
             <div className="relative aspect-[4/5] sm:aspect-[16/11] lg:aspect-[4/5]">
               <Image
@@ -259,11 +195,11 @@ export function HomePageView() {
 
           <motion.div
             variants={containerVariants}
-            className="rounded-[2rem] bg-white p-8 shadow-[0_24px_70px_rgba(27,28,25,0.08)] sm:p-10 lg:-ml-12 lg:p-12"
+            className="rounded-card bg-white p-8 shadow-[0_24px_70px_rgba(27,28,25,0.08)] sm:p-10 lg:-ml-12 lg:p-12"
           >
             <motion.p
               variants={itemVariants}
-              className="text-xs font-semibold uppercase tracking-[0.35em] text-primary-dark/80"
+              className="text-xs font-semibold uppercase tracking-eyebrow text-gold"
             >
               {weddingFeature.badge}
             </motion.p>
@@ -288,11 +224,11 @@ export function HomePageView() {
                 <motion.div
                   key={point.label}
                   variants={itemVariants}
-                  className="rounded-[1.5rem] border border-primary/10 bg-secondary/45 p-5"
+                  className="rounded-card-inner border border-primary/10 bg-secondary/45 p-5"
                 >
                   <div className="flex items-center gap-3 text-primary-dark">
-                    <IconBadge icon={point.icon} className="size-5" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary-dark/80">
+                    <SiteIcon icon={point.icon} className="size-5" />
+                    <p className="text-xs font-semibold uppercase tracking-label text-gold">
                       {point.label}
                     </p>
                   </div>
@@ -307,7 +243,7 @@ export function HomePageView() {
               <Button
                 asChild
                 size="lg"
-                className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-[0.24em]"
+                className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-label"
               >
                 <Link href="/wedding" className="gap-2">
                   {weddingFeature.ctaLabel}
@@ -337,15 +273,15 @@ export function HomePageView() {
             variants={containerVariants}
             className="mt-12 grid gap-6 lg:grid-cols-3"
           >
-            {featuredRooms.map((room) => (
+            {featuredRooms.map((room, roomIndex) => (
               <motion.article
-                key={room.id}
+                key={room.slug || roomIndex}
                 variants={itemVariants}
-                className="overflow-hidden rounded-[2rem] border border-primary/10 bg-[#fbfdf8] shadow-[0_22px_55px_rgba(27,28,25,0.06)]"
+                className="overflow-hidden rounded-card border border-primary/10 bg-[#fbfdf8] shadow-[0_22px_55px_rgba(27,28,25,0.06)]"
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
-                    src={room.images[0]}
+                    src={room.images[0] || '/images/resort-pool.jpg'}
                     alt={room.name}
                     fill
                     sizes="(min-width: 1024px) 30vw, 100vw"
@@ -353,13 +289,13 @@ export function HomePageView() {
                   />
                 </div>
                 <div className="p-6 sm:p-7">
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-dark/75">
+                  <p className="text-xs font-semibold uppercase tracking-label text-gold">
                     {room.type}
                   </p>
                   <h3 className="mt-3 text-3xl italic text-foreground">
                     {room.name}
                   </h3>
-                  <p className="text-foreground/68 mt-4 text-sm leading-7">
+                  <p className="text-foreground/70 mt-4 text-sm leading-7">
                     {room.description}
                   </p>
                   <div className="mt-6 flex items-center justify-between gap-4">
@@ -367,7 +303,7 @@ export function HomePageView() {
                       <p className="text-xl font-semibold text-foreground">
                         {formatIndianCurrency(room.price_per_night)}
                       </p>
-                      <p className="mt-1 text-sm text-foreground/60">
+                      <p className="mt-1 text-sm text-foreground/55">
                         Sleeps {room.capacity} guests
                       </p>
                     </div>
@@ -388,7 +324,7 @@ export function HomePageView() {
               asChild
               variant="outline"
               size="lg"
-              className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-[0.24em]"
+              className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-label"
             >
               <Link href="/rooms">View All Rooms</Link>
             </Button>
@@ -418,15 +354,15 @@ export function HomePageView() {
               <motion.article
                 key={service.title}
                 variants={itemVariants}
-                className="rounded-[2rem] border border-white/70 bg-white/90 p-6 shadow-[0_18px_50px_rgba(46,125,50,0.08)]"
+                className="rounded-card border border-white/70 bg-white/90 p-6 shadow-[0_18px_50px_rgba(46,125,50,0.08)]"
               >
                 <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary-dark">
-                  <IconBadge icon={service.icon} className="size-6" />
+                  <SiteIcon icon={service.icon} className="size-6" />
                 </div>
                 <h3 className="mt-5 text-2xl italic text-foreground">
                   {service.title}
                 </h3>
-                <p className="text-foreground/68 mt-3 text-sm leading-7">
+                <p className="text-foreground/70 mt-3 text-sm leading-7">
                   {service.description}
                 </p>
               </motion.article>
@@ -445,16 +381,16 @@ export function HomePageView() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             variants={containerVariants}
-            className="grid gap-4 rounded-[2rem] border border-white/50 bg-white/50 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-5"
+            className="grid gap-4 rounded-card border border-white/50 bg-white/50 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-5"
           >
             {amenities.map((amenity) => (
               <motion.div
                 key={amenity.label}
                 variants={itemVariants}
-                className="flex items-center gap-4 rounded-[1.5rem] bg-white/75 px-4 py-4"
+                className="flex items-center gap-4 rounded-card-inner bg-white/75 px-4 py-4"
               >
                 <div className="flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary-dark">
-                  <IconBadge icon={amenity.icon} className="size-5" />
+                  <SiteIcon icon={amenity.icon} className="size-5" />
                 </div>
                 <span className="text-sm font-medium text-foreground">
                   {amenity.label}
@@ -470,7 +406,7 @@ export function HomePageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
-        className="bg-[#f8fbf4] py-20 sm:py-24"
+        className="bg-warm-green py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -488,13 +424,13 @@ export function HomePageView() {
               <motion.div
                 key={placeholder}
                 variants={itemVariants}
-                className="flex aspect-square items-center justify-center rounded-[1.75rem] border border-dashed border-primary/25 bg-white/70 p-6 text-center shadow-[0_16px_40px_rgba(46,125,50,0.05)]"
+                className="flex aspect-square items-center justify-center rounded-card-md border border-dashed border-primary/25 bg-white/70 p-6 text-center shadow-[0_16px_40px_rgba(46,125,50,0.05)]"
               >
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary-dark/70">
+                  <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
                     Placeholder {placeholder}
                   </p>
-                  <p className="mt-3 text-sm leading-6 text-foreground/60">
+                  <p className="mt-3 text-sm leading-6 text-foreground/55">
                     Behold.so embed goes here
                   </p>
                 </div>
@@ -506,9 +442,9 @@ export function HomePageView() {
             <Button
               asChild
               size="lg"
-              className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-[0.24em]"
+              className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-label"
             >
-              <Link href={resort.instagram} target="_blank" rel="noreferrer">
+              <Link href={siteContent.instagram} target="_blank" rel="noreferrer">
                 Follow on Instagram
               </Link>
             </Button>
@@ -534,22 +470,22 @@ export function HomePageView() {
             variants={containerVariants}
             className="mt-12 grid gap-6 lg:grid-cols-3"
           >
-            {reviews.map((review) => (
+            {reviews.map((review, reviewIndex) => (
               <motion.article
-                key={`${review.guest_name}-${review.date}`}
+                key={`${review.guest_name}-${reviewIndex}`}
                 variants={itemVariants}
-                className="rounded-[2rem] border border-primary/10 bg-[#fcfdf9] p-7 shadow-[0_18px_50px_rgba(27,28,25,0.06)]"
+                className="rounded-card border border-primary/10 bg-[#fcfdf9] p-7 shadow-[0_18px_50px_rgba(27,28,25,0.06)]"
               >
                 <ReviewStars rating={review.rating} />
                 <p className="mt-6 text-lg italic leading-8 text-foreground">
-                  &ldquo;{review.text}&rdquo;
+                  &ldquo;{review.review_text}&rdquo;
                 </p>
                 <div className="mt-6 border-t border-primary/10 pt-5">
                   <p className="text-base font-semibold text-foreground">
                     {review.guest_name}
                   </p>
                   <p className="mt-1 text-sm text-foreground/55">
-                    {new Date(review.date).toLocaleDateString('en-IN', {
+                    {new Date(review.createdAt).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
@@ -584,7 +520,7 @@ export function HomePageView() {
               <motion.article
                 key={attraction.name}
                 variants={itemVariants}
-                className="overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_20px_55px_rgba(27,28,25,0.07)]"
+                className="overflow-hidden rounded-card border border-white/60 bg-white shadow-[0_20px_55px_rgba(27,28,25,0.07)]"
               >
                 <div className="grid gap-0 md:grid-cols-[0.9fr_1.1fr]">
                   <div className="relative aspect-[4/3] md:h-full md:min-h-[300px]">
@@ -600,10 +536,10 @@ export function HomePageView() {
                     <h3 className="text-3xl italic text-foreground">
                       {attraction.name}
                     </h3>
-                    <p className="text-foreground/68 mt-4 text-sm leading-7">
+                    <p className="text-foreground/70 mt-4 text-sm leading-7">
                       {attraction.description}
                     </p>
-                    <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-primary-dark">
+                    <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-dark">
                       <MapPin className="size-3.5" />
                       {attraction.distance}
                     </div>

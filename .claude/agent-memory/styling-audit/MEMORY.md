@@ -1,0 +1,1 @@
+- [Project Design Tokens](project_design_tokens.md) -- Color palette, font tokens, CSS variables catalog for Madhuban Garden Resort

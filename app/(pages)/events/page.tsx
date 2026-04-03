@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 
 import { EventsPageView } from '@/components/events/events-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Events & Celebrations',
-  description: `Plan birthdays, corporate meets, and smaller gatherings at Madhuban Garden Resort. ${resort.tagline}`,
-  openGraph: {
-    title: 'Events & Celebrations | Madhuban Garden Resort',
-    description: `Plan birthdays, corporate meets, and smaller gatherings at Madhuban Garden Resort. ${resort.tagline}`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Events & Celebrations',
+    description: `Plan birthdays, corporate meets, and smaller gatherings at Madhuban Garden Resort. ${site.tagline}`,
+    openGraph: {
+      title: 'Events & Celebrations | Madhuban Garden Resort',
+      description: `Plan birthdays, corporate meets, and smaller gatherings at Madhuban Garden Resort. ${site.tagline}`,
+    },
+  }
 }
 
 export default function EventsPage() {

@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 
 import { BanquetPageView } from '@/components/banquet/banquet-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Banquet Hall',
-  description: `Discover the Madhuban banquet hall for weddings, conferences, and parties. ${resort.tagline}`,
-  openGraph: {
-    title: 'Banquet Hall | Madhuban Garden Resort',
-    description: `Discover the Madhuban banquet hall for weddings, conferences, and parties. ${resort.tagline}`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Banquet Hall',
+    description: `Discover the Madhuban banquet hall for weddings, conferences, and parties. ${site.tagline}`,
+    openGraph: {
+      title: 'Banquet Hall | Madhuban Garden Resort',
+      description: `Discover the Madhuban banquet hall for weddings, conferences, and parties. ${site.tagline}`,
+    },
+  }
 }
 
 export default function BanquetPage() {

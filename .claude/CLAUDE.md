@@ -1,4 +1,4 @@
-# GEMINI.md — Madhuban Garden Resort Website
+# CLAUDE.md — Madhuban Garden Resort Website
 # Antigravity Project Context File — Phase 2+
 
 > UI is complete. Phase 1 (frontend with dummy data) is done and approved.

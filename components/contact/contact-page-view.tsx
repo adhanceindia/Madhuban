@@ -3,13 +3,16 @@
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
+import { CheckCircle2, Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 import { EditorialPageHero } from '@/components/shared/editorial-page-hero'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
-import { contactPage, resort } from '@/lib/dummy-data'
+import { contactPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
+import type { SiteContent } from '@/lib/types'
 
 type ContactFormState = {
   name: string
@@ -27,14 +30,21 @@ const defaultFormState: ContactFormState = {
   message: '',
 }
 
-const fieldClassName =
-  'w-full rounded-[1.35rem] border border-[#cfd5c6]/70 bg-white px-4 py-3.5 text-sm text-foreground outline-none transition focus:border-[#4caf50] focus:ring-4 focus:ring-[#4caf50]/12'
+const SERVICE_TO_EVENT_TYPE: Record<string, string> = {
+  'Wedding Venue': 'wedding',
+  'Events & Parties': 'corporate',
+}
 
-export function ContactPageView() {
+const fieldClassName =
+  'w-full rounded-card-inner border border-[#cfd5c6]/70 bg-white px-4 py-3.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15'
+
+export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
   const [formState, setFormState] = useState<ContactFormState>(defaultFormState)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submittedName, setSubmittedName] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function updateField<K extends keyof ContactFormState>(
     key: K,
@@ -44,14 +54,48 @@ export function ContactPageView() {
     setIsSubmitted(false)
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setIsSubmitted(true)
-    setFormState(defaultFormState)
+    setIsSubmitting(true)
+
+    try {
+      const eventType = SERVICE_TO_EVENT_TYPE[formState.serviceInterest] ?? 'other'
+      const messageWithInterest =
+        eventType === 'other'
+          ? `[Interest: ${formState.serviceInterest}]\n\n${formState.message}`
+          : formState.message
+
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formState.name,
+          phone: formState.phone.replace(/\D/g, '').slice(-10),
+          email: formState.email,
+          event_type: eventType,
+          message: messageWithInterest,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        toast.error(data.error ?? 'Something went wrong. Please try again.')
+        return
+      }
+
+      setSubmittedName(formState.name)
+      setIsSubmitted(true)
+      setFormState(defaultFormState)
+    } catch {
+      toast.error('Network error. Please check your connection and try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <div className="-mt-[92px] overflow-x-clip bg-[#fbf9f4]">
+    <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={contactPage.hero}
         minHeightClassName="min-h-[68svh]"
@@ -60,7 +104,7 @@ export function ContactPageView() {
         <Button
           asChild
           size="lg"
-          className="h-auto rounded-full bg-[#ba7517] px-8 py-4 text-sm font-semibold uppercase tracking-[0.24em] text-white hover:bg-[#a46612]"
+          className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="#query-form">
             Send Query
@@ -74,7 +118,7 @@ export function ContactPageView() {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-[#fbf9f4] py-20 sm:py-24"
+        className="bg-background py-20 sm:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.96fr_1.04fr] lg:gap-16">
@@ -88,15 +132,15 @@ export function ContactPageView() {
               <div className="grid gap-4">
                 {contactPage.channels.map((channel) => {
                   const content = (
-                    <div className="flex items-start gap-4 rounded-[1.75rem] bg-white px-5 py-5 shadow-[0_22px_60px_rgba(27,28,25,0.06)]">
-                      <span className="mt-1 inline-flex size-11 items-center justify-center rounded-full bg-[#ecf4e6] text-[#356609]">
+                    <div className="flex items-start gap-4 rounded-card-md bg-white px-5 py-5 shadow-[0_22px_60px_rgba(27,28,25,0.06)]">
+                      <span className="mt-1 inline-flex size-11 items-center justify-center rounded-full bg-primary-light text-primary-deep">
                         <SiteIcon icon={channel.icon} className="size-5" />
                       </span>
                       <div>
-                        <p className="text-[#356609]/76 text-[0.72rem] font-semibold uppercase tracking-[0.26em]">
+                        <p className="text-gold text-xs font-semibold uppercase tracking-label">
                           {channel.label}
                         </p>
-                        <p className="text-foreground/74 mt-3 text-sm leading-7">
+                        <p className="text-foreground/70 mt-3 text-sm leading-7">
                           {channel.value}
                         </p>
                       </div>
@@ -117,8 +161,8 @@ export function ContactPageView() {
                 })}
               </div>
 
-              <div className="rounded-[2rem] bg-[linear-gradient(135deg,rgba(56,106,14,0.95),rgba(102,146,48,0.93))] p-7 text-white shadow-[0_24px_70px_rgba(56,106,14,0.18)]">
-                <p className="text-white/72 text-xs font-semibold uppercase tracking-[0.32em]">
+              <div className="rounded-card bg-[linear-gradient(135deg,rgba(56,106,14,0.95),rgba(102,146,48,0.93))] p-7 text-white shadow-[0_24px_70px_rgba(56,106,14,0.18)]">
+                <p className="text-white/72 text-xs font-semibold uppercase tracking-eyebrow">
                   Instant Contact
                 </p>
                 <h3 className="mt-4 text-3xl italic">Prefer WhatsApp?</h3>
@@ -129,10 +173,10 @@ export function ContactPageView() {
                 <Button
                   asChild
                   size="lg"
-                  className="hover:bg-white/92 mt-6 h-auto rounded-full bg-white px-6 py-3.5 text-sm font-semibold uppercase tracking-[0.2em] text-[#356609]"
+                  className="hover:bg-white/92 mt-6 h-auto rounded-full bg-white px-6 py-3.5 text-sm font-semibold uppercase tracking-tag text-primary-deep"
                 >
                   <Link
-                    href={`https://wa.me/${resort.whatsapp.replace(/\D/g, '')}`}
+                    href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -142,24 +186,24 @@ export function ContactPageView() {
                 </Button>
               </div>
 
-              <div className="overflow-hidden rounded-[2rem] bg-[#eef4e7] p-3 shadow-[0_20px_60px_rgba(27,28,25,0.05)]">
-                <div className="flex min-h-[19rem] flex-col justify-between rounded-[1.5rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0.92)),radial-gradient(circle_at_top_right,rgba(186,117,23,0.16),transparent_35%)] p-6">
+              <div className="overflow-hidden rounded-card bg-primary-light p-3 shadow-[0_20px_60px_rgba(27,28,25,0.05)]">
+                <div className="flex min-h-[19rem] flex-col justify-between rounded-card-inner bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0.92)),radial-gradient(circle_at_top_right,rgba(186,117,23,0.16),transparent_35%)] p-6">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#ba7517]">
+                    <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
                       {contactPage.mapTitle}
                     </p>
                     <h3 className="mt-4 text-3xl italic text-foreground">
                       Madhuban Garden Resort
                     </h3>
-                    <p className="text-foreground/68 mt-4 max-w-md text-sm leading-7">
+                    <p className="text-foreground/70 mt-4 max-w-md text-sm leading-7">
                       {contactPage.mapDescription}
                     </p>
                   </div>
-                  <div className="rounded-[1.5rem] bg-white/85 p-5 backdrop-blur">
-                    <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[#356609]/70">
+                  <div className="rounded-card-inner bg-white/85 p-5 backdrop-blur">
+                    <p className="text-xs font-semibold uppercase tracking-label text-primary-deep/70">
                       Location
                     </p>
-                    <p className="text-foreground/72 mt-3 text-sm leading-7">
+                    <p className="text-foreground/70 mt-3 text-sm leading-7">
                       Agar Malwa District, Madhya Pradesh
                     </p>
                   </div>
@@ -170,119 +214,146 @@ export function ContactPageView() {
             <motion.div variants={itemVariants}>
               <section
                 id="query-form"
-                className="rounded-[2.3rem] bg-white/90 p-6 shadow-[0_28px_80px_rgba(27,28,25,0.08)] backdrop-blur sm:p-8 lg:p-10"
+                className="rounded-card bg-white/90 p-6 shadow-[0_28px_80px_rgba(27,28,25,0.08)] backdrop-blur sm:p-8 lg:p-10"
               >
-                <SectionHeading
-                  eyebrow="Query Form"
-                  title={contactPage.formTitle}
-                  description={contactPage.formDescription}
-                />
-
                 {isSubmitted ? (
-                  <div className="mt-8 rounded-[1.6rem] bg-[#eef7e7] px-5 py-4 text-sm leading-7 text-[#356609]">
-                    Your enquiry has been captured in this demo flow. The final
-                    build will connect this form to the live resort enquiry
-                    system.
+                  <div className="flex min-h-[22rem] flex-col items-center justify-center text-center">
+                    <div className="flex size-16 items-center justify-center rounded-full bg-primary-light">
+                      <CheckCircle2 className="size-8 text-primary-deep" />
+                    </div>
+                    <h3 className="mt-6 text-2xl italic text-foreground sm:text-3xl">
+                      Thank you, {submittedName}!
+                    </h3>
+                    <p className="text-foreground/70 mt-3 max-w-sm text-sm leading-7">
+                      We&apos;ve received your enquiry and will get back to you
+                      within 24 hours.
+                    </p>
+                    <Button
+                      type="button"
+                      onClick={() => setIsSubmitted(false)}
+                      size="lg"
+                      className="mt-8 h-auto rounded-full bg-[linear-gradient(135deg,#386a0e,#76a839)] px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:opacity-95"
+                    >
+                      Send Another Enquiry
+                    </Button>
                   </div>
-                ) : null}
-
-                <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <label className="grid gap-2">
-                      <span className="text-foreground/56 text-[0.72rem] font-semibold uppercase tracking-[0.24em]">
-                        Full Name
-                      </span>
-                      <input
-                        type="text"
-                        required
-                        value={formState.name}
-                        onChange={(event) =>
-                          updateField('name', event.target.value)
-                        }
-                        className={fieldClassName}
-                        placeholder="Your name"
-                      />
-                    </label>
-
-                    <label className="grid gap-2">
-                      <span className="text-foreground/56 text-[0.72rem] font-semibold uppercase tracking-[0.24em]">
-                        Phone
-                      </span>
-                      <input
-                        type="tel"
-                        required
-                        value={formState.phone}
-                        onChange={(event) =>
-                          updateField('phone', event.target.value)
-                        }
-                        className={fieldClassName}
-                        placeholder="+91"
-                      />
-                    </label>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <label className="grid gap-2">
-                      <span className="text-foreground/56 text-[0.72rem] font-semibold uppercase tracking-[0.24em]">
-                        Email
-                      </span>
-                      <input
-                        type="email"
-                        required
-                        value={formState.email}
-                        onChange={(event) =>
-                          updateField('email', event.target.value)
-                        }
-                        className={fieldClassName}
-                        placeholder="name@example.com"
-                      />
-                    </label>
-
-                    <label className="grid gap-2">
-                      <span className="text-foreground/56 text-[0.72rem] font-semibold uppercase tracking-[0.24em]">
-                        Service Interest
-                      </span>
-                      <select
-                        value={formState.serviceInterest}
-                        onChange={(event) =>
-                          updateField('serviceInterest', event.target.value)
-                        }
-                        className={fieldClassName}
-                      >
-                        {contactPage.serviceInterestOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-
-                  <label className="grid gap-2">
-                    <span className="text-foreground/56 text-[0.72rem] font-semibold uppercase tracking-[0.24em]">
-                      Message
-                    </span>
-                    <textarea
-                      required
-                      rows={6}
-                      value={formState.message}
-                      onChange={(event) =>
-                        updateField('message', event.target.value)
-                      }
-                      className={fieldClassName}
-                      placeholder="Tell us what you are planning or what you need help with."
+                ) : (
+                  <>
+                    <SectionHeading
+                      eyebrow="Query Form"
+                      title={contactPage.formTitle}
+                      description={contactPage.formDescription}
                     />
-                  </label>
 
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="mt-2 h-auto rounded-full bg-[linear-gradient(135deg,#386a0e,#76a839)] px-8 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-white hover:opacity-95"
-                  >
-                    Send Enquiry
-                    <SiteIcon icon="ArrowRight" className="size-4" />
-                  </Button>
-                </form>
+                    <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <label className="grid gap-2">
+                          <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                            Full Name
+                          </span>
+                          <input
+                            type="text"
+                            required
+                            value={formState.name}
+                            onChange={(event) =>
+                              updateField('name', event.target.value)
+                            }
+                            className={fieldClassName}
+                            placeholder="Your name"
+                          />
+                        </label>
+
+                        <label className="grid gap-2">
+                          <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                            Phone
+                          </span>
+                          <input
+                            type="tel"
+                            required
+                            value={formState.phone}
+                            onChange={(event) =>
+                              updateField('phone', event.target.value)
+                            }
+                            className={fieldClassName}
+                            placeholder="+91"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <label className="grid gap-2">
+                          <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                            Email
+                          </span>
+                          <input
+                            type="email"
+                            required
+                            value={formState.email}
+                            onChange={(event) =>
+                              updateField('email', event.target.value)
+                            }
+                            className={fieldClassName}
+                            placeholder="name@example.com"
+                          />
+                        </label>
+
+                        <label className="grid gap-2">
+                          <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                            Service Interest
+                          </span>
+                          <select
+                            value={formState.serviceInterest}
+                            onChange={(event) =>
+                              updateField('serviceInterest', event.target.value)
+                            }
+                            className={fieldClassName}
+                          >
+                            {contactPage.serviceInterestOptions.map((option) => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      <label className="grid gap-2">
+                        <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                          Message
+                        </span>
+                        <textarea
+                          required
+                          rows={6}
+                          value={formState.message}
+                          onChange={(event) =>
+                            updateField('message', event.target.value)
+                          }
+                          className={fieldClassName}
+                          placeholder="Tell us what you are planning or what you need help with."
+                        />
+                      </label>
+
+                      <Button
+                        type="submit"
+                        size="lg"
+                        disabled={isSubmitting}
+                        className="mt-2 h-auto rounded-full bg-[linear-gradient(135deg,#386a0e,#76a839)] px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:opacity-95 disabled:opacity-60"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="size-4 animate-spin" />
+                            Sending…
+                          </>
+                        ) : (
+                          <>
+                            Send Enquiry
+                            <SiteIcon icon="ArrowRight" className="size-4" />
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </>
+                )}
               </section>
             </motion.div>
           </div>

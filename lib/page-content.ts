@@ -1,24 +1,49 @@
-export type Room = {
-  id: number
-  slug: string
-  name: string
-  type: 'Deluxe' | 'Suite' | 'Standard'
-  description: string
-  details: string[]
-  price_per_night: number
-  capacity: number
-  bed_type: string
-  size_sqft: number
-  amenities: string[]
-  images: string[]
+// Static marketing content for editorial pages. Production content, not placeholder data.
+// Contact info (phone, email, address) in layout components comes from Payload CMS Content global.
+// Only the editorial page structures (heroes, descriptions, features) live here.
+
+// ---------------------------------------------------------------------------
+// Shared types
+// ---------------------------------------------------------------------------
+
+export type RouteHero = {
+  eyebrow: string
+  title: string
+  subtitle: string
+  image: string
+  overlayWord?: string
+  chip?: string
 }
 
-export type Review = {
-  guest_name: string
-  rating: number
-  text: string
-  date: string
+export type StatItem = {
+  label: string
+  value: string
 }
+
+export type IconFeature = {
+  icon: string
+  title: string
+  description: string
+}
+
+export type MediaAsset = {
+  src: string
+  alt: string
+  title?: string
+  caption?: string
+  size?: 'portrait' | 'landscape' | 'square'
+}
+
+export type ContactChannel = {
+  icon: string
+  label: string
+  value: string
+  href?: string
+}
+
+// ---------------------------------------------------------------------------
+// Home page types + data
+// ---------------------------------------------------------------------------
 
 export type HomeHero = {
   eyebrow: string
@@ -58,191 +83,6 @@ export type WeddingFeature = {
   points: WeddingFeaturePoint[]
 }
 
-export type WeddingHero = {
-  eyebrow: string
-  title: string
-  subtitle: string
-  image: string
-}
-
-export type WeddingOverviewStat = {
-  label: string
-  value: string
-}
-
-export type WeddingOverview = {
-  eyebrow: string
-  title: string
-  image: string
-  description: string[]
-  stats: WeddingOverviewStat[]
-  points: string[]
-}
-
-export type WeddingServiceItem = {
-  icon: string
-  title: string
-  description: string
-}
-
-export type WeddingGalleryImage = {
-  src: string
-  alt: string
-}
-
-export type WeddingReason = {
-  icon: string
-  title: string
-  description: string
-}
-
-export type WeddingInquiryContent = {
-  eyebrow: string
-  title: string
-  description: string
-}
-
-export type WeddingLocation = {
-  eyebrow: string
-  title: string
-  address: string
-  region: string
-  note: string
-}
-
-export type WeddingPage = {
-  hero: WeddingHero
-  overview: WeddingOverview
-  services: WeddingServiceItem[]
-  gallery: WeddingGalleryImage[]
-  reasons: WeddingReason[]
-  inquiry: WeddingInquiryContent
-  location: WeddingLocation
-}
-
-export type RouteHero = {
-  eyebrow: string
-  title: string
-  subtitle: string
-  image: string
-  overlayWord?: string
-  chip?: string
-}
-
-export type StatItem = {
-  label: string
-  value: string
-}
-
-export type IconFeature = {
-  icon: string
-  title: string
-  description: string
-}
-
-export type MediaAsset = {
-  src: string
-  alt: string
-  title?: string
-  caption?: string
-  size?: 'portrait' | 'landscape' | 'square'
-}
-
-export type ContactChannel = {
-  icon: string
-  label: string
-  value: string
-  href?: string
-}
-
-export type ContactPage = {
-  hero: RouteHero
-  introTitle: string
-  introDescription: string
-  channels: ContactChannel[]
-  mapTitle: string
-  mapDescription: string
-  formTitle: string
-  formDescription: string
-  serviceInterestOptions: string[]
-}
-
-export type GalleryCategory =
-  | 'rooms'
-  | 'wedding'
-  | 'events'
-  | 'pool'
-  | 'restaurant'
-
-export type GalleryItem = MediaAsset & {
-  category: GalleryCategory
-}
-
-export type GalleryPage = {
-  hero: RouteHero
-  description: string
-}
-
-export type BanquetFacility = {
-  icon: string
-  label: string
-}
-
-export type BanquetPage = {
-  hero: RouteHero
-  overviewTitle: string
-  overviewDescription: string[]
-  overviewImage: string
-  stats: StatItem[]
-  facilities: BanquetFacility[]
-  useCases: IconFeature[]
-  photos: MediaAsset[]
-  ctaTitle: string
-  ctaDescription: string
-}
-
-export type PoolPage = {
-  hero: RouteHero
-  overviewTitle: string
-  overviewDescription: string[]
-  timings: string
-  rules: string[]
-  photos: MediaAsset[]
-}
-
-export type EventsPage = {
-  hero: RouteHero
-  introTitle: string
-  introDescription: string
-  services: IconFeature[]
-  ctaTitle: string
-  ctaDescription: string
-}
-
-export type AttractionsPage = {
-  hero: RouteHero
-  visitPlanTitle: string
-  visitPlanDescription: string
-}
-
-export type Attraction = {
-  name: string
-  description: string
-  distance: string
-  image: string
-}
-
-export const resort = {
-  name: 'Madhuban Garden Resort',
-  tagline: 'The most peaceful & lush green premises in Agar Malwa District.',
-  address: 'Agar Malwa District, Madhya Pradesh, India',
-  phone: '+91 98765 43210',
-  email: 'hello@madhubangarden.com',
-  whatsapp: '+91 98765 43210',
-  instagram: 'https://instagram.com/madhubangarden',
-  facebook: 'https://facebook.com/madhubangarden',
-}
-
 export const homeHero: HomeHero = {
   eyebrow: 'Madhuban Garden Resort',
   subtitle:
@@ -274,168 +114,6 @@ export const highlights: HighlightStat[] = [
     title: 'Restaurant',
     description:
       'Indoor and outdoor dining with warm hospitality and fresh surroundings.',
-  },
-]
-
-export const rooms: Room[] = [
-  {
-    id: 1,
-    slug: 'garden-deluxe-room',
-    name: 'Garden Deluxe Room',
-    type: 'Deluxe',
-    description:
-      'A calm, garden-facing room with airy interiors, premium furnishings, and a cozy layout for couples or solo travelers.',
-    details: [
-      'The Garden Deluxe Room is designed for quiet, restorative stays, with soft natural light, warm textures, and a polished layout that feels easy from the moment you step in. Its garden-facing setting keeps the experience peaceful and closely connected to the resort’s lush green grounds.',
-      'Ideal for couples or solo guests, this room balances comfort with an elevated resort mood. It is a strong fit for weekend escapes, wedding guest stays, or anyone wanting a serene room with thoughtful essentials already in place.',
-    ],
-    price_per_night: 3200,
-    capacity: 2,
-    bed_type: '1 King Bed',
-    size_sqft: 260,
-    amenities: ['Garden View', 'Air Conditioning', 'Smart TV', 'Tea Counter'],
-    images: [
-      '/images/room-garden-deluxe.svg',
-      '/images/room-garden-deluxe.svg',
-    ],
-  },
-  {
-    id: 2,
-    slug: 'premium-deluxe-room',
-    name: 'Premium Deluxe Room',
-    type: 'Deluxe',
-    description:
-      'Designed for restful stays, this room includes elegant finishes, a spacious bath, and soft natural light throughout the day.',
-    details: [
-      'The Premium Deluxe Room brings together a more generous footprint, refined finishes, and a bright, calming atmosphere suited to longer leisure stays. Its layout feels airy and composed, while the bath and work-ready touches add practical comfort.',
-      'This option works especially well for guests who want a little more room to settle in without stepping up to a suite. It is equally suited to resort holidays, business travel, and premium accommodation for event attendees.',
-    ],
-    price_per_night: 3800,
-    capacity: 2,
-    bed_type: '1 King Bed',
-    size_sqft: 290,
-    amenities: ['Pool Access', 'Wi-Fi', 'Work Desk', 'Wardrobe'],
-    images: [
-      '/images/room-premium-deluxe.svg',
-      '/images/room-premium-deluxe.svg',
-    ],
-  },
-  {
-    id: 3,
-    slug: 'family-suite',
-    name: 'Family Suite',
-    type: 'Suite',
-    description:
-      'A spacious suite made for families, with a warm sitting area, extra room to unwind, and a comfortable sleep setup.',
-    details: [
-      'The Family Suite is shaped around togetherness, with extra breathing room for parents, children, and small groups to stay comfortably under one roof. A welcoming sitting area creates an easy transition between rest, conversation, and downtime after a day around the resort.',
-      'For family celebrations or longer leisure stays, the suite offers a more flexible setup than a standard room while keeping the same calm, nature-led feel. It is a dependable choice for guests who want comfort, convenience, and space to spread out.',
-    ],
-    price_per_night: 6200,
-    capacity: 4,
-    bed_type: '1 King Bed + 1 Sofa Bed',
-    size_sqft: 420,
-    amenities: [
-      'Living Area',
-      'Mini Fridge',
-      'Balcony',
-      'Complimentary Breakfast',
-    ],
-    images: ['/images/room-family-suite.svg', '/images/room-family-suite.svg'],
-  },
-  {
-    id: 4,
-    slug: 'wedding-suite',
-    name: 'Wedding Suite',
-    type: 'Suite',
-    description:
-      'An elevated suite with refined finishes, ideal for bridal prep, special celebrations, and premium guest stays.',
-    details: [
-      'The Wedding Suite is our most elevated stay category, created for milestone moments, premium hosting, and the kind of calm preparation a wedding day deserves. The suite’s generous proportions, dressing-ready zones, and polished finish make it especially fitting for bridal or family use.',
-      'Beyond weddings, it also serves as a signature stay for VIP guests who want more privacy and a stronger sense of occasion. Every detail is tuned toward comfort, readiness, and a premium resort experience.',
-    ],
-    price_per_night: 7800,
-    capacity: 4,
-    bed_type: '1 King Bed + 1 Day Bed',
-    size_sqft: 520,
-    amenities: [
-      'Dressing Area',
-      'Premium Bath',
-      'Garden Balcony',
-      'Room Service',
-    ],
-    images: [
-      '/images/room-wedding-suite.svg',
-      '/images/room-wedding-suite.svg',
-    ],
-  },
-  {
-    id: 5,
-    slug: 'standard-garden-room',
-    name: 'Standard Garden Room',
-    type: 'Standard',
-    description:
-      'A practical and comfortable room for short stays, featuring a clean layout and a peaceful resort atmosphere.',
-    details: [
-      'The Standard Garden Room keeps things simple in the best way, offering a clean, relaxed layout with easy access to the resort’s green surroundings. It is designed for short stays that still feel comfortable, fresh, and properly cared for.',
-      'This room is a reliable choice for guests who value calm surroundings and essential convenience without needing extra space. It suits overnight stopovers, quick family visits, and budget-conscious resort stays.',
-    ],
-    price_per_night: 2500,
-    capacity: 2,
-    bed_type: '1 Queen Bed',
-    size_sqft: 220,
-    amenities: [
-      'Garden Access',
-      'Air Conditioning',
-      'Hot Water',
-      'Laundry Service',
-    ],
-    images: [
-      '/images/room-standard-garden.svg',
-      '/images/room-standard-garden.svg',
-    ],
-  },
-  {
-    id: 6,
-    slug: 'standard-family-room',
-    name: 'Standard Family Room',
-    type: 'Standard',
-    description:
-      'A budget-friendly family option with enough space for a short holiday or an overnight resort stop.',
-    details: [
-      'The Standard Family Room is a practical option for smaller groups that want an affordable stay without compromising on comfort. Its bedding setup and extra flexibility make it well suited to families, wedding guests, and short leisure trips.',
-      'With a straightforward layout and useful everyday amenities, this room is built to handle real travel needs while still feeling warm and welcoming. It is especially helpful for guests who want value and convenience in one package.',
-    ],
-    price_per_night: 4600,
-    capacity: 3,
-    bed_type: '1 Queen Bed + 1 Single Bed',
-    size_sqft: 310,
-    amenities: ['Extra Bed Option', 'TV', 'Cupboard Space', '24x7 Front Desk'],
-    images: [
-      '/images/room-standard-family.svg',
-      '/images/room-standard-family.svg',
-    ],
-  },
-]
-
-export const reviews: Review[] = [
-  {
-    guest_name: 'Rahul Mehta',
-    rating: 5,
-    text: 'A peaceful property with lush surroundings and warm service. The rooms were clean and the overall experience felt premium.',
-    date: '2026-02-12',
-  },
-  {
-    guest_name: 'Sakshi Verma',
-    rating: 5,
-    text: 'We attended a family function here and loved the open green feel. The venue looked beautiful in photos and the food was excellent.',
-    date: '2026-01-28',
-  },
-  {
-    guest_name: 'Ankit Jain',
-    rating: 4,
-    text: 'Great place for a resort stay near Agar Malwa. Spacious, calm, and ideal for both weekend getaways and events.',
-    date: '2025-12-19',
   },
 ]
 
@@ -517,6 +195,72 @@ export const weddingFeature: WeddingFeature = {
   ],
 }
 
+// ---------------------------------------------------------------------------
+// Wedding page
+// ---------------------------------------------------------------------------
+
+export type WeddingHero = {
+  eyebrow: string
+  title: string
+  subtitle: string
+  image: string
+}
+
+export type WeddingOverviewStat = {
+  label: string
+  value: string
+}
+
+export type WeddingOverview = {
+  eyebrow: string
+  title: string
+  image: string
+  description: string[]
+  stats: WeddingOverviewStat[]
+  points: string[]
+}
+
+export type WeddingServiceItem = {
+  icon: string
+  title: string
+  description: string
+}
+
+export type WeddingGalleryImage = {
+  src: string
+  alt: string
+}
+
+export type WeddingReason = {
+  icon: string
+  title: string
+  description: string
+}
+
+export type WeddingInquiryContent = {
+  eyebrow: string
+  title: string
+  description: string
+}
+
+export type WeddingLocation = {
+  eyebrow: string
+  title: string
+  address: string
+  region: string
+  note: string
+}
+
+export type WeddingPage = {
+  hero: WeddingHero
+  overview: WeddingOverview
+  services: WeddingServiceItem[]
+  gallery: WeddingGalleryImage[]
+  reasons: WeddingReason[]
+  inquiry: WeddingInquiryContent
+  location: WeddingLocation
+}
+
 export const weddingPage: WeddingPage = {
   hero: {
     eyebrow: 'Signature Wedding Venue',
@@ -569,7 +313,7 @@ export const weddingPage: WeddingPage = {
       icon: 'Sparkles',
       title: 'Decoration',
       description:
-        'Styled floral concepts, stage dressing, lighting, and visual detailing to suit your family’s taste.',
+        'Styled floral concepts, stage dressing, lighting, and visual detailing to suit your family\u2019s taste.',
     },
     {
       icon: 'CalendarDays',
@@ -615,7 +359,7 @@ export const weddingPage: WeddingPage = {
       icon: 'Trees',
       title: 'Lush Green Premises',
       description:
-        'The resort’s natural greenery gives every function a calm, expansive, and highly photogenic backdrop.',
+        'The resort\u2019s natural greenery gives every function a calm, expansive, and highly photogenic backdrop.',
     },
     {
       icon: 'Users',
@@ -638,17 +382,33 @@ export const weddingPage: WeddingPage = {
   ],
   inquiry: {
     eyebrow: 'Wedding Enquiry',
-    title: "Let's begin planning your day with care and clarity.",
+    title: "Let\u2019s begin planning your day with care and clarity.",
     description:
-      'Tell us about your date, guest count, and celebration vision. This is a front-end enquiry flow for client approval, so submissions currently show a dummy success state only.',
+      'Tell us about your date, guest count, and celebration vision. Our team will get back to you to discuss venue options, packages, and next steps.',
   },
   location: {
     eyebrow: 'Visit The Venue',
     title: 'Plan a walkthrough of Madhuban Garden Resort.',
     address: 'Madhuban Garden Resort, Agar Malwa District',
     region: 'Madhya Pradesh, India',
-    note: 'Google Maps integration will be added in the final implementation. For now, this section is a premium placeholder for the future embed.',
+    note: 'Google Maps integration will be added in the final implementation.',
   },
+}
+
+// ---------------------------------------------------------------------------
+// Contact page
+// ---------------------------------------------------------------------------
+
+export type ContactPage = {
+  hero: RouteHero
+  introTitle: string
+  introDescription: string
+  channels: ContactChannel[]
+  mapTitle: string
+  mapDescription: string
+  formTitle: string
+  formDescription: string
+  serviceInterestOptions: string[]
 }
 
 export const contactPage: ContactPage = {
@@ -663,32 +423,32 @@ export const contactPage: ContactPage = {
   },
   introTitle: 'Speak with the team that helps shape stays and celebrations.',
   introDescription:
-    'Whether you are planning a room stay, checking venue suitability, or exploring an event at the resort, we will help you choose the right next step. This contact experience is UI-only for now and does not submit to a live backend.',
+    'Whether you are planning a room stay, checking venue suitability, or exploring an event at the resort, we will help you choose the right next step.',
   channels: [
     {
       icon: 'Phone',
       label: 'Phone',
-      value: resort.phone,
-      href: `tel:${resort.phone.replace(/\s+/g, '')}`,
+      value: '+91 98765 43210',
+      href: 'tel:+919876543210',
     },
     {
       icon: 'Mail',
       label: 'Email',
-      value: resort.email,
-      href: `mailto:${resort.email}`,
+      value: 'hello@madhubangarden.com',
+      href: 'mailto:hello@madhubangarden.com',
     },
     {
       icon: 'MapPin',
       label: 'Address',
-      value: resort.address,
+      value: 'Agar Malwa District, Madhya Pradesh, India',
     },
   ],
   mapTitle: 'Google Maps embed placeholder',
   mapDescription:
-    'The live map embed will be added once the final location pin and client-approved Google Maps configuration are ready.',
+    'The live map embed will be added once the final location pin and Google Maps configuration are ready.',
   formTitle: 'Send a resort query',
   formDescription:
-    'Share what you are looking for and the team will be able to guide you toward rooms, venues, events, or a general visit plan in the final implementation.',
+    'Share what you are looking for and the team will guide you toward rooms, venues, events, or a general visit plan.',
   serviceInterestOptions: [
     'Wedding Venue',
     'Rooms & Stays',
@@ -698,6 +458,26 @@ export const contactPage: ContactPage = {
     'Restaurant',
     'General Enquiry',
   ],
+}
+
+// ---------------------------------------------------------------------------
+// Gallery page
+// ---------------------------------------------------------------------------
+
+export type GalleryCategory =
+  | 'rooms'
+  | 'wedding'
+  | 'events'
+  | 'pool'
+  | 'restaurant'
+
+export type GalleryItem = MediaAsset & {
+  category: GalleryCategory
+}
+
+export type GalleryPage = {
+  hero: RouteHero
+  description: string
 }
 
 export const galleryPage: GalleryPage = {
@@ -714,131 +494,27 @@ export const galleryPage: GalleryPage = {
     'A premium visual index of the resort experience, arranged across rooms, weddings, events, poolside leisure, and restaurant moments.',
 }
 
-export const galleryItems: GalleryItem[] = [
-  {
-    src: '/images/room-garden-deluxe.svg',
-    alt: 'Garden Deluxe Room interior at Madhuban Garden Resort',
-    title: 'Garden Deluxe Room',
-    caption: 'Soft, calm interiors with a garden-facing stay experience.',
-    category: 'rooms',
-    size: 'portrait',
-  },
-  {
-    src: '/images/room-premium-deluxe.svg',
-    alt: 'Premium Deluxe Room view at Madhuban Garden Resort',
-    title: 'Premium Deluxe',
-    caption: 'A brighter, more polished room layout for premium stays.',
-    category: 'rooms',
-    size: 'landscape',
-  },
-  {
-    src: '/images/room-family-suite.svg',
-    alt: 'Family Suite interior and lounge space',
-    title: 'Family Suite',
-    caption: 'A spacious room profile suited to families and wedding groups.',
-    category: 'rooms',
-    size: 'portrait',
-  },
-  {
-    src: '/images/room-wedding-suite.svg',
-    alt: 'Wedding Suite details at Madhuban Garden Resort',
-    title: 'Wedding Suite',
-    caption: 'An elevated suite for bridal readiness and premium hosting.',
-    category: 'rooms',
-    size: 'landscape',
-  },
-  {
-    src: '/images/wedding-gallery-1.svg',
-    alt: 'Wedding aisle styling at Madhuban Garden Resort',
-    title: 'Ceremony Lawn',
-    caption: 'Open-air ceremony styling framed by greenery and soft decor.',
-    category: 'wedding',
-    size: 'portrait',
-  },
-  {
-    src: '/images/wedding-gallery-2.svg',
-    alt: 'Wedding portrait setting in resort lawns',
-    title: 'Wedding Portraits',
-    caption: 'Natural backdrops that keep the celebration visually timeless.',
-    category: 'wedding',
-    size: 'portrait',
-  },
-  {
-    src: '/images/wedding-gallery-4.svg',
-    alt: 'Wedding reception hall styling at Madhuban',
-    title: 'Reception Setup',
-    caption: 'Elegant indoor celebration styling for evening functions.',
-    category: 'wedding',
-    size: 'square',
-  },
-  {
-    src: '/images/wedding-gallery-6.svg',
-    alt: 'Decorated stage at Madhuban Garden Resort',
-    title: 'Stage Styling',
-    caption: 'A warm and polished event setting for meaningful family moments.',
-    category: 'wedding',
-    size: 'landscape',
-  },
-  {
-    src: '/images/events-1.svg',
-    alt: 'Birthday party atmosphere at Madhuban Garden Resort',
-    title: 'Birthday Celebrations',
-    caption:
-      'Smaller celebrations with decor, dining, and guest comfort in one place.',
-    category: 'events',
-    size: 'square',
-  },
-  {
-    src: '/images/events-2.svg',
-    alt: 'Corporate meet setup in a banquet-style hall',
-    title: 'Corporate Meets',
-    caption:
-      'Conference-friendly layouts for team events and business gatherings.',
-    category: 'events',
-    size: 'landscape',
-  },
-  {
-    src: '/images/events-3.svg',
-    alt: 'Intimate event setting at Madhuban Garden Resort',
-    title: 'Small Gatherings',
-    caption: 'Social functions that feel warm, premium, and easy to host.',
-    category: 'events',
-    size: 'portrait',
-  },
-  {
-    src: '/images/pool-1.svg',
-    alt: 'Swimming pool at Madhuban Garden Resort',
-    title: 'Poolside Leisure',
-    caption:
-      'A relaxed resort zone for leisure hours between stays and events.',
-    category: 'pool',
-    size: 'landscape',
-  },
-  {
-    src: '/images/pool-2.svg',
-    alt: 'Pool deck and sitting area at Madhuban',
-    title: 'Pool Deck',
-    caption: 'Comfortable seating and open-air ambience by the water.',
-    category: 'pool',
-    size: 'portrait',
-  },
-  {
-    src: '/images/restaurant-1.svg',
-    alt: 'Indoor restaurant setting at Madhuban Garden Resort',
-    title: 'Indoor Dining',
-    caption: 'A calm dining environment for hosted meals and everyday stays.',
-    category: 'restaurant',
-    size: 'square',
-  },
-  {
-    src: '/images/restaurant-2.svg',
-    alt: 'Open-air restaurant seating surrounded by greenery',
-    title: 'Outdoor Dining',
-    caption: 'Fresh air, greenery, and warm hospitality in an open setting.',
-    category: 'restaurant',
-    size: 'landscape',
-  },
-]
+// ---------------------------------------------------------------------------
+// Banquet page
+// ---------------------------------------------------------------------------
+
+export type BanquetFacility = {
+  icon: string
+  label: string
+}
+
+export type BanquetPage = {
+  hero: RouteHero
+  overviewTitle: string
+  overviewDescription: string[]
+  overviewImage: string
+  stats: StatItem[]
+  facilities: BanquetFacility[]
+  useCases: IconFeature[]
+  photos: MediaAsset[]
+  ctaTitle: string
+  ctaDescription: string
+}
 
 export const banquetPage: BanquetPage = {
   hero: {
@@ -921,7 +597,20 @@ export const banquetPage: BanquetPage = {
   ],
   ctaTitle: 'Planning a banquet function at Madhuban?',
   ctaDescription:
-    'Share your event date, guest count, and function type with the resort team and we can shape the right next step in the final enquiry flow.',
+    'Share your event date, guest count, and function type with the resort team to get started.',
+}
+
+// ---------------------------------------------------------------------------
+// Pool page
+// ---------------------------------------------------------------------------
+
+export type PoolPage = {
+  hero: RouteHero
+  overviewTitle: string
+  overviewDescription: string[]
+  timings: string
+  rules: string[]
+  photos: MediaAsset[]
 }
 
 export const poolPage: PoolPage = {
@@ -968,6 +657,19 @@ export const poolPage: PoolPage = {
       caption: 'Soft evening ambience for a more relaxed end to the day.',
     },
   ],
+}
+
+// ---------------------------------------------------------------------------
+// Events page
+// ---------------------------------------------------------------------------
+
+export type EventsPage = {
+  hero: RouteHero
+  introTitle: string
+  introDescription: string
+  services: IconFeature[]
+  ctaTitle: string
+  ctaDescription: string
 }
 
 export const eventsPage: EventsPage = {
@@ -1018,7 +720,24 @@ export const eventsPage: EventsPage = {
   ],
   ctaTitle: 'Need help planning an event at Madhuban?',
   ctaDescription:
-    'Use the contact form to share your function type, date, and guest estimate. The final implementation will route it to the appropriate event enquiry workflow.',
+    'Use the contact form to share your function type, date, and guest estimate.',
+}
+
+// ---------------------------------------------------------------------------
+// Attractions page
+// ---------------------------------------------------------------------------
+
+export type AttractionsPage = {
+  hero: RouteHero
+  visitPlanTitle: string
+  visitPlanDescription: string
+}
+
+export type Attraction = {
+  name: string
+  description: string
+  distance: string
+  image: string
 }
 
 export const attractions: Attraction[] = [

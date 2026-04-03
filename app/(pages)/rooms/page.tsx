@@ -1,17 +1,23 @@
 import type { Metadata } from 'next'
 
 import { RoomsPageView } from '@/components/rooms/rooms-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getRooms, getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  title: 'Our Rooms & Suites',
-  description: `${resort.tagline} Explore the current room and suite collection at Madhuban Garden Resort.`,
-  openGraph: {
-    title: 'Our Rooms & Suites | Madhuban Garden Resort',
-    description: `${resort.tagline} Explore the current room and suite collection at Madhuban Garden Resort.`,
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    title: 'Our Rooms & Suites',
+    description: `${site.tagline} Explore the current room and suite collection at Madhuban Garden Resort.`,
+    openGraph: {
+      title: 'Our Rooms & Suites | Madhuban Garden Resort',
+      description: `${site.tagline} Explore the current room and suite collection at Madhuban Garden Resort.`,
+    },
+  }
 }
 
-export default function RoomsPage() {
-  return <RoomsPageView />
+export default async function RoomsPage() {
+  const rooms = await getRooms()
+
+  return <RoomsPageView rooms={rooms} />
 }

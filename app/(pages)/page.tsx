@@ -1,19 +1,35 @@
 import type { Metadata } from 'next'
 
 import { HomePageView } from '@/components/sections/home-page-view'
-import { resort } from '@/lib/dummy-data'
+import { getFeaturedRooms, getReviews, getSiteContent } from '@/lib/data'
 
-export const metadata: Metadata = {
-  description: resort.tagline,
-  openGraph: {
-    title: resort.name,
-    description: resort.tagline,
-    siteName: resort.name,
-    locale: 'en_IN',
-    type: 'website',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await getSiteContent()
+
+  return {
+    description: site.tagline,
+    openGraph: {
+      title: site.name,
+      description: site.tagline,
+      siteName: site.name,
+      locale: 'en_IN',
+      type: 'website',
+    },
+  }
 }
 
-export default function HomePage() {
-  return <HomePageView />
+export default async function HomePage() {
+  const [featuredRooms, reviews, siteContent] = await Promise.all([
+    getFeaturedRooms(),
+    getReviews(),
+    getSiteContent(),
+  ])
+
+  return (
+    <HomePageView
+      featuredRooms={featuredRooms}
+      reviews={reviews}
+      siteContent={siteContent}
+    />
+  )
 }
