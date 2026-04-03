@@ -58,3 +58,6 @@ Thumbs.db
 # stray / backup files
 check_out
 public/favicon.ico.bak
+
+# ui design reference files
+UI design/
