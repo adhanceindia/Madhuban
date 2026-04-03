@@ -47,4 +47,14 @@ app/(payload)/admin/importMap.js
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/settings.json
+.vscode/
+
+# claude internal files
+.claude/agent-memory/
+.claude/PRD-madhuban-garden.md
+.claude/antigravity-prompts-phase2.md
+.claude/dashboard.md
+
+# stray / backup files
+check_out
+public/favicon.ico.bak
