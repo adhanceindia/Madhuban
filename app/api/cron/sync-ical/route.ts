@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { verifySignatureAppRouter } from '@upstash/qstash/nextjs'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { redis } from '@/lib/redis'
@@ -109,26 +110,7 @@ async function syncFeed(
   return { source, synced, removed }
 }
 
-export async function POST(request: NextRequest) {
-  // Verify CRON_SECRET
-  const authHeader = request.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
-
-  if (!cronSecret) {
-    console.error('[sync-ical] CRON_SECRET not configured')
-    return Response.json(
-      { error: 'Server misconfigured', code: 'CRON_SECRET_MISSING' },
-      { status: 500 },
-    )
-  }
-
-  if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
-    return Response.json(
-      { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-      { status: 401 },
-    )
-  }
-
+async function handler(_request: NextRequest) {
   try {
     const payload = await getPayload({ config })
 
@@ -211,3 +193,5 @@ export async function POST(request: NextRequest) {
     )
   }
 }
+
+export const POST = verifySignatureAppRouter(handler)
