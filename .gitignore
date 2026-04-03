@@ -27,6 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -38,3 +39,12 @@ next-env.d.ts
 # payload
 payload-types.ts
 app/(payload)/admin/importMap.js
+
+# media uploads (managed via Supabase Storage)
+/public/media
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
