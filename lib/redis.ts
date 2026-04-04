@@ -1,10 +1,14 @@
 import { Redis } from '@upstash/redis'
 
 // ---------------------------------------------------------------------------
-// Upstash Redis client — graceful fallback for local dev without credentials
+// Upstash Redis client — lazy singleton, only instantiated at request time
 // ---------------------------------------------------------------------------
 
-function createRedisClient(): Redis | null {
+let _redis: Redis | null | undefined
+
+export function getRedis(): Redis | null {
+  if (_redis !== undefined) return _redis
+
   const url = process.env.UPSTASH_REDIS_REST_URL
   const token = process.env.UPSTASH_REDIS_REST_TOKEN
 
@@ -12,10 +16,10 @@ function createRedisClient(): Redis | null {
     console.warn(
       '[redis] UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not set — caching disabled',
     )
+    _redis = null
     return null
   }
 
-  return new Redis({ url, token })
+  _redis = new Redis({ url, token })
+  return _redis
 }
-
-export const redis = createRedisClient()

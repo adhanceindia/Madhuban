@@ -215,3 +215,94 @@ NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=
 - ✅ Rate limit bookings + inquiry APIs via Upstash Redis
 - ✅ Razorpay webhook must verify signature
 - ✅ Cron must verify CRON_SECRET
+
+## Vercel Deployment Rules
+
+This project deploys on Vercel. The build runs `payload generate:importmap && 
+next build` in a serverless environment where only build-time env vars are 
+available. Violating these rules will cause the build to fail or break in 
+production.
+
+### 1. Never instantiate service clients at module level
+
+Any client that reads from process.env must be instantiated inside the function 
+body — not at the top of the file.
+
+This applies to: QStash Receiver, Upstash Redis, Razorpay, Resend, Cashfree, 
+CCAvenue, PayU, PhonePe, and any other third-party SDK.
+
+// ❌ WRONG — runs at build time, crashes if env var is missing
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY,
+})
+
+// ✅ CORRECT — runs at request time only
+export async function POST(req) {
+  const receiver = new Receiver({
+    currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
+  })
+}
+
+### 2. All local imports in payload.config.ts must have explicit .js extensions
+
+Vercel runs payload generate:importmap via tsx in strict ESM mode. TypeScript 
+path resolution does not apply. Every local import must have an explicit extension.
+
+// ❌ WRONG
+import Users from './collections/Users'
+
+// ✅ CORRECT — file
+import Users from './collections/Users.js'
+
+// ✅ CORRECT — folder with index.ts
+import Users from './collections/Users/index.js'
+
+This rule applies to payload.config.ts and any file it directly imports.
+
+### 3. Serverless function timeout limits
+
+Vercel free tier enforces a 10 second max duration on all serverless functions. 
+Payment callbacks and cron routes are the most at-risk.
+
+Set explicit maxDuration in vercel.json for heavy routes:
+
+{
+  "functions": {
+    "app/api/payments/**": { "maxDuration": 10 },
+    "app/api/cron/**": { "maxDuration": 10 }
+  }
+}
+
+Never write logic inside an API route that could block for more than 10 seconds. 
+Offload heavy work to QStash if needed.
+
+### 4. Required env vars for build to succeed
+
+The following env vars must be set in Vercel project settings before deploying. 
+Missing any of these will either crash the build or silently disable features:
+
+DATABASE_URI                  # Supabase Postgres — required, Payload won't start without it
+PAYLOAD_SECRET                # Payload auth secret — required
+CLOUDINARY_CLOUD_NAME         # Media storage — required
+CLOUDINARY_API_KEY            # Media storage — required
+CLOUDINARY_API_SECRET         # Media storage — required
+UPSTASH_REDIS_REST_URL        # Caching — optional but logs warning if missing
+UPSTASH_REDIS_REST_TOKEN      # Caching — optional but logs warning if missing
+QSTASH_CURRENT_SIGNING_KEY    # iCal cron webhook verification — required for cron route
+QSTASH_NEXT_SIGNING_KEY       # iCal cron webhook verification — required for cron route
+NEXT_PUBLIC_SERVER_URL        # Must be set to the Vercel public domain
+
+### 5. Do not use the local filesystem for any persistent storage
+
+Vercel's filesystem is read-only and ephemeral at runtime. All media uploads go 
+through Cloudinary. Never write files to disk expecting them to persist across 
+deployments or function invocations.
+
+### 6. Before every deploy, verify locally
+
+Run the following before pushing:
+  npm run build
+
+If it passes locally, it will pass on Vercel — provided all env vars are set in 
+Vercel project settings. If it fails locally, do not push and expect Vercel to 
+handle it differently.

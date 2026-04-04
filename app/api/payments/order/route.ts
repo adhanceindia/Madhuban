@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { redis } from '@/lib/redis'
+import { getRedis } from '@/lib/redis'
 import { resolveActiveGateway } from '@/lib/payments/resolve-gateway'
 
 // ---------------------------------------------------------------------------
@@ -31,6 +31,7 @@ const orderSchema = z.object({
 // ---------------------------------------------------------------------------
 
 async function isRateLimited(ip: string): Promise<boolean> {
+  const redis = getRedis()
   if (!redis) return false
   const key = `rl:payments:${ip}`
   try {
@@ -214,9 +215,10 @@ export async function POST(request: NextRequest) {
     })
 
     // Invalidate availability cache
-    if (redis) {
+    const redisClient = getRedis()
+    if (redisClient) {
       try {
-        await redis.del(`avail:${room_id}:${check_in}:${check_out}`)
+        await redisClient.del(`avail:${room_id}:${check_in}:${check_out}`)
       } catch { /* non-critical */ }
     }
 

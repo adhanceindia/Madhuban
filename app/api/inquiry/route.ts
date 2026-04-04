@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 
 import { adminInquiryNotification, guestInquiryAcknowledgement } from '@/lib/email'
-import { redis } from '@/lib/redis'
+import { getRedis } from '@/lib/redis'
 
 // ---------------------------------------------------------------------------
 // Zod schema
@@ -28,6 +28,7 @@ const RATE_LIMIT = 5
 const RATE_WINDOW = 3600 // 1 hour in seconds
 
 async function isRateLimited(ip: string): Promise<boolean> {
+  const redis = getRedis()
   if (!redis) return false
 
   const key = `inquiry_rl:${ip}`

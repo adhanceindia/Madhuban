@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { redis } from '@/lib/redis'
+import { getRedis } from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
 
@@ -171,6 +171,7 @@ async function handler(_request: NextRequest) {
 
     // Update Redis with sync metadata
     const timestamp = new Date().toISOString()
+    const redis = getRedis()
     if (redis) {
       await Promise.all([
         redis.set('ical:last_sync', timestamp),

@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { redis } from '@/lib/redis'
+import { getRedis } from '@/lib/redis'
 import { sendBookingConfirmationEmail } from '@/lib/email'
 
 // ---------------------------------------------------------------------------
@@ -46,6 +46,7 @@ export async function confirmBookingPayment(opts: {
   })
 
   // Invalidate Redis availability cache
+  const redis = getRedis()
   if (redis) {
     try {
       const roomId =

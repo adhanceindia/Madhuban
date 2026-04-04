@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { redis } from '@/lib/redis'
+import { getRedis } from '@/lib/redis'
 
 // ---------------------------------------------------------------------------
 // Validation
@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
     // Check Redis cache first
     // -----------------------------------------------------------------------
     const cacheKey = `avail:${room_id}:${check_in}:${check_out}`
+    const redis = getRedis()
 
     if (redis) {
       try {

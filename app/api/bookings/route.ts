@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-import { redis } from '@/lib/redis'
+import { getRedis } from '@/lib/redis'
 import { sendBookingConfirmationEmail } from '@/lib/email'
 
 // ---------------------------------------------------------------------------
@@ -32,6 +32,7 @@ const bookingSchema = z.object({
 // ---------------------------------------------------------------------------
 
 async function isRateLimited(ip: string): Promise<boolean> {
+  const redis = getRedis()
   if (!redis) return false
 
   const key = `rl:bookings:${ip}`
@@ -182,13 +183,14 @@ export async function POST(request: NextRequest) {
     // -------------------------------------------------------------------
     // Invalidate Redis cache for this room's availability
     // -------------------------------------------------------------------
-    if (redis) {
+    const redisClient = getRedis()
+    if (redisClient) {
       try {
         // Delete any cached availability keys for this room
         // Since we can't easily pattern-delete in Upstash, we invalidate
         // the specific date range that was just booked
         const cacheKey = `avail:${room_id}:${check_in}:${check_out}`
-        await redis.del(cacheKey)
+        await redisClient.del(cacheKey)
       } catch {
         // Non-critical — cache will expire naturally
       }
