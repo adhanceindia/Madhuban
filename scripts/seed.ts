@@ -222,11 +222,11 @@ const contentGlobal = {
       'From intimate ceremonies to grand celebrations, Madhuban Garden Resort offers the perfect backdrop for your special day. Our lush green lawns, elegant banquet hall, and dedicated event management team will ensure every detail is taken care of — making your wedding truly unforgettable.',
   },
   contact: {
-    contact_phone: '+91 XXXXX XXXXX',
+    contact_phone: '+91 73899 09985',
     contact_email: 'info@madhubangarden.com',
     contact_address:
       'Madhuban Garden Resort, Agar Malwa District, Madhya Pradesh, India',
-    whatsapp_number: '91XXXXXXXXXX',
+    whatsapp_number: '917389909985',
   },
   social: {
     instagram_url: 'https://instagram.com/madhubangarden',

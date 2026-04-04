@@ -61,7 +61,7 @@ export function RoomsPageView({ rooms }: { rooms: RoomData[] }) {
       >
         <div className="absolute inset-0">
           <Image
-            src={rooms[0]?.images?.[0] || '/images/resort-pool.jpg'}
+            src={rooms[0]?.images?.[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80'}
             alt="Luxury room interiors at Madhuban Garden Resort"
             fill
             priority

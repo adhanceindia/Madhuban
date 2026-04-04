@@ -164,7 +164,7 @@ export function BanquetPageView() {
           <SectionHeading
             eyebrow="Photo Strip"
             title="A quick visual sense of the banquet atmosphere."
-            description="These placeholders show the intended mood direction for the hall gallery until final resort photography is supplied."
+            description="Elegantly appointed interiors that set the tone for every celebration."
           />
           <div className="mt-10">
             <EditorialPhotoStrip items={banquetPage.photos} />

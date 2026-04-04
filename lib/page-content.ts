@@ -87,7 +87,7 @@ export const homeHero: HomeHero = {
   eyebrow: 'Madhuban Garden Resort',
   subtitle:
     'Welcome to a peaceful garden retreat where restful stays, family celebrations, and unforgettable wedding moments feel naturally beautiful.',
-  image: '/images/home-hero.svg',
+  image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1600&q=80',
 }
 
 export const highlights: HighlightStat[] = [
@@ -169,7 +169,7 @@ export const weddingFeature: WeddingFeature = {
   title: 'Your Perfect Wedding Awaits',
   description:
     'Celebrate your biggest day in a setting that feels lush, intimate, and deeply memorable. Madhuban Garden Resort brings together expansive greenery, graceful event spaces, and warm hosting so every ritual feels beautifully cared for.',
-  image: '/images/home-wedding.svg',
+  image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80',
   ctaLabel: 'Plan Your Wedding',
   points: [
     {
@@ -267,13 +267,13 @@ export const weddingPage: WeddingPage = {
     title: 'Begin Your Forever at Madhuban Garden',
     subtitle:
       'Where lush green lawns, graceful venues, and heartfelt hosting come together for the kind of wedding memories families talk about for years.',
-    image: '/images/wedding-hero.svg',
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=80',
   },
   overview: {
     eyebrow: 'Venue Overview',
     title:
       'A wedding destination shaped for emotion, beauty, and effortless hosting.',
-    image: '/images/wedding-overview.svg',
+    image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1600&q=80',
     description: [
       'Madhuban Garden Resort brings together landscaped outdoor beauty and polished event-ready spaces, making it a natural fit for intimate ceremonies as well as large-format family celebrations. The setting feels lush, premium, and deeply welcoming from the very first arrival.',
       'With venue flexibility, guest accommodation, and an experienced support team in one place, families can celebrate without the stress of coordinating across multiple locations. The experience is designed to feel calm behind the scenes and unforgettable in every frame.',
@@ -330,27 +330,27 @@ export const weddingPage: WeddingPage = {
   ],
   gallery: [
     {
-      src: '/images/wedding-gallery-1.svg',
+      src: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80',
       alt: 'Outdoor wedding ceremony aisle at Madhuban Garden Resort',
     },
     {
-      src: '/images/wedding-gallery-2.svg',
+      src: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=800&q=80',
       alt: 'Wedding couple portrait in the resort lawns',
     },
     {
-      src: '/images/wedding-gallery-3.svg',
+      src: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80',
       alt: 'Decorative floral wedding details and intimate styling',
     },
     {
-      src: '/images/wedding-gallery-4.svg',
+      src: 'https://images.unsplash.com/photo-1507504031003-b417219a0fde?auto=format&fit=crop&w=800&q=80',
       alt: 'Banquet reception setup with premium lighting and tables',
     },
     {
-      src: '/images/wedding-gallery-5.svg',
+      src: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80',
       alt: 'Evening wedding lawn lighting across lush green premises',
     },
     {
-      src: '/images/wedding-gallery-6.svg',
+      src: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?auto=format&fit=crop&w=800&q=80',
       alt: 'Bridal seating and stage styling for a celebration at Madhuban',
     },
   ],
@@ -391,7 +391,7 @@ export const weddingPage: WeddingPage = {
     title: 'Plan a walkthrough of Madhuban Garden Resort.',
     address: 'Madhuban Garden Resort, Agar Malwa District',
     region: 'Madhya Pradesh, India',
-    note: 'Google Maps integration will be added in the final implementation.',
+    note: 'Approximately 90 minutes from Ujjain, 2.5 hours from Indore, and 4 hours from Bhopal by road.',
   },
 }
 
@@ -417,7 +417,7 @@ export const contactPage: ContactPage = {
     title: 'Get In Touch',
     subtitle:
       'Reach our team for room bookings, wedding walkthroughs, banquet enquiries, and celebration planning support at Madhuban Garden Resort.',
-    image: '/images/home-hero.svg',
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Hello',
     chip: 'Call, email, or WhatsApp the Madhuban team',
   },
@@ -428,8 +428,8 @@ export const contactPage: ContactPage = {
     {
       icon: 'Phone',
       label: 'Phone',
-      value: '+91 98765 43210',
-      href: 'tel:+919876543210',
+      value: '+91 73899 09985',
+      href: 'tel:+917389909985',
     },
     {
       icon: 'Mail',
@@ -443,9 +443,9 @@ export const contactPage: ContactPage = {
       value: 'Agar Malwa District, Madhya Pradesh, India',
     },
   ],
-  mapTitle: 'Google Maps embed placeholder',
+  mapTitle: 'Find Us',
   mapDescription:
-    'The live map embed will be added once the final location pin and Google Maps configuration are ready.',
+    'Located on the Agar–Ujjain highway, Madhuban Garden Resort is a 90-minute drive from Ujjain and about 2.5 hours from Indore. Look for the resort signboard past the Agar town bypass.',
   formTitle: 'Send a resort query',
   formDescription:
     'Share what you are looking for and the team will guide you toward rooms, venues, events, or a general visit plan.',
@@ -486,7 +486,7 @@ export const galleryPage: GalleryPage = {
     title: 'Resort Gallery',
     subtitle:
       'Explore a curated look at rooms, wedding moods, celebrations, leisure spaces, and the green calm that defines Madhuban Garden Resort.',
-    image: '/images/gallery-hero.svg',
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Moments',
     chip: 'Rooms, celebrations, dining, leisure, and atmosphere',
   },
@@ -522,7 +522,7 @@ export const banquetPage: BanquetPage = {
     title: 'Banquet Hall',
     subtitle:
       'A polished indoor event space designed for wedding functions, conferences, and family celebrations that need comfort, flexibility, and dependable hosting.',
-    image: '/images/banquet-1.svg',
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Gather',
     chip: 'Elegant indoor hosting for up to 800 guests',
   },
@@ -532,7 +532,7 @@ export const banquetPage: BanquetPage = {
     'The Madhuban banquet hall is built for celebrations that need structure, comfort, and smooth guest movement. Its indoor format makes it especially useful for receptions, sangeet nights, conferences, and hosted family functions where timing and logistics matter.',
     'Because the hall sits within the wider resort environment, families can combine event hosting with accommodation, food coordination, and guest support in one place rather than splitting the experience across multiple vendors or venues.',
   ],
-  overviewImage: '/images/banquet-2.svg',
+  overviewImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80',
   stats: [
     { label: 'Capacity', value: '800 guests' },
     { label: 'Dimensions', value: '110 ft x 70 ft' },
@@ -569,27 +569,27 @@ export const banquetPage: BanquetPage = {
   ],
   photos: [
     {
-      src: '/images/banquet-1.svg',
+      src: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80',
       alt: 'Banquet hall entrance and lighting mood at Madhuban',
       title: 'Arrival View',
       caption:
         'A welcoming indoor event atmosphere from the first guest arrival.',
     },
     {
-      src: '/images/banquet-2.svg',
+      src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
       alt: 'Banquet interior styling at Madhuban Garden Resort',
       title: 'Interior Styling',
       caption: 'A refined indoor environment ready for formal celebrations.',
     },
     {
-      src: '/images/banquet-3.svg',
+      src: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=800&q=80',
       alt: 'Banquet seating and stage arrangement',
       title: 'Seating Layout',
       caption:
         'Configurable arrangements for celebrations, dining, and hosting.',
     },
     {
-      src: '/images/banquet-4.svg',
+      src: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?auto=format&fit=crop&w=800&q=80',
       alt: 'Banquet decor and hosted event setup',
       title: 'Decor Mood',
       caption: 'Warm interior finishes that support polished event styling.',
@@ -619,7 +619,7 @@ export const poolPage: PoolPage = {
     title: 'Swimming Pool',
     subtitle:
       'A calm open-air pool zone that adds relaxation, family leisure, and easy downtime to the Madhuban Garden Resort experience.',
-    image: '/images/pool-1.svg',
+    image: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Leisure',
     chip: 'Open daily from 8:00 AM to 8:00 PM',
   },
@@ -639,19 +639,19 @@ export const poolPage: PoolPage = {
   ],
   photos: [
     {
-      src: '/images/pool-1.svg',
+      src: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80',
       alt: 'Swimming pool at Madhuban Garden Resort',
       title: 'Pool View',
       caption: 'An open resort leisure zone surrounded by greenery.',
     },
     {
-      src: '/images/pool-2.svg',
+      src: 'https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?auto=format&fit=crop&w=800&q=80',
       alt: 'Poolside deck and sitting area',
       title: 'Deck Seating',
       caption: 'Comfortable sitting areas for guests between swims and stays.',
     },
     {
-      src: '/images/pool-3.svg',
+      src: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80',
       alt: 'Evening pool atmosphere at Madhuban Garden Resort',
       title: 'Evening Mood',
       caption: 'Soft evening ambience for a more relaxed end to the day.',
@@ -678,7 +678,7 @@ export const eventsPage: EventsPage = {
     title: 'Events & Celebrations',
     subtitle:
       'From birthdays and family gatherings to corporate meets and hosted functions, Madhuban helps smaller events feel thoughtful, polished, and easy to manage.',
-    image: '/images/events-1.svg',
+    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Celebrate',
     chip: 'Birthday parties, gatherings, business events, and catered functions',
   },
@@ -746,14 +746,14 @@ export const attractions: Attraction[] = [
     description:
       'A revered spiritual destination near Nalkheda, known for its sacred atmosphere and lasting cultural significance.',
     distance: '15 km from the resort',
-    image: '/images/attraction-baglabukhi.svg',
+    image: 'https://images.unsplash.com/photo-1609766857041-ed0703465262?auto=format&fit=crop&w=800&q=80',
   },
   {
     name: 'Mahakaleshwar Temple',
     description:
       'The iconic Jyotirlinga temple in Ujjain, a meaningful day trip for guests exploring Madhya Pradesh.',
     distance: '65 km from the resort',
-    image: '/images/attraction-mahakaleshwar.svg',
+    image: 'https://images.unsplash.com/photo-1621427638996-d57d0c1b3a2c?auto=format&fit=crop&w=800&q=80',
   },
 ]
 
@@ -763,7 +763,7 @@ export const attractionsPage: AttractionsPage = {
     title: 'Places Worth Visiting Near Madhuban',
     subtitle:
       'Turn a peaceful resort stay into a meaningful local journey with major temple destinations that families often include in their travel plans.',
-    image: '/images/attractions-hero.svg',
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Explore',
     chip: 'Stay at Madhuban and plan nearby spiritual day visits',
   },

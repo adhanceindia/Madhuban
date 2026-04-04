@@ -108,10 +108,10 @@ function normalizeGalleryItem(doc: Record<string, unknown>): GalleryItemData {
 const defaultSiteContent: SiteContent = {
   name: 'Madhuban Garden Resort',
   tagline: 'The most peaceful & lush green premises in Agar Malwa District.',
-  phone: '+91 98765 43210',
+  phone: '+91 73899 09985',
   email: 'hello@madhubangarden.com',
   address: 'Agar Malwa District, Madhya Pradesh, India',
-  whatsapp: '+91 98765 43210',
+  whatsapp: '+91 73899 09985',
   instagram: 'https://instagram.com/madhubangarden',
   facebook: 'https://facebook.com/madhubangarden',
   hero_heading: 'Madhuban Garden Resort',

@@ -57,7 +57,7 @@ export function EventsPageView() {
               <div className="overflow-hidden rounded-card bg-white p-3 shadow-[0_28px_80px_rgba(27,28,25,0.08)]">
                 <div className="relative aspect-[16/11] overflow-hidden rounded-card-inner">
                   <Image
-                    src="/images/events-2.svg"
+                    src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80"
                     alt="Corporate and social event setup at Madhuban Garden Resort"
                     fill
                     sizes="(min-width: 1024px) 42vw, 100vw"

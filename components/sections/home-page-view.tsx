@@ -19,7 +19,14 @@ import {
 import type { RoomData, ReviewData, SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-const instagramPlaceholders = Array.from({ length: 6 }, (_, index) => index + 1)
+const instagramPhotos = [
+  { src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=80', alt: 'Resort garden grounds' },
+  { src: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=600&q=80', alt: 'Resort swimming pool' },
+  { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80', alt: 'Outdoor dining experience' },
+  { src: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=600&q=80', alt: 'Wedding floral decor' },
+  { src: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=600&q=80', alt: 'Resort exterior view' },
+  { src: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80', alt: 'Celebration moments' },
+]
 const easing = [0.22, 1, 0.36, 1] as const
 
 function formatIndianCurrency(value: number) {
@@ -281,7 +288,7 @@ export function HomePageView({ featuredRooms, reviews, siteContent }: HomePageVi
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
-                    src={room.images[0] || '/images/resort-pool.jpg'}
+                    src={room.images[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80'}
                     alt={room.name}
                     fill
                     sizes="(min-width: 1024px) 30vw, 100vw"
@@ -420,18 +427,22 @@ export function HomePageView({ featuredRooms, reviews, siteContent }: HomePageVi
             variants={containerVariants}
             className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3"
           >
-            {instagramPlaceholders.map((placeholder) => (
+            {instagramPhotos.map((photo, index) => (
               <motion.div
-                key={placeholder}
+                key={index}
                 variants={itemVariants}
-                className="flex aspect-square items-center justify-center rounded-card-md border border-dashed border-primary/25 bg-white/70 p-6 text-center shadow-[0_16px_40px_rgba(46,125,50,0.05)]"
+                className="group relative aspect-square overflow-hidden rounded-card-md shadow-[0_16px_40px_rgba(46,125,50,0.05)]"
               >
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
-                    Placeholder {placeholder}
-                  </p>
-                  <p className="mt-3 text-sm leading-6 text-foreground/55">
-                    Behold.so embed goes here
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes="(min-width: 768px) 30vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/35">
+                  <p className="translate-y-2 text-sm font-semibold tracking-wide text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    @madhubangarden
                   </p>
                 </div>
               </motion.div>

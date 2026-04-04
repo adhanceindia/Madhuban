@@ -634,25 +634,21 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
               className="relative overflow-hidden rounded-card border border-[#d7dfce] bg-[linear-gradient(180deg,#e9f3df,#f7fbf2)] p-6 shadow-[0_20px_65px_rgba(56,106,14,0.08)] sm:p-8"
             >
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(76,175,80,0.1),transparent_45%)]" />
-              <div className="relative h-full min-h-[22rem] overflow-hidden rounded-card-md border border-white/80 bg-warm-sand">
-                <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(255,255,255,0.32),rgba(255,255,255,0.32)),linear-gradient(90deg,rgba(53,102,9,0.08)_1px,transparent_1px),linear-gradient(rgba(53,102,9,0.08)_1px,transparent_1px)] bg-[size:100%_100%,68px_68px,68px_68px]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_28%,rgba(186,117,23,0.12),transparent_18%),radial-gradient(circle_at_72%_58%,rgba(56,106,14,0.15),transparent_22%)]" />
-                <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-8">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-label text-gold">
-                      Location + Map
-                    </p>
-                    <h3 className="mt-4 text-3xl italic text-foreground sm:text-4xl">
-                      Google Maps embed placeholder
-                    </h3>
-                    <p className="text-foreground/70 mt-4 max-w-lg text-sm leading-7">
-                      This area is reserved for the final map integration once
-                      the live embed and venue pin are ready.
-                    </p>
-                  </div>
-
+              <div className="relative h-full min-h-[22rem] overflow-hidden rounded-card-md border border-white/80">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58844.83936774386!2d76.0!3d23.71!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3963711111111111%3A0x1111111111111111!2sAgar%20Malwa%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, minHeight: '22rem' }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Madhuban Garden Resort location on Google Maps"
+                  className="absolute inset-0"
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-4">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="rounded-card-inner bg-white/70 p-4 shadow-sm">
+                    <div className="pointer-events-auto rounded-card-inner bg-white/90 p-4 shadow-sm backdrop-blur">
                       <p className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
                         Venue Zone
                       </p>
@@ -660,7 +656,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
                         Agar Malwa District
                       </p>
                     </div>
-                    <div className="rounded-card-inner bg-white/70 p-4 shadow-sm">
+                    <div className="pointer-events-auto rounded-card-inner bg-white/90 p-4 shadow-sm backdrop-blur">
                       <p className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
                         Arrival Experience
                       </p>

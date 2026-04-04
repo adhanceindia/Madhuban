@@ -187,25 +187,27 @@ export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
               </div>
 
               <div className="overflow-hidden rounded-card bg-primary-light p-3 shadow-[0_20px_60px_rgba(27,28,25,0.05)]">
-                <div className="flex min-h-[19rem] flex-col justify-between rounded-card-inner bg-[linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0.92)),radial-gradient(circle_at_top_right,rgba(186,117,23,0.16),transparent_35%)] p-6">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
-                      {contactPage.mapTitle}
-                    </p>
-                    <h3 className="mt-4 text-3xl italic text-foreground">
-                      Madhuban Garden Resort
-                    </h3>
-                    <p className="text-foreground/70 mt-4 max-w-md text-sm leading-7">
-                      {contactPage.mapDescription}
-                    </p>
-                  </div>
-                  <div className="rounded-card-inner bg-white/85 p-5 backdrop-blur">
-                    <p className="text-xs font-semibold uppercase tracking-label text-primary-deep/70">
-                      Location
-                    </p>
-                    <p className="text-foreground/70 mt-3 text-sm leading-7">
-                      Agar Malwa District, Madhya Pradesh
-                    </p>
+                <div className="relative overflow-hidden rounded-card-inner" style={{ minHeight: '19rem' }}>
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58844.83936774386!2d76.0!3d23.71!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3963711111111111%3A0x1111111111111111!2sAgar%20Malwa%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, minHeight: '19rem' }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Madhuban Garden Resort location on Google Maps"
+                    className="absolute inset-0"
+                  />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-3">
+                    <div className="pointer-events-auto rounded-card-inner bg-white/90 p-5 backdrop-blur">
+                      <p className="text-xs font-semibold uppercase tracking-label text-primary-deep/70">
+                        Location
+                      </p>
+                      <p className="text-foreground/70 mt-3 text-sm leading-7">
+                        Agar Malwa District, Madhya Pradesh
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
