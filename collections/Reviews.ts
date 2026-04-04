@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin, isAdminOrStaff, isAdminFieldLevel } from '../src/access'
+import { isAdmin, isAdminOrStaff, isAdminFieldLevel } from '../src/access/index.ts'
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',

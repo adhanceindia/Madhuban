@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin, isAdminOrStaff } from '../src/access'
+import { isAdmin, isAdminOrStaff } from '../src/access/index.ts'
 
 export const Content: GlobalConfig = {
   slug: 'content',

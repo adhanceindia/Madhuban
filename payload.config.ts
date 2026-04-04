@@ -7,17 +7,17 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import sharp from 'sharp'
 
-import { Users } from './collections/Users'
-import { Rooms } from './collections/Rooms'
-import { Bookings } from './collections/Bookings'
-import { Inquiries } from './collections/Inquiries'
-import { BlockedDates } from './collections/BlockedDates'
-import { Gallery } from './collections/Gallery'
-import { Reviews } from './collections/Reviews'
-import { Media } from './collections/Media'
+import { Users } from './collections/Users.ts'
+import { Rooms } from './collections/Rooms.ts'
+import { Bookings } from './collections/Bookings.ts'
+import { Inquiries } from './collections/Inquiries.ts'
+import { BlockedDates } from './collections/BlockedDates.ts'
+import { Gallery } from './collections/Gallery.ts'
+import { Reviews } from './collections/Reviews.ts'
+import { Media } from './collections/Media.ts'
 
-import { Content } from './globals/Content'
-import { PaymentConfig } from './globals/PaymentConfig'
+import { Content } from './globals/Content.ts'
+import { PaymentConfig } from './globals/PaymentConfig.ts'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

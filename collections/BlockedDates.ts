@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdminOrStaff } from '../src/access'
+import { isAdminOrStaff } from '../src/access/index.ts'
 
 export const BlockedDates: CollectionConfig = {
   slug: 'blocked-dates',

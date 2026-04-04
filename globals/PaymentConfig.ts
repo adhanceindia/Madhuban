@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { isAdmin } from '../src/access'
+import { isAdmin } from '../src/access/index.ts'
 
 export const PaymentConfig: GlobalConfig = {
   slug: 'payment-config',
