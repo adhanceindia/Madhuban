@@ -1,109 +1,9 @@
 import 'server-only'
 
-import { getPayload } from 'payload'
-import type { Where } from 'payload'
-import config from '@payload-config'
-
-import type { SiteContent, RoomData, ReviewData, GalleryItemData } from './types'
-
-// ---------------------------------------------------------------------------
-// Helpers — Payload → Frontend normalization
-// ---------------------------------------------------------------------------
-
-function extractPlainText(richTextField: unknown): string {
-  if (!richTextField) return ''
-  if (typeof richTextField === 'string') return richTextField
-
-  // Payload Lexical richText stores as { root: { children: [...] } }
-  const root = (richTextField as Record<string, unknown>)?.root
-  if (!root) return ''
-
-  function walkNodes(nodes: unknown[]): string {
-    return nodes
-      .map((node: unknown) => {
-        const n = node as Record<string, unknown>
-        if (n.text) return n.text as string
-        if (Array.isArray(n.children)) return walkNodes(n.children)
-        return ''
-      })
-      .join(' ')
-      .trim()
-  }
-
-  const children = (root as Record<string, unknown>)?.children
-  if (Array.isArray(children)) return walkNodes(children)
-  return ''
-}
-
-function normalizeRoom(doc: Record<string, unknown>): RoomData {
-  // Extract amenities from Payload array-of-objects format: [{ amenity: 'WiFi' }]
-  const rawAmenities = doc.amenities as Array<Record<string, unknown>> | undefined
-  const amenities = Array.isArray(rawAmenities)
-    ? rawAmenities.map((a) => (a.amenity as string) || '').filter(Boolean)
-    : []
-
-  // Extract image URLs — Payload upload returns objects with url/filename
-  const rawImages = doc.images as Array<Record<string, unknown> | string> | undefined
-  const images = Array.isArray(rawImages)
-    ? rawImages
-        .map((img) => {
-          if (typeof img === 'string') return img
-          return (img?.url as string) || (img?.filename as string) || ''
-        })
-        .filter(Boolean)
-    : []
-
-  return {
-    id: (doc.id as string | number) || '',
-    slug: (doc.slug as string) || '',
-    name: (doc.name as string) || '',
-    type: (doc.type as string) || '',
-    description: extractPlainText(doc.description),
-    price_per_night: (doc.price_per_night as number) || 0,
-    capacity: (doc.capacity as number) || 1,
-    bed_type: (doc.bed_type as string) || '',
-    room_size: (doc.room_size as string) || '',
-    amenities,
-    images,
-    is_active: (doc.is_active as boolean) ?? true,
-  }
-}
-
-function normalizeReview(doc: Record<string, unknown>): ReviewData {
-  return {
-    id: (doc.id as string | number) || '',
-    guest_name: (doc.guest_name as string) || '',
-    rating: (doc.rating as number) || 5,
-    review_text: (doc.review_text as string) || '',
-    createdAt: (doc.createdAt as string) || new Date().toISOString(),
-  }
-}
-
-function normalizeGalleryItem(doc: Record<string, unknown>): GalleryItemData {
-  const image = doc.image as Record<string, unknown> | string | undefined
-  let src = ''
-  let alt = ''
-
-  if (typeof image === 'string') {
-    src = image
-  } else if (image) {
-    src = (image.url as string) || (image.filename as string) || ''
-    alt = (image.alt as string) || ''
-  }
-
-  return {
-    id: (doc.id as string | number) || '',
-    src,
-    alt: alt || (doc.caption as string) || '',
-    caption: (doc.caption as string) || '',
-    category: (doc.category as string) || '',
-    sort_order: (doc.sort_order as number) || 0,
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Default "resort" fallback (used when Content global hasn't loaded)
-// ---------------------------------------------------------------------------
+import { getDb } from '@/db/client'
+import { rooms, reviews, gallery, siteContent } from '@/db/schema'
+import { eq, asc, desc } from 'drizzle-orm'
+import type { SiteContent, RoomData, ReviewData, GalleryItemData, HeroImage } from './types'
 
 const defaultSiteContent: SiteContent = {
   name: 'Madhuban Garden Resort',
@@ -118,36 +18,65 @@ const defaultSiteContent: SiteContent = {
   hero_subtext: '',
   wedding_heading: 'Make your wedding unforgettable',
   wedding_description: '',
+  hero_images: [],
 }
 
-// ---------------------------------------------------------------------------
-// Data fetching functions
-// ---------------------------------------------------------------------------
+type GeneralContent = {
+  tagline?: string
+  hero_heading?: string
+  hero_subtext?: string
+  wedding_heading?: string
+  wedding_description?: string
+}
+
+type ContactContent = {
+  phone?: string
+  email?: string
+  address?: string
+  whatsapp?: string
+}
+
+type SocialContent = {
+  instagram?: string
+  facebook?: string
+}
+
+type HeroImagesContent = {
+  images?: HeroImage[]
+}
 
 export async function getSiteContent(): Promise<SiteContent> {
   try {
-    const payload = await getPayload({ config })
-    const data = await payload.findGlobal({ slug: 'content' })
-    const d = data as Record<string, unknown>
+    const db = getDb()
+    const rows = await db.select().from(siteContent)
+    const contentMap: Record<string, unknown> = {}
+    for (const row of rows) {
+      contentMap[row.page] = row.content
+    }
 
-    const hero = (d.hero as Record<string, unknown>) || {}
-    const wedding = (d.wedding as Record<string, unknown>) || {}
-    const contact = (d.contact as Record<string, unknown>) || {}
-    const social = (d.social as Record<string, unknown>) || {}
+    const general = (contentMap['general'] as GeneralContent) || {}
+    const contact = (contentMap['contact'] as ContactContent) || {}
+    const social = (contentMap['social'] as SocialContent) || {}
+    const heroData = (contentMap['hero_images'] as HeroImagesContent) || {}
+
+    const hero_images: HeroImage[] = Array.isArray(heroData.images)
+      ? heroData.images.filter((x) => x?.url)
+      : []
 
     return {
       name: 'Madhuban Garden Resort',
-      tagline: (hero.tagline as string) || defaultSiteContent.tagline,
-      hero_heading: (hero.hero_heading as string) || defaultSiteContent.hero_heading,
-      hero_subtext: (hero.hero_subtext as string) || defaultSiteContent.hero_subtext,
-      wedding_heading: (wedding.wedding_heading as string) || defaultSiteContent.wedding_heading,
-      wedding_description: (wedding.wedding_description as string) || defaultSiteContent.wedding_description,
-      phone: (contact.contact_phone as string) || defaultSiteContent.phone,
-      email: (contact.contact_email as string) || defaultSiteContent.email,
-      address: (contact.contact_address as string) || defaultSiteContent.address,
-      whatsapp: (contact.whatsapp_number as string) || defaultSiteContent.whatsapp,
-      instagram: (social.instagram_url as string) || defaultSiteContent.instagram,
-      facebook: (social.facebook_url as string) || defaultSiteContent.facebook,
+      tagline: general.tagline || defaultSiteContent.tagline,
+      hero_heading: general.hero_heading || defaultSiteContent.hero_heading,
+      hero_subtext: general.hero_subtext || defaultSiteContent.hero_subtext,
+      wedding_heading: general.wedding_heading || defaultSiteContent.wedding_heading,
+      wedding_description: general.wedding_description || defaultSiteContent.wedding_description,
+      phone: contact.phone || defaultSiteContent.phone,
+      email: contact.email || defaultSiteContent.email,
+      address: contact.address || defaultSiteContent.address,
+      whatsapp: contact.whatsapp || defaultSiteContent.whatsapp,
+      instagram: social.instagram || defaultSiteContent.instagram,
+      facebook: social.facebook || defaultSiteContent.facebook,
+      hero_images,
     }
   } catch (error) {
     console.error('[data] getSiteContent error:', error)
@@ -155,17 +84,28 @@ export async function getSiteContent(): Promise<SiteContent> {
   }
 }
 
+function normalizeRoom(room: typeof rooms.$inferSelect): RoomData {
+  return {
+    id: room.id,
+    slug: room.slug,
+    name: room.name,
+    type: room.type,
+    description: room.description || '',
+    price_per_night: room.price_per_night,
+    capacity: room.capacity,
+    bed_type: room.bed_type || '',
+    room_size: room.room_size || '',
+    amenities: (room.amenities as string[]) || [],
+    images: (room.images as string[]) || [],
+    is_active: room.is_active,
+  }
+}
+
 export async function getRooms(): Promise<RoomData[]> {
   try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'rooms',
-      where: { is_active: { equals: true } },
-      limit: 100,
-      sort: 'price_per_night',
-    })
-
-    return result.docs.map((doc) => normalizeRoom(doc as unknown as Record<string, unknown>))
+    const db = getDb()
+    const results = await db.select().from(rooms).where(eq(rooms.is_active, true)).orderBy(asc(rooms.price_per_night))
+    return results.map(normalizeRoom)
   } catch (error) {
     console.error('[data] getRooms error:', error)
     return []
@@ -174,15 +114,10 @@ export async function getRooms(): Promise<RoomData[]> {
 
 export async function getRoomBySlug(slug: string): Promise<RoomData | null> {
   try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'rooms',
-      where: { slug: { equals: slug } },
-      limit: 1,
-    })
-
-    if (!result.docs.length) return null
-    return normalizeRoom(result.docs[0] as unknown as Record<string, unknown>)
+    const db = getDb()
+    const [room] = await db.select().from(rooms).where(eq(rooms.slug, slug)).limit(1)
+    if (!room) return null
+    return normalizeRoom(room)
   } catch (error) {
     console.error('[data] getRoomBySlug error:', error)
     return null
@@ -191,70 +126,62 @@ export async function getRoomBySlug(slug: string): Promise<RoomData | null> {
 
 export async function getFeaturedRooms(): Promise<RoomData[]> {
   try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'rooms',
-      where: { is_active: { equals: true } },
-      limit: 3,
-      sort: '-price_per_night',
-    })
-
-    return result.docs.map((doc) => normalizeRoom(doc as unknown as Record<string, unknown>))
+    const db = getDb()
+    const results = await db
+      .select()
+      .from(rooms)
+      .where(eq(rooms.is_active, true))
+      .orderBy(desc(rooms.price_per_night))
+      .limit(3)
+    return results.map(normalizeRoom)
   } catch (error) {
     console.error('[data] getFeaturedRooms error:', error)
     return []
   }
 }
 
-export async function getRelatedRooms(
-  currentSlug: string,
-  limit = 3,
-): Promise<RoomData[]> {
-  try {
-    const rooms = await getRooms()
-    return rooms.filter((r) => r.slug !== currentSlug).slice(0, limit)
-  } catch (error) {
-    console.error('[data] getRelatedRooms error:', error)
-    return []
-  }
+export async function getRelatedRooms(currentSlug: string, limit = 3): Promise<RoomData[]> {
+  const allRooms = await getRooms()
+  return allRooms.filter((r) => r.slug !== currentSlug).slice(0, limit)
 }
 
 export async function getReviews(): Promise<ReviewData[]> {
   try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'reviews',
-      where: { is_published: { equals: true } },
-      limit: 50,
-      sort: '-createdAt',
-    })
-
-    return result.docs.map((doc) => normalizeReview(doc as unknown as Record<string, unknown>))
+    const db = getDb()
+    const results = await db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.is_published, true))
+      .orderBy(desc(reviews.created_at))
+      .limit(50)
+    return results.map((r) => ({
+      id: r.id,
+      guest_name: r.guest_name,
+      rating: r.rating,
+      review_text: r.review_text,
+      createdAt: r.created_at.toISOString(),
+    }))
   } catch (error) {
     console.error('[data] getReviews error:', error)
     return []
   }
 }
 
-export async function getGallery(
-  category?: string,
-): Promise<GalleryItemData[]> {
+export async function getGallery(category?: string): Promise<GalleryItemData[]> {
   try {
-    const payload = await getPayload({ config })
+    const db = getDb()
+    const results = category && category !== 'all'
+      ? await db.select().from(gallery).where(eq(gallery.category, category as 'rooms' | 'wedding' | 'events' | 'pool' | 'restaurant')).orderBy(asc(gallery.sort_order))
+      : await db.select().from(gallery).orderBy(asc(gallery.sort_order))
 
-    const where: Where = {}
-    if (category && category !== 'all') {
-      where.category = { equals: category }
-    }
-
-    const result = await payload.find({
-      collection: 'gallery',
-      where,
-      limit: 100,
-      sort: 'sort_order',
-    })
-
-    return result.docs.map((doc) => normalizeGalleryItem(doc as unknown as Record<string, unknown>))
+    return results.map((g) => ({
+      id: g.id,
+      src: g.media_url,
+      alt: g.caption || '',
+      caption: g.caption || '',
+      category: g.category,
+      sort_order: g.sort_order,
+    }))
   } catch (error) {
     console.error('[data] getGallery error:', error)
     return []
