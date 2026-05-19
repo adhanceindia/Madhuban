@@ -32,6 +32,23 @@
 }
 
 @layer utilities {
+  /* Tabular figures for any data/number displays in the admin */
+  .font-admin-mono {
+    font-feature-settings: 'tnum' on, 'lnum' on, 'cv11' on;
+    font-variant-numeric: tabular-nums lining-nums;
+    letter-spacing: -0.01em;
+  }
+
+  /* Headings inside admin should not switch to the public-side serif */
+  .font-admin h1,
+  .font-admin h2,
+  .font-admin h3,
+  .font-admin h4,
+  .font-admin h5,
+  .font-admin h6 {
+    font-family: var(--font-admin), system-ui, sans-serif;
+  }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;

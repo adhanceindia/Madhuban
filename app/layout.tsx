@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, DM_Sans, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
+import { Cormorant_Garamond, DM_Sans, Lato } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 
 import { getSiteContent } from '@/lib/data'
@@ -21,18 +21,11 @@ const bodyFont = DM_Sans({
   weight: ['400', '500', '700'],
 })
 
-const adminFont = Plus_Jakarta_Sans({
+const adminFont = Lato({
   subsets: ['latin'],
   variable: '--font-admin',
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
-})
-
-const monoFont = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-admin-mono',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '700', '900'],
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -67,7 +60,6 @@ export default function RootLayout({
         displayFont.variable,
         bodyFont.variable,
         adminFont.variable,
-        monoFont.variable,
         'scroll-smooth',
       )}
     >

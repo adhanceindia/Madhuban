@@ -169,8 +169,9 @@ const config: Config = {
       fontFamily: {
         display: ['var(--font-display)', 'serif'],
         body: ['var(--font-body)', 'sans-serif'],
-        admin: ['var(--font-admin)', 'sans-serif'],
-        'admin-mono': ['var(--font-admin-mono)', 'ui-monospace', 'monospace'],
+        admin: ['var(--font-admin)', 'system-ui', 'sans-serif'],
+        // Numbers/data — same Lato family with tabular-nums utility applied at usage
+        'admin-mono': ['var(--font-admin)', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         eyebrow: '0.35em',
