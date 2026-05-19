@@ -203,6 +203,20 @@ export const PAGE_SCHEMAS: PageSchema[] = [
       },
     ],
   },
+  {
+    key: 'ical',
+    label: 'iCal feeds (internal)',
+    description: 'Managed via Channel Manager — not normally edited here',
+    sections: [
+      {
+        fields: [
+          { field: 'bookingcom_ical_url', label: 'Booking.com iCal URL', type: 'url' },
+          { field: 'mmt_ical_url', label: 'MakeMyTrip iCal URL', type: 'url' },
+          { field: 'goibibo_ical_url', label: 'Goibibo iCal URL', type: 'url' },
+        ],
+      },
+    ],
+  },
 ]
 
 export function getPageSchema(key: string): PageSchema | undefined {
