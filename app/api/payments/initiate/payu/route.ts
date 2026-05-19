@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { getDb } from '@/db/client'
+import { bookings, rooms } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
 import { getPaymentConfig } from '@/lib/payments/resolve-gateway'
 import { PayUGateway } from '@/lib/payments/payu'
-
-// ---------------------------------------------------------------------------
-// GET /api/payments/initiate/payu?booking_id=123
-// Renders an auto-submit HTML form that POSTs to PayU
-// ---------------------------------------------------------------------------
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,33 +14,35 @@ export async function GET(request: NextRequest) {
       return new NextResponse('Missing booking_id', { status: 400 })
     }
 
-    const payload = await getPayload({ config })
-    const booking = await payload.findByID({ collection: 'bookings', id: bookingId })
+    const db = getDb()
+    const [booking] = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.id, parseInt(bookingId)))
+      .limit(1)
 
-    if (!booking) {
+    if (!booking || !booking.gateway_order_id) {
       return new NextResponse('Booking not found', { status: 404 })
     }
 
-    const bookingData = booking as unknown as Record<string, unknown>
-    const cfg = await getPaymentConfig()
-    const roomName = typeof bookingData.room === 'object' && bookingData.room !== null
-      ? ((bookingData.room as Record<string, unknown>).name as string) || 'Room Booking'
-      : 'Room Booking'
+    const [room] = await db.select().from(rooms).where(eq(rooms.id, booking.room_id)).limit(1)
+    const roomName = room?.name || 'Room Booking'
 
+    const cfg = await getPaymentConfig()
     const gateway = new PayUGateway(cfg)
     const origin = new URL(request.url).origin
     const callbackUrl = `${origin}/api/payments/callbacks/payu`
 
     const fields = gateway.buildFormFields({
-      txnid: bookingData.gateway_order_id as string,
-      amount: bookingData.total_amount as number,
+      txnid: booking.gateway_order_id,
+      amount: booking.total_amount || 0,
       productinfo: `${roomName} — Madhuban Garden Resort`,
-      firstname: bookingData.guest_name as string,
-      email: bookingData.guest_email as string,
-      phone: bookingData.guest_phone as string,
+      firstname: booking.guest_name,
+      email: booking.guest_email,
+      phone: booking.guest_phone,
       surl: callbackUrl,
       furl: callbackUrl,
-      udf1: String(bookingData.id),
+      udf1: String(booking.id),
     })
 
     const { action, ...hiddenFields } = fields

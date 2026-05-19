@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function AttractionsPage() {
-  return <AttractionsPageView />
+export default async function AttractionsPage() {
+  const siteContent = await getSiteContent()
+  return <AttractionsPageView siteContent={siteContent} />
 }

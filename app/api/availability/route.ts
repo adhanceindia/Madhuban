@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-
+import { getDb } from '@/db/client'
+import { bookings, blockedDates, rooms } from '@/db/schema'
+import { and, eq, lt, gt, gte, inArray } from 'drizzle-orm'
 import { getRedis } from '@/lib/redis'
-
-// ---------------------------------------------------------------------------
-// Validation
-// ---------------------------------------------------------------------------
 
 const querySchema = z.object({
   room_id: z.string().min(1, 'room_id is required'),
@@ -25,10 +21,6 @@ const querySchema = z.object({
   { message: 'check_in cannot be in the past', path: ['check_in'] },
 )
 
-// ---------------------------------------------------------------------------
-// GET /api/availability?room_id=&check_in=&check_out=
-// ---------------------------------------------------------------------------
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl
@@ -38,7 +30,6 @@ export async function GET(request: NextRequest) {
       check_out: searchParams.get('check_out') ?? '',
     }
 
-    // Validate
     const parsed = querySchema.safeParse(raw)
     if (!parsed.success) {
       return NextResponse.json(
@@ -48,10 +39,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { room_id, check_in, check_out } = parsed.data
+    const roomIdNum = parseInt(room_id)
 
-    // -----------------------------------------------------------------------
-    // Check Redis cache first
-    // -----------------------------------------------------------------------
     const cacheKey = `avail:${room_id}:${check_in}:${check_out}`
     const redis = getRedis()
 
@@ -59,117 +48,70 @@ export async function GET(request: NextRequest) {
       try {
         const cached = await redis.get<string>(cacheKey)
         if (cached) {
-          const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached
-          return NextResponse.json({ ...parsed, cached: true })
+          const parsedCache = typeof cached === 'string' ? JSON.parse(cached) : cached
+          return NextResponse.json({ ...parsedCache, cached: true })
         }
       } catch {
-        // Cache miss or error — continue to DB query
+        // Cache miss — continue
       }
     }
 
-    // -----------------------------------------------------------------------
-    // Query Payload — overlapping bookings
-    // -----------------------------------------------------------------------
-    const payload = await getPayload({ config })
+    const db = getDb()
 
-    // Find bookings where:
-    //   room = room_id
-    //   AND status IN [confirmed, pending]
-    //   AND check_in < requested check_out
-    //   AND check_out > requested check_in
-    const overlappingBookings = await payload.find({
-      collection: 'bookings',
-      where: {
-        and: [
-          { room: { equals: room_id } },
-          {
-            status: {
-              in: ['confirmed', 'pending'],
-            },
-          },
-          { check_in: { less_than: check_out } },
-          { check_out: { greater_than: check_in } },
-        ],
-      },
-      limit: 1,
-    })
+    const overlapping = await db
+      .select({ id: bookings.id })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.room_id, roomIdNum),
+          inArray(bookings.status, ['confirmed', 'pending']),
+          lt(bookings.check_in, check_out),
+          gt(bookings.check_out, check_in),
+        )
+      )
+      .limit(1)
 
-    // -----------------------------------------------------------------------
-    // Query Payload — blocked dates in range
-    // -----------------------------------------------------------------------
-    const blockedDatesResult = await payload.find({
-      collection: 'blocked-dates',
-      where: {
-        and: [
-          { room: { equals: room_id } },
-          { date: { greater_than_equal: check_in } },
-          { date: { less_than: check_out } },
-        ],
-      },
-      limit: 100,
-    })
+    const blockedRows = await db
+      .select({ date: blockedDates.date })
+      .from(blockedDates)
+      .where(
+        and(
+          eq(blockedDates.room_id, roomIdNum),
+          gte(blockedDates.date, check_in),
+          lt(blockedDates.date, check_out),
+        )
+      )
+      .limit(100)
 
-    const blockedDates = blockedDatesResult.docs.map((doc) => {
-      const d = doc as unknown as Record<string, unknown>
-      const dateVal = d.date as string
-      // Normalize to YYYY-MM-DD
-      return dateVal ? dateVal.split('T')[0] : ''
-    }).filter(Boolean)
+    const blocked = blockedRows.map((b) => b.date)
 
-    // -----------------------------------------------------------------------
-    // Fetch room price
-    // -----------------------------------------------------------------------
-    let pricePerNight = 0
-    try {
-      const room = await payload.findByID({
-        collection: 'rooms',
-        id: room_id,
-      })
-      pricePerNight = (room as unknown as Record<string, unknown>).price_per_night as number || 0
-    } catch {
-      // Room not found — price stays 0
-    }
+    const [room] = await db.select({ price_per_night: rooms.price_per_night }).from(rooms).where(eq(rooms.id, roomIdNum)).limit(1)
+    const pricePerNight = room?.price_per_night || 0
 
-    // -----------------------------------------------------------------------
-    // Calculate nights
-    // -----------------------------------------------------------------------
     const checkInDate = new Date(check_in)
     const checkOutDate = new Date(check_out)
-    const nights = Math.max(1, Math.ceil(
-      (checkOutDate.getTime() - checkInDate.getTime()) / 86400000,
-    ))
+    const nights = Math.max(1, Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000))
 
-    // -----------------------------------------------------------------------
-    // Build response
-    // -----------------------------------------------------------------------
-    const hasOverlapping = overlappingBookings.docs.length > 0
-    const hasBlocked = blockedDates.length > 0
-    const available = !hasOverlapping && !hasBlocked
+    const available = overlapping.length === 0 && blocked.length === 0
 
     const result = {
       available,
-      blocked_dates: blockedDates,
+      blocked_dates: blocked,
       nights,
       price_per_night: pricePerNight,
     }
 
-    // -----------------------------------------------------------------------
-    // Cache the result (15 min TTL)
-    // -----------------------------------------------------------------------
     if (redis) {
       try {
         await redis.set(cacheKey, JSON.stringify(result), { ex: 900 })
       } catch {
-        // Cache write failure is non-critical
+        // Cache write failure non-critical
       }
     }
 
     return NextResponse.json(result)
   } catch (error) {
     console.error('[api/availability] Error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

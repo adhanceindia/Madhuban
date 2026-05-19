@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function PoolPage() {
-  return <PoolPageView />
+export default async function PoolPage() {
+  const siteContent = await getSiteContent()
+  return <PoolPageView siteContent={siteContent} />
 }

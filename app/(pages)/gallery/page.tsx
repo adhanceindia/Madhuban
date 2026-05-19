@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function GalleryPage() {
-  const galleryItems = await getGallery()
+  const [galleryItems, siteContent] = await Promise.all([getGallery(), getSiteContent()])
 
-  return <GalleryPageView galleryItems={galleryItems} />
+  return <GalleryPageView galleryItems={galleryItems} siteContent={siteContent} />
 }

@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
-import { verifySignatureAppRouter } from '@upstash/qstash/nextjs'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { getDb } from '@/db/client'
+import { rooms, blockedDates, siteContent } from '@/db/schema'
+import { and, eq, inArray, notInArray, isNotNull } from 'drizzle-orm'
 import { getRedis } from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
@@ -12,23 +12,22 @@ interface SyncResult {
   removed: number
 }
 
-/**
- * Fetch and parse an iCal feed, then upsert blocked dates for the given room.
- * Returns the count of events synced and stale entries removed.
- */
+type IcalContent = {
+  bookingcom_ical_url?: string
+  mmt_ical_url?: string
+}
+
 async function syncFeed(
-  payload: Awaited<ReturnType<typeof getPayload>>,
   feedUrl: string,
   source: string,
-  roomId: string,
+  roomId: number,
 ): Promise<SyncResult> {
-  // Dynamic import to avoid BigInt issue during Next.js static build analysis
   const ical = await import('node-ical')
-
-  // Fetch and parse the iCal feed
   const events = await ical.async.fromURL(feedUrl)
+  const db = getDb()
 
-  const activeUids: string[] = []
+  const activeUidPrefixes: string[] = []
+  const activeIcalUids: string[] = []
   let synced = 0
 
   for (const [, component] of Object.entries(events)) {
@@ -41,9 +40,8 @@ async function syncFeed(
 
     if (!uid || !dtstart || !dtend) continue
 
-    activeUids.push(uid)
+    activeUidPrefixes.push(uid)
 
-    // Generate one blocked-date entry per day in the range
     const start = new Date(dtstart)
     const end = new Date(dtend)
     const current = new Date(start)
@@ -51,26 +49,23 @@ async function syncFeed(
     while (current < end) {
       const dateStr = current.toISOString().split('T')[0]
       const icalUid = `${uid}__${dateStr}`
+      activeIcalUids.push(icalUid)
 
-      // Check if this blocked date already exists
-      const existing = await payload.find({
-        collection: 'blocked-dates',
-        where: {
-          ical_uid: { equals: icalUid },
-          room: { equals: roomId },
-        },
-        limit: 1,
-      })
+      const existing = await db
+        .select({ id: blockedDates.id })
+        .from(blockedDates)
+        .where(and(
+          eq(blockedDates.ical_uid, icalUid),
+          eq(blockedDates.room_id, roomId),
+        ))
+        .limit(1)
 
-      if (existing.docs.length === 0) {
-        await payload.create({
-          collection: 'blocked-dates',
-          data: {
-            room: roomId,
-            date: `${dateStr}T00:00:00.000Z`,
-            source: 'ical',
-            ical_uid: icalUid,
-          },
+      if (existing.length === 0) {
+        await db.insert(blockedDates).values({
+          room_id: roomId,
+          date: dateStr,
+          source: 'ical',
+          ical_uid: icalUid,
         })
         synced++
       }
@@ -79,32 +74,22 @@ async function syncFeed(
     }
   }
 
-  // Remove stale entries: blocked dates from iCal that are no longer in the feed
-  // Build prefix set from active UIDs for comparison
-  const activeUidPrefixes = new Set(activeUids)
-
-  const staleEntries = await payload.find({
-    collection: 'blocked-dates',
-    where: {
-      room: { equals: roomId },
-      source: { equals: 'ical' },
-    },
-    limit: 5000,
-  })
-
-  let removed = 0
-  for (const entry of staleEntries.docs) {
-    if (!entry.ical_uid) continue
-    // Extract the base UID (before __date suffix)
-    const baseUid = entry.ical_uid.split('__')[0]
-    if (!activeUidPrefixes.has(baseUid)) {
-      await payload.delete({
-        collection: 'blocked-dates',
-        id: entry.id,
-      })
-      removed++
-    }
+  // Remove stale ical entries
+  const staleConditions = [
+    eq(blockedDates.room_id, roomId),
+    eq(blockedDates.source, 'ical'),
+    isNotNull(blockedDates.ical_uid),
+  ]
+  if (activeIcalUids.length > 0) {
+    staleConditions.push(notInArray(blockedDates.ical_uid, activeIcalUids))
   }
+
+  const staleResult = await db
+    .delete(blockedDates)
+    .where(and(...staleConditions))
+    .returning({ id: blockedDates.id })
+
+  const removed = staleResult.length
 
   console.log(`[sync-ical] ${source}: synced=${synced}, removed=${removed}`)
   return { source, synced, removed }
@@ -112,14 +97,15 @@ async function syncFeed(
 
 async function handler(_request: NextRequest) {
   try {
-    const payload = await getPayload({ config })
+    const db = getDb()
 
-    // Fetch Content global to get iCal URLs
-    const content = await payload.findGlobal({ slug: 'content' })
-    const icalConfig = content.ical as
-      | { bookingcom_ical_url?: string; mmt_ical_url?: string }
-      | undefined
+    const [contentRow] = await db
+      .select()
+      .from(siteContent)
+      .where(eq(siteContent.page, 'ical'))
+      .limit(1)
 
+    const icalConfig = (contentRow?.content as IcalContent) || {}
     const bookingcomUrl = icalConfig?.bookingcom_ical_url
     const mmtUrl = icalConfig?.mmt_ical_url
 
@@ -133,16 +119,13 @@ async function handler(_request: NextRequest) {
       })
     }
 
-    // Get all active rooms — OTA feeds typically block all rooms
-    // unless per-room URLs are configured in the future
-    const rooms = await payload.find({
-      collection: 'rooms',
-      where: { is_active: { equals: true } },
-      limit: 100,
-      depth: 0,
-    })
+    const activeRooms = await db
+      .select()
+      .from(rooms)
+      .where(eq(rooms.is_active, true))
+      .limit(100)
 
-    if (rooms.docs.length === 0) {
+    if (activeRooms.length === 0) {
       return Response.json({
         success: true,
         message: 'No active rooms found',
@@ -152,24 +135,21 @@ async function handler(_request: NextRequest) {
       })
     }
 
-    // For now, sync each OTA feed against the first room
-    // TODO: When per-room iCal URLs are supported, map feeds to specific rooms
-    const defaultRoomId = String(rooms.docs[0].id)
+    const defaultRoomId = activeRooms[0].id
 
     let bookingcomSynced = 0
     let mmtSynced = 0
 
     if (bookingcomUrl) {
-      const result = await syncFeed(payload, bookingcomUrl, 'booking.com', defaultRoomId)
+      const result = await syncFeed(bookingcomUrl, 'booking.com', defaultRoomId)
       bookingcomSynced = result.synced
     }
 
     if (mmtUrl) {
-      const result = await syncFeed(payload, mmtUrl, 'makemytrip', defaultRoomId)
+      const result = await syncFeed(mmtUrl, 'makemytrip', defaultRoomId)
       mmtSynced = result.synced
     }
 
-    // Update Redis with sync metadata
     const timestamp = new Date().toISOString()
     const redis = getRedis()
     if (redis) {
@@ -195,4 +175,8 @@ async function handler(_request: NextRequest) {
   }
 }
 
-export const POST = verifySignatureAppRouter(handler)
+export async function POST(request: NextRequest) {
+  const { verifySignatureAppRouter } = await import('@upstash/qstash/nextjs')
+  const verified = verifySignatureAppRouter(handler)
+  return verified(request)
+}

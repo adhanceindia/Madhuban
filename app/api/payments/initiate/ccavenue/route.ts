@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { getDb } from '@/db/client'
+import { bookings } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
 import { getPaymentConfig } from '@/lib/payments/resolve-gateway'
 import { CCavenueGateway } from '@/lib/payments/ccavenue'
-
-// ---------------------------------------------------------------------------
-// GET /api/payments/initiate/ccavenue?booking_id=123
-// Renders an auto-submit HTML form that POSTs to CCAvenue
-// ---------------------------------------------------------------------------
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,25 +14,27 @@ export async function GET(request: NextRequest) {
       return new NextResponse('Missing booking_id', { status: 400 })
     }
 
-    const payload = await getPayload({ config })
-    const booking = await payload.findByID({ collection: 'bookings', id: bookingId })
+    const db = getDb()
+    const [booking] = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.id, parseInt(bookingId)))
+      .limit(1)
 
-    if (!booking) {
+    if (!booking || !booking.gateway_order_id) {
       return new NextResponse('Booking not found', { status: 404 })
     }
 
-    const bookingData = booking as unknown as Record<string, unknown>
     const cfg = await getPaymentConfig()
-
     const gateway = new CCavenueGateway(cfg)
     const origin = new URL(request.url).origin
 
     const { encRequest, accessCode, gatewayUrl } = gateway.buildEncryptedRequest({
-      orderId: bookingData.gateway_order_id as string,
-      amount: bookingData.total_amount as number,
-      guestName: bookingData.guest_name as string,
-      guestEmail: bookingData.guest_email as string,
-      guestPhone: bookingData.guest_phone as string,
+      orderId: booking.gateway_order_id,
+      amount: booking.total_amount || 0,
+      guestName: booking.guest_name,
+      guestEmail: booking.guest_email,
+      guestPhone: booking.guest_phone,
       redirectUrl: `${origin}/api/payments/callbacks/ccavenue`,
       cancelUrl: `${origin}/api/payments/callbacks/ccavenue`,
     })

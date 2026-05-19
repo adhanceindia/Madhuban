@@ -8,6 +8,22 @@
 // Site Content (from Content global)
 // ---------------------------------------------------------------------------
 
+export type HeroImage = {
+  page: string
+  url: string
+  alt: string
+}
+
+export function getHeroImage(siteContent: SiteContent, page: string, fallback: string): string {
+  const match = siteContent.hero_images.find((h) => h.page === page)
+  return match?.url || fallback
+}
+
+export function getHeroAlt(siteContent: SiteContent, page: string, fallback: string): string {
+  const match = siteContent.hero_images.find((h) => h.page === page)
+  return match?.alt || fallback
+}
+
 export type SiteContent = {
   name: string
   tagline: string
@@ -21,6 +37,7 @@ export type SiteContent = {
   hero_subtext: string
   wedding_heading: string
   wedding_description: string
+  hero_images: HeroImage[]
 }
 
 // ---------------------------------------------------------------------------

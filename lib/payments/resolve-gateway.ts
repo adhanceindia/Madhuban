@@ -1,5 +1,5 @@
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { getDb } from '@/db/client'
+import { paymentConfig } from '@/db/schema'
 
 import type { GatewayName, PaymentConfigData, PaymentGateway } from './types'
 import { RazorpayGateway } from './razorpay'
@@ -8,19 +8,18 @@ import { CashfreeGateway } from './cashfree'
 import { CCavenueGateway } from './ccavenue'
 import { PayUGateway } from './payu'
 
-// ---------------------------------------------------------------------------
-// Fetch the PaymentConfig global from Payload
-// ---------------------------------------------------------------------------
-
 export async function getPaymentConfig(): Promise<PaymentConfigData> {
-  const payload = await getPayload({ config })
-  const data = await payload.findGlobal({ slug: 'payment-config' })
-  return data as unknown as PaymentConfigData
+  const db = getDb()
+  const [row] = await db.select().from(paymentConfig).limit(1)
+  if (!row) {
+    throw new Error('Payment config not found. Please configure in admin settings.')
+  }
+  const gateways = (row.gateways as Record<string, unknown>) || {}
+  return {
+    active_gateway: row.active_gateway,
+    ...gateways,
+  } as PaymentConfigData
 }
-
-// ---------------------------------------------------------------------------
-// Credential validation per gateway
-// ---------------------------------------------------------------------------
 
 const REQUIRED_FIELDS: Record<GatewayName, string[]> = {
   razorpay: ['razorpay_key_id', 'razorpay_key_secret'],
@@ -42,15 +41,10 @@ function validateCredentials(gateway: GatewayName, cfg: PaymentConfigData): void
   }
 }
 
-// ---------------------------------------------------------------------------
-// Resolve the active gateway to a concrete PaymentGateway instance
-// ---------------------------------------------------------------------------
-
 export async function resolveActiveGateway(): Promise<PaymentGateway> {
   const cfg = await getPaymentConfig()
   const name = cfg.active_gateway
 
-  // Check enabled
   const enabledKey = `${name}_enabled` as keyof PaymentConfigData
   if (!cfg[enabledKey]) {
     throw new Error(
@@ -59,10 +53,8 @@ export async function resolveActiveGateway(): Promise<PaymentGateway> {
     )
   }
 
-  // Validate credentials
   validateCredentials(name, cfg)
 
-  // Build gateway
   switch (name) {
     case 'razorpay':
       return new RazorpayGateway(cfg)
@@ -78,4 +70,3 @@ export async function resolveActiveGateway(): Promise<PaymentGateway> {
       throw new Error(`Unknown payment gateway: ${name}`)
   }
 }
-

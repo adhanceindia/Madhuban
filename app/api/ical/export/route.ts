@@ -1,39 +1,33 @@
 import { NextRequest } from 'next/server'
-import { getPayload } from 'payload'
-import type { Where } from 'payload'
-import config from '@payload-config'
+import { getDb } from '@/db/client'
+import { bookings } from '@/db/schema'
+import { and, eq } from 'drizzle-orm'
 import ical, { ICalCalendarMethod } from 'ical-generator'
 
 export async function GET(request: NextRequest) {
   try {
-    const payload = await getPayload({ config })
+    const db = getDb()
     const { searchParams } = request.nextUrl
     const roomId = searchParams.get('room_id')
 
-    // Build query for confirmed bookings
-    const where: Where = {
-      status: { equals: 'confirmed' },
-    }
-
+    const conditions = [eq(bookings.status, 'confirmed')]
     if (roomId) {
-      where.room = { equals: roomId }
+      conditions.push(eq(bookings.room_id, parseInt(roomId)))
     }
 
-    const bookings = await payload.find({
-      collection: 'bookings',
-      where,
-      limit: 1000,
-      depth: 0,
-    })
+    const rows = await db
+      .select()
+      .from(bookings)
+      .where(and(...conditions))
+      .limit(1000)
 
-    // Generate iCal feed
     const calendar = ical({
       name: 'Madhuban Garden Resort',
       method: ICalCalendarMethod.PUBLISH,
       prodId: { company: 'Madhuban Garden Resort', product: 'Bookings' },
     })
 
-    for (const booking of bookings.docs) {
+    for (const booking of rows) {
       if (!booking.check_in || !booking.check_out) continue
 
       calendar.createEvent({
@@ -41,7 +35,7 @@ export async function GET(request: NextRequest) {
         end: new Date(booking.check_out),
         summary: 'Booked',
         id: `${booking.id}@madhubangarden.com`,
-        stamp: new Date(booking.createdAt),
+        stamp: new Date(booking.created_at),
       })
     }
 

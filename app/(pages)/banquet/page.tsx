@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function BanquetPage() {
-  return <BanquetPageView />
+export default async function BanquetPage() {
+  const siteContent = await getSiteContent()
+  return <BanquetPageView siteContent={siteContent} />
 }

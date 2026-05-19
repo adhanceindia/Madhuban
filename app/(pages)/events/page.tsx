@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function EventsPage() {
-  return <EventsPageView />
+export default async function EventsPage() {
+  const siteContent = await getSiteContent()
+  return <EventsPageView siteContent={siteContent} />
 }
