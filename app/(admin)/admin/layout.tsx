@@ -19,7 +19,7 @@ export default async function AdminLayout({
       <Sidebar userRole={session.role} />
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader user={session} />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 pt-0">
           {children}
         </main>
       </div>

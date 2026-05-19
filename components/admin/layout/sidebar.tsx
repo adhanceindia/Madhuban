@@ -32,35 +32,35 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: 'Operations',
     items: [
-      { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} />, module: 'dashboard' },
-      { label: 'Bookings', href: '/admin/bookings', icon: <ClipboardList size={20} />, module: 'bookings' },
-      { label: 'Front Desk', href: '/admin/front-desk', icon: <ConciergeBell size={20} />, module: 'front-desk' },
-      { label: 'Calendar', href: '/admin/calendar', icon: <Calendar size={20} />, module: 'calendar' },
-      { label: 'Rooms', href: '/admin/rooms', icon: <BedDouble size={20} />, module: 'rooms' },
+      { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={18} />, module: 'dashboard' },
+      { label: 'Bookings', href: '/admin/bookings', icon: <ClipboardList size={18} />, module: 'bookings' },
+      { label: 'Front Desk', href: '/admin/front-desk', icon: <ConciergeBell size={18} />, module: 'front-desk' },
+      { label: 'Calendar', href: '/admin/calendar', icon: <Calendar size={18} />, module: 'calendar' },
+      { label: 'Rooms', href: '/admin/rooms', icon: <BedDouble size={18} />, module: 'rooms' },
     ],
   },
   {
     label: 'Content',
     items: [
-      { label: 'Gallery', href: '/admin/gallery', icon: <Image size={20} />, module: 'gallery' },
-      { label: 'Reviews', href: '/admin/reviews', icon: <Star size={20} />, module: 'reviews' },
-      { label: 'Inquiries', href: '/admin/inquiries', icon: <Inbox size={20} />, module: 'inquiries' },
-      { label: 'Pages', href: '/admin/content', icon: <FileText size={20} />, module: 'content' },
+      { label: 'Gallery', href: '/admin/gallery', icon: <Image size={18} />, module: 'gallery' },
+      { label: 'Reviews', href: '/admin/reviews', icon: <Star size={18} />, module: 'reviews' },
+      { label: 'Inquiries', href: '/admin/inquiries', icon: <Inbox size={18} />, module: 'inquiries' },
+      { label: 'Pages', href: '/admin/content', icon: <FileText size={18} />, module: 'content' },
     ],
   },
   {
     label: 'Insights',
     items: [
-      { label: 'Channel Manager', href: '/admin/channel-manager', icon: <Radio size={20} />, module: 'channel-manager' },
-      { label: 'Analytics', href: '/admin/analytics', icon: <BarChart3 size={20} />, module: 'analytics' },
-      { label: 'Audit Log', href: '/admin/audit-log', icon: <ScrollText size={20} />, module: 'audit-log' },
+      { label: 'Channel Manager', href: '/admin/channel-manager', icon: <Radio size={18} />, module: 'channel-manager' },
+      { label: 'Analytics', href: '/admin/analytics', icon: <BarChart3 size={18} />, module: 'analytics' },
+      { label: 'Audit Log', href: '/admin/audit-log', icon: <ScrollText size={18} />, module: 'audit-log' },
     ],
   },
   {
     label: 'System',
     items: [
-      { label: 'Users', href: '/admin/users', icon: <Users size={20} />, module: 'users' },
-      { label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, module: 'settings' },
+      { label: 'Users', href: '/admin/users', icon: <Users size={18} />, module: 'users' },
+      { label: 'Settings', href: '/admin/settings', icon: <Settings size={18} />, module: 'settings' },
     ],
   },
 ]
@@ -69,24 +69,24 @@ export function Sidebar({ userRole }: { userRole: UserRole }) {
   const pathname = usePathname()
 
   return (
-    <aside className="w-[260px] h-screen sticky top-0 border-r border-border bg-white flex flex-col">
-      <div className="h-16 flex items-center px-5 border-b border-border">
+    <aside className="w-[220px] h-screen sticky top-0 bg-sidebar flex flex-col">
+      <div className="h-16 flex items-center px-5">
         <Link href="/admin" className="flex items-center gap-2 no-underline">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-sm">M</span>
+          <div className="w-7 h-7 rounded-md bg-accent flex items-center justify-center">
+            <span className="text-foreground font-bold text-[13px] font-admin">M</span>
           </div>
-          <span className="font-display font-bold text-foreground text-[15px]">Madhuban</span>
+          <span className="font-admin font-bold text-foreground text-[15px] tracking-tight">Madhuban</span>
         </Link>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4 px-3">
+      <nav className="flex-1 overflow-y-auto px-3 py-2 font-admin">
         {navGroups.map((group) => {
           const visibleItems = group.items.filter((item) => canAccess(userRole, item.module))
           if (visibleItems.length === 0) return null
 
           return (
-            <div key={group.label} className="mb-6">
-              <div className="px-3 mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+            <div key={group.label} className="mb-5">
+              <div className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
                 {group.label}
               </div>
               <div className="space-y-0.5">
@@ -96,13 +96,15 @@ export function Sidebar({ userRole }: { userRole: UserRole }) {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium no-underline transition-colors ${
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] no-underline transition-colors ${
                         isActive
-                          ? 'bg-primary-light text-primary font-semibold'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                          ? 'bg-accent text-foreground font-semibold shadow-sm'
+                          : 'text-muted-foreground hover:bg-sage-soft hover:text-foreground font-medium'
                       }`}
                     >
-                      {item.icon}
+                      <span className={isActive ? 'text-foreground' : 'text-muted-foreground'}>
+                        {item.icon}
+                      </span>
                       {item.label}
                     </Link>
                   )
@@ -112,6 +114,10 @@ export function Sidebar({ userRole }: { userRole: UserRole }) {
           )
         })}
       </nav>
+
+      <div className="px-4 py-4 text-[11px] text-muted-foreground/60 font-admin">
+        Madhuban Garden &middot; v1.0
+      </div>
     </aside>
   )
 }
