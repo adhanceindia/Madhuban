@@ -19,7 +19,7 @@ import {
   Settings,
 } from 'lucide-react'
 import type { UserRole } from '@/db/schema/users'
-import { canAccess } from '@/lib/auth'
+import { canAccess } from '@/lib/permissions'
 
 type NavItem = {
   label: string

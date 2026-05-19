@@ -12,7 +12,7 @@ import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import { weddingPage } from '@/lib/page-content'
 import { formatDateInput } from '@/lib/room-helpers'
-import type { SiteContent } from '@/lib/types'
+import { getHeroImage, getHeroAlt, type SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 const easing = [0.22, 1, 0.36, 1] as const
@@ -139,8 +139,8 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
       >
         <div className="absolute inset-0">
           <Image
-            src={weddingPage.hero.image}
-            alt="Wedding venue lawn and floral ceremony setup at Madhuban Garden Resort"
+            src={getHeroImage(siteContent, 'wedding', weddingPage.hero.image)}
+            alt={getHeroAlt(siteContent, 'wedding', 'Wedding venue lawn and floral ceremony setup at Madhuban Garden Resort')}
             fill
             priority
             sizes="100vw"

@@ -16,7 +16,7 @@ import {
   services,
   weddingFeature,
 } from '@/lib/page-content'
-import type { RoomData, ReviewData, SiteContent } from '@/lib/types'
+import { getHeroImage, getHeroAlt, type RoomData, type ReviewData, type SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 const instagramPhotos = [
@@ -101,8 +101,8 @@ export function HomePageView({ featuredRooms, reviews, siteContent }: HomePageVi
       >
         <div className="absolute inset-0">
           <Image
-            src={homeHero.image}
-            alt="Lush garden resort landscape at Madhuban Garden Resort"
+            src={getHeroImage(siteContent, 'home', homeHero.image)}
+            alt={getHeroAlt(siteContent, 'home', 'Lush garden resort landscape at Madhuban Garden Resort')}
             fill
             priority
             sizes="100vw"

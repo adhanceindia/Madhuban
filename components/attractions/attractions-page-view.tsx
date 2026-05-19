@@ -11,9 +11,10 @@ import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import { attractions, attractionsPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
+import { getHeroImage, type SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-export function AttractionsPageView() {
+export function AttractionsPageView({ siteContent }: { siteContent: SiteContent }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
 
@@ -21,6 +22,7 @@ export function AttractionsPageView() {
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={attractionsPage.hero}
+        imageOverride={getHeroImage(siteContent, 'attractions', '')}
         minHeightClassName="min-h-[68svh]"
         imageAlt="Nearby attractions and travel mood around Madhuban Garden Resort"
       >

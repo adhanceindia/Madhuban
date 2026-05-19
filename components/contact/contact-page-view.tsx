@@ -12,7 +12,7 @@ import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import { contactPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
-import type { SiteContent } from '@/lib/types'
+import { getHeroImage, type SiteContent } from '@/lib/types'
 
 type ContactFormState = {
   name: string
@@ -98,6 +98,7 @@ export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={contactPage.hero}
+        imageOverride={getHeroImage(siteContent, 'contact', '')}
         minHeightClassName="min-h-[68svh]"
         imageAlt="Madhuban Garden Resort exterior and lush grounds"
       >

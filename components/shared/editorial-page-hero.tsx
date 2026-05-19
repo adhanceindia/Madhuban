@@ -11,12 +11,14 @@ import { cn } from '@/lib/utils'
 export function EditorialPageHero({
   hero,
   imageAlt,
+  imageOverride,
   children,
   className,
   minHeightClassName,
 }: {
   hero: RouteHero
   imageAlt?: string
+  imageOverride?: string
   children?: ReactNode
   className?: string
   minHeightClassName?: string
@@ -37,7 +39,7 @@ export function EditorialPageHero({
     >
       <div className="absolute inset-0">
         <Image
-          src={hero.image}
+          src={imageOverride || hero.image}
           alt={imageAlt ?? hero.title}
           fill
           priority

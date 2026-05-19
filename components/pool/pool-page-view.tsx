@@ -11,8 +11,9 @@ import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import { poolPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
+import { getHeroImage, type SiteContent } from '@/lib/types'
 
-export function PoolPageView() {
+export function PoolPageView({ siteContent }: { siteContent: SiteContent }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
 
@@ -20,6 +21,7 @@ export function PoolPageView() {
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={poolPage.hero}
+        imageOverride={getHeroImage(siteContent, 'pool', '')}
         minHeightClassName="min-h-[68svh]"
         imageAlt="Swimming pool and leisure area at Madhuban Garden Resort"
       >

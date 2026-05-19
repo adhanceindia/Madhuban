@@ -11,8 +11,9 @@ import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import { eventsPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
+import { getHeroImage, type SiteContent } from '@/lib/types'
 
-export function EventsPageView() {
+export function EventsPageView({ siteContent }: { siteContent: SiteContent }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -21,6 +22,7 @@ export function EventsPageView() {
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={eventsPage.hero}
+        imageOverride={getHeroImage(siteContent, 'events', '')}
         minHeightClassName="min-h-[70svh]"
         imageAlt="Event celebration setup at Madhuban Garden Resort"
       >

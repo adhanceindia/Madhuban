@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog'
 import { galleryPage, type GalleryCategory } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
-import type { GalleryItemData } from '@/lib/types'
+import { getHeroImage, type GalleryItemData, type SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 type GalleryFilter = 'all' | GalleryCategory
@@ -34,7 +34,7 @@ function formatCategory(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
-export function GalleryPageView({ galleryItems }: { galleryItems: GalleryItemData[] }) {
+export function GalleryPageView({ galleryItems, siteContent }: { galleryItems: GalleryItemData[]; siteContent: SiteContent }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -113,6 +113,7 @@ export function GalleryPageView({ galleryItems }: { galleryItems: GalleryItemDat
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={galleryPage.hero}
+        imageOverride={getHeroImage(siteContent, 'gallery', '')}
         minHeightClassName="min-h-[66svh]"
         imageAlt="Gallery collage of Madhuban Garden Resort spaces"
       >

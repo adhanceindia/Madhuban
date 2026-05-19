@@ -12,8 +12,9 @@ import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
 import { banquetPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
+import { getHeroImage, type SiteContent } from '@/lib/types'
 
-export function BanquetPageView() {
+export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -22,6 +23,7 @@ export function BanquetPageView() {
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={banquetPage.hero}
+        imageOverride={getHeroImage(siteContent, 'banquet', '')}
         minHeightClassName="min-h-[72svh]"
         imageAlt="Banquet hall at Madhuban Garden Resort"
       >
