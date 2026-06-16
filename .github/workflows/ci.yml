@@ -22,7 +22,7 @@ jobs:
       - run: npm audit --audit-level=high
   codeql:
     runs-on: ubuntu-latest
-    permissions: { security-events: write, contents: read }
+    permissions: { actions: read, security-events: write, contents: read }
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v3

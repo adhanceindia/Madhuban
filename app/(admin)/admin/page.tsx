@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { CalendarRange } from 'lucide-react'
 
 import { KPICards } from '@/components/admin/dashboard/kpi-cards'
@@ -217,12 +218,12 @@ export default function DashboardPage() {
                     {data.pending_inquiries}
                   </div>
                 </div>
-                <a
+                <Link
                   href="/admin/inquiries"
                   className="text-[12px] font-semibold text-foreground bg-accent hover:bg-accent-deep px-3 py-1.5 rounded-md no-underline transition-colors"
                 >
                   Review
-                </a>
+                </Link>
               </div>
             </div>
           </div>
