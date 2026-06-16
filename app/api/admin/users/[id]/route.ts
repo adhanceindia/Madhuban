@@ -1,6 +1,6 @@
 import { apiHandler } from '@/lib/api-handler'
 import { getStaffUserById } from '@/db/queries/users-admin'
-import { updateStaffUser, deleteStaffUser, countActiveSuperAdmins } from '@/lib/admin-users'
+import { updateStaffUser, deleteStaffUser, countActiveSuperAdmins, signOutAllSessions } from '@/lib/admin-users'
 import { userUpdateSchema } from '@/lib/schemas/users'
 import { logAudit } from '@/lib/audit'
 
@@ -39,6 +39,16 @@ export const PATCH = apiHandler({
     }
 
     const updated = await updateStaffUser(userId, body)
+
+    // Revoke all of the target user's sessions when they are deactivated or
+    // their role changes, so a disabled/downgraded account can't keep acting
+    // on a still-valid JWT until natural expiry.
+    const roleChanged = body.role !== undefined && body.role !== existing.role
+    const deactivated = body.is_active === false
+    if (roleChanged || deactivated) {
+      await signOutAllSessions(existing.auth_id)
+    }
+
     await logAudit({
       user_id: session.id,
       action: 'user.updated',

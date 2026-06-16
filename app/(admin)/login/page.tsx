@@ -1,8 +1,8 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   return (
@@ -25,14 +25,15 @@ function LoginForm() {
     setError('')
     setLoading(true)
 
-    const supabase = createSupabaseBrowserClient()
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     })
 
-    if (authError) {
-      setError('Invalid email or password')
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setError(data.error || 'Invalid email or password')
       setLoading(false)
       return
     }
@@ -98,6 +99,15 @@ function LoginForm() {
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+
+          <div className="text-center">
+            <Link
+              href="/reset-password"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </form>
       </div>
     </div>

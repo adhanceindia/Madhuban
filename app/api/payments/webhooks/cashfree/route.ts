@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
           gateway_order_id: data.order.order_id,
           gateway_payment_id: String(data.payment.cf_payment_id),
           gateway_name: 'cashfree',
+          paid_amount_inr: Number(data.order.order_amount),
         })
         break
       }

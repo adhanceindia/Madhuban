@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
           gateway_order_id: payment.order_id,
           gateway_payment_id: payment.id,
           gateway_name: 'razorpay',
+          paid_amount_inr: payment.amount / 100,
         })
         break
       }

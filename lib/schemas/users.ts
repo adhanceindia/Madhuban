@@ -9,9 +9,17 @@ const roleEnum = z.enum([
   'content_manager',
 ])
 
+export const strongPassword = z
+  .string()
+  .min(12, 'Use at least 12 characters')
+  .regex(/[a-z]/, 'Include a lowercase letter')
+  .regex(/[A-Z]/, 'Include an uppercase letter')
+  .regex(/[0-9]/, 'Include a number')
+  .regex(/[^A-Za-z0-9]/, 'Include a symbol')
+
 export const userCreateSchema = z.object({
   email: z.string().email('Enter a valid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: strongPassword,
   name: z.string().min(1, 'Name is required'),
   role: roleEnum,
 })
@@ -23,7 +31,7 @@ export const userUpdateSchema = z.object({
 })
 
 export const passwordResetSchema = z.object({
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: strongPassword,
 })
 
 export type UserCreateInput = z.infer<typeof userCreateSchema>

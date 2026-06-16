@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LogOut, ChevronDown } from 'lucide-react'
+import { LogOut, ChevronDown, User } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 import type { SessionUser } from '@/lib/auth'
 
@@ -48,6 +49,15 @@ export function UserMenu({ user }: { user: SessionUser }) {
 
       {open && (
         <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-border rounded-lg shadow-md py-1 z-50">
+          <Link
+            href="/admin/account"
+            onClick={() => setOpen(false)}
+            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors text-left"
+          >
+            <User size={16} />
+            My Account
+          </Link>
+          <div className="my-1 h-px bg-border" />
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-muted transition-colors border-none bg-transparent cursor-pointer text-left"

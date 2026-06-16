@@ -56,6 +56,15 @@ export function apiHandler<TBody = unknown, TParams = Record<string, string>, TR
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
 
+      // 1b. CSRF: same-origin enforcement for state-changing methods
+      if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
+        const origin = request.headers.get('origin')
+        const host = request.headers.get('host')
+        if (origin && new URL(origin).host !== host) {
+          return NextResponse.json({ error: 'Cross-origin request blocked' }, { status: 403 })
+        }
+      }
+
       // 2. RBAC — module-based check
       if (options.module && !canAccess(session.role, options.module)) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })

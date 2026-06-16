@@ -7,6 +7,31 @@ import { PhonePeGateway } from './phonepe'
 import { CashfreeGateway } from './cashfree'
 import { CCavenueGateway } from './ccavenue'
 import { PayUGateway } from './payu'
+import { decryptSecret } from '@/lib/crypto'
+
+// Credential fields that are stored encrypted at rest and must be decrypted
+// before being handed to a gateway adapter. decryptSecret() returns the input
+// unchanged for legacy plaintext values, so this stays backward-compatible.
+const SECRET_FIELDS = [
+  'razorpay_key_secret',
+  'razorpay_webhook_secret',
+  'phonepe_client_secret',
+  'phonepe_webhook_password',
+  'cashfree_secret_key',
+  'ccavenue_working_key',
+  'payu_merchant_salt',
+] as const
+
+function decryptConfigSecrets(cfg: PaymentConfigData): PaymentConfigData {
+  const out = { ...(cfg as unknown as Record<string, unknown>) }
+  for (const field of SECRET_FIELDS) {
+    const value = out[field]
+    if (typeof value === 'string' && value.length > 0) {
+      out[field] = decryptSecret(value)
+    }
+  }
+  return out as unknown as PaymentConfigData
+}
 
 export async function getPaymentConfig(): Promise<PaymentConfigData> {
   const db = getDb()
@@ -15,10 +40,10 @@ export async function getPaymentConfig(): Promise<PaymentConfigData> {
     throw new Error('Payment config not found. Please configure in admin settings.')
   }
   const gateways = (row.gateways as Record<string, unknown>) || {}
-  return {
+  return decryptConfigSecrets({
     active_gateway: row.active_gateway,
     ...gateways,
-  } as PaymentConfigData
+  } as PaymentConfigData)
 }
 
 const REQUIRED_FIELDS: Record<GatewayName, string[]> = {

@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
           gateway_order_id: payload.merchantOrderId,
           gateway_payment_id: payload.orderId || payload.merchantOrderId,
           gateway_name: 'phonepe',
+          paid_amount_inr: payload.amount / 100,
         })
         break
       }

@@ -4,6 +4,7 @@ import { getDb } from '@/db/client'
 import { bookings, blockedDates, rooms } from '@/db/schema'
 import { and, eq, lt, gt, gte, inArray } from 'drizzle-orm'
 import { getRedis } from '@/lib/redis'
+import { clientIp, isRateLimited } from '@/lib/rate-limit'
 
 const querySchema = z.object({
   room_id: z.string().min(1, 'room_id is required'),
@@ -23,6 +24,10 @@ const querySchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    if (await isRateLimited(`rl:availability:${clientIp(request)}`, 60, 3600)) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
+    }
+
     const { searchParams } = request.nextUrl
     const raw = {
       room_id: searchParams.get('room_id') ?? '',

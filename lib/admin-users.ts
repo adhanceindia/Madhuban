@@ -117,6 +117,20 @@ export async function deleteStaffUser(id: number): Promise<boolean> {
   return result.length > 0
 }
 
+/**
+ * Revoke all active sessions for a Supabase Auth user (e.g. on deactivation or
+ * role change). Best-effort: failures are swallowed because per-request
+ * getSession() already re-checks is_active/role, so this is defense-in-depth.
+ */
+export async function signOutAllSessions(authId: string): Promise<void> {
+  const admin = getAdminClient()
+  try {
+    await admin.auth.admin.signOut(authId, 'global')
+  } catch {
+    // best-effort
+  }
+}
+
 export async function countActiveSuperAdmins(): Promise<number> {
   const db = getDb()
   const [{ value }] = await db
