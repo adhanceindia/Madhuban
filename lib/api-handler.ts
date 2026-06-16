@@ -39,12 +39,16 @@ type HandlerOptions<TBody, TParams, TResult> = {
   handler: (args: HandlerArgs<TBody, TParams>) => Promise<TResult>
 }
 
-type NextContext<TParams> = { params: Promise<TParams> }
+// Mirrors the `RouteContext` type Next.js generates and type-checks route
+// handlers against. Params are cast to the handler's TParams internally.
+type NextRouteContext = {
+  params: Promise<Record<string, string | string[] | undefined>>
+}
 
 export function apiHandler<TBody = unknown, TParams = Record<string, string>, TResult = unknown>(
   options: HandlerOptions<TBody, TParams, TResult>,
 ) {
-  return async (request: NextRequest, ctx?: NextContext<TParams>) => {
+  return async (request: NextRequest, ctx: NextRouteContext): Promise<NextResponse> => {
     try {
       // 1. Session check
       const session = await getSession()
@@ -63,7 +67,7 @@ export function apiHandler<TBody = unknown, TParams = Record<string, string>, TR
       }
 
       // 4. Resolve params
-      const params = ctx ? await ctx.params : ({} as TParams)
+      const params = ((await ctx?.params) ?? {}) as unknown as TParams
       const searchParams = request.nextUrl.searchParams
 
       // 5. Validate body (when applicable)
