@@ -9,7 +9,7 @@ import {
   ClipboardList,
   ConciergeBell,
   Radio,
-  Image,
+  Image as ImageIcon,
   Star,
   Inbox,
   FileText,
@@ -42,7 +42,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: 'Content',
     items: [
-      { label: 'Gallery', href: '/admin/gallery', icon: <Image size={18} />, module: 'gallery' },
+      { label: 'Gallery', href: '/admin/gallery', icon: <ImageIcon size={18} />, module: 'gallery' },
       { label: 'Reviews', href: '/admin/reviews', icon: <Star size={18} />, module: 'reviews' },
       { label: 'Inquiries', href: '/admin/inquiries', icon: <Inbox size={18} />, module: 'inquiries' },
       { label: 'Pages', href: '/admin/content', icon: <FileText size={18} />, module: 'content' },

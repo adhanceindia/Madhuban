@@ -17,7 +17,6 @@ type PaymentConfig = {
 }
 
 export function PaymentConfigForm() {
-  const [config, setConfig] = useState<PaymentConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [activeGateway, setActiveGateway] = useState<GatewayKey>('razorpay')
@@ -30,7 +29,6 @@ export function PaymentConfigForm() {
       .then((r) => r.json())
       .then((d) => {
         const cfg: PaymentConfig = d.config
-        setConfig(cfg)
         setActiveGateway(cfg.active_gateway)
         setGatewayFields(
           Object.fromEntries(
@@ -74,7 +72,6 @@ export function PaymentConfigForm() {
         return
       }
       toast.success('Payment settings updated')
-      setConfig(data.config)
     } finally {
       setSaving(false)
     }

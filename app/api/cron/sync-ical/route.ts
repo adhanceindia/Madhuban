@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { getDb } from '@/db/client'
 import { rooms, blockedDates, siteContent } from '@/db/schema'
-import { and, eq, inArray, notInArray, isNotNull } from 'drizzle-orm'
+import { and, eq, notInArray, isNotNull } from 'drizzle-orm'
 import { getRedis } from '@/lib/redis'
 
 export const dynamic = 'force-dynamic'
@@ -95,7 +95,7 @@ async function syncFeed(
   return { source, synced, removed }
 }
 
-async function handler(_request: NextRequest) {
+async function handler() {
   try {
     const db = getDb()
 

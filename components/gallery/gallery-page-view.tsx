@@ -46,7 +46,7 @@ export function GalleryPageView({ galleryItems, siteContent }: { galleryItems: G
       activeFilter === 'all'
         ? galleryItems
         : galleryItems.filter((item) => item.category === activeFilter),
-    [activeFilter],
+    [activeFilter, galleryItems],
   )
 
   const selectedItem =

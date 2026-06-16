@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Image as ImageIcon, Upload, Trash2, GripVertical, X } from 'lucide-react'
+import { Image as ImageIcon, Upload, Trash2, GripVertical } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { PageHeader } from '@/components/admin/shared/page-header'
