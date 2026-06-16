@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 type Props = {
-  searchParams: Promise<{ gateway?: string; order_id?: string; status?: string }>
+  searchParams: Promise<{ gateway?: string; order_id?: string; status?: string; verify?: string }>
 }
 
 export default async function BookingStatusPage({ searchParams }: Props) {
@@ -31,13 +31,71 @@ export default async function BookingStatusPage({ searchParams }: Props) {
         .limit(1)
 
       if (row) {
-        booking = row
-        const [room] = await db.select().from(rooms).where(eq(rooms.id, row.room_id)).limit(1)
-        if (room) roomName = room.name
+        const v = (params.verify || '').trim().toLowerCase()
+        const phoneLast4 = (row.guest_phone || '').slice(-4)
+        const ownsIt =
+          v.length > 0 && (v === (row.guest_email || '').toLowerCase() || v === phoneLast4)
+        if (ownsIt) {
+          booking = row
+          const [room] = await db.select().from(rooms).where(eq(rooms.id, row.room_id)).limit(1)
+          if (room) roomName = room.name
+        }
       }
     } catch {
       // fall through — show generic status
     }
+  }
+
+  // Ownership not yet proven for a known order — prompt the visitor to verify
+  // before exposing any booking details (prevents PII enumeration by order_id).
+  const needsVerify = Boolean(order_id) && !booking
+
+  if (needsVerify) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md">
+          <div className="rounded-card border border-card-accent/80 bg-warm-cream p-8 shadow-[0_24px_65px_rgba(53,102,9,0.08)]">
+            <div className="inline-flex size-14 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+              <Clock className="size-7" />
+            </div>
+
+            <h1 className="mt-5 font-display text-3xl italic text-foreground">Verify Your Booking</h1>
+
+            <p className="mt-4 text-sm leading-7 text-foreground/70">
+              For your privacy, please confirm your identity to view this booking. Enter the email
+              address or the last 4 digits of the phone number used when booking.
+            </p>
+
+            <form method="get" className="mt-6 space-y-4">
+              <input type="hidden" name="order_id" value={order_id} />
+              <div>
+                <label
+                  htmlFor="verify"
+                  className="text-xs font-semibold uppercase tracking-label text-foreground/60"
+                >
+                  Email or last 4 digits of phone
+                </label>
+                <input
+                  id="verify"
+                  name="verify"
+                  type="text"
+                  required
+                  autoComplete="off"
+                  placeholder="you@example.com or 1234"
+                  className="mt-2 block w-full rounded-card-inner border border-card-accent/80 bg-warm-sand px-4 py-3 text-sm text-foreground outline-none focus:border-primary"
+                />
+              </div>
+              <button
+                type="submit"
+                className="inline-flex h-auto w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-xs font-semibold uppercase tracking-label text-white hover:bg-primary-600"
+              >
+                View Booking Status
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const paymentStatus = booking?.payment_status || statusParam || 'pending'

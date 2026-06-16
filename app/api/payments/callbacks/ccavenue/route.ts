@@ -32,12 +32,14 @@ export async function POST(request: NextRequest) {
     const orderStatus = params.get('order_status') || ''
     const orderId = params.get('order_id') || params.get('merchant_param1') || ''
     const trackingId = params.get('tracking_id') || ''
+    const amount = params.get('amount') || ''
 
     if (orderStatus === 'Success') {
       await confirmBookingPayment({
         gateway_order_id: orderId,
         gateway_payment_id: trackingId,
         gateway_name: 'ccavenue',
+        paid_amount_inr: Number(amount),
       })
       return redirectToStatus(request, orderId, 'success')
     } else {

@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
         gateway_order_id: txnid,
         gateway_payment_id: mihpayid,
         gateway_name: 'payu',
+        paid_amount_inr: Number(amount),
       })
       return redirectToStatus(request, txnid, 'success')
     } else {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import crypto from 'node:crypto'
 import { getSession } from '@/lib/auth'
 
 /**
@@ -33,22 +34,39 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'File exceeds 20 MB limit' }, { status: 413 })
   }
 
-  const fileName = (file as File).name || 'upload.bin'
-  const safeName = fileName
-    .toLowerCase()
-    .replace(/[^a-z0-9.\-]/g, '-')
-    .replace(/-+/g, '-')
-  const path = `${folder}/${Date.now()}-${safeName}`
+  const ALLOWED = {
+    'image/jpeg': { ext: 'jpg', magic: [[0xff, 0xd8, 0xff]] },
+    'image/png': { ext: 'png', magic: [[0x89, 0x50, 0x4e, 0x47]] },
+    'image/webp': { ext: 'webp', magic: [[0x52, 0x49, 0x46, 0x46]] }, // RIFF
+    'image/gif': { ext: 'gif', magic: [[0x47, 0x49, 0x46, 0x38]] },
+    'video/mp4': { ext: 'mp4', magic: [[0x66, 0x74, 0x79, 0x70]] }, // 'ftyp' at offset 4
+  } as const
+
+  const declared = (file as File).type
+  const spec = ALLOWED[declared as keyof typeof ALLOWED]
+  if (!spec) {
+    return NextResponse.json({ error: 'Unsupported file type' }, { status: 415 })
+  }
+
+  const arrayBuffer = await (file as Blob).arrayBuffer()
+  const bytes = new Uint8Array(arrayBuffer)
+  const offset = declared === 'video/mp4' ? 4 : 0
+  const magicOk = spec.magic.some((sig) => sig.every((b, i) => bytes[offset + i] === b))
+  if (!magicOk) {
+    return NextResponse.json({ error: 'File content does not match its type' }, { status: 415 })
+  }
+
+  const safeFolder = folder.replace(/[^a-z0-9/_-]/gi, '').replace(/\.\.+/g, '') || 'uploads'
+  const path = `${safeFolder}/${crypto.randomUUID()}.${spec.ext}`
 
   const supabase = createClient(url, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   })
 
-  const arrayBuffer = await file.arrayBuffer()
   const { error: uploadError } = await supabase.storage
     .from(bucket)
     .upload(path, arrayBuffer, {
-      contentType: file.type || 'application/octet-stream',
+      contentType: declared,
       cacheControl: '31536000',
       upsert: false,
     })

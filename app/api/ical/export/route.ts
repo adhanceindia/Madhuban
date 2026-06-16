@@ -5,6 +5,11 @@ import { and, eq } from 'drizzle-orm'
 import ical, { ICalCalendarMethod } from 'ical-generator'
 
 export async function GET(request: NextRequest) {
+  const token = request.nextUrl.searchParams.get('token')
+  if (!process.env.ICAL_EXPORT_TOKEN || token !== process.env.ICAL_EXPORT_TOKEN) {
+    return new Response('Not found', { status: 404 })
+  }
+
   try {
     const db = getDb()
     const { searchParams } = request.nextUrl

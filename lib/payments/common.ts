@@ -8,6 +8,7 @@ export async function confirmBookingPayment(opts: {
   gateway_order_id: string
   gateway_payment_id: string
   gateway_name: string
+  paid_amount_inr?: number // captured amount in rupees
 }) {
   const db = getDb()
 
@@ -24,6 +25,20 @@ export async function confirmBookingPayment(opts: {
 
   if (booking.payment_status === 'paid') {
     return booking
+  }
+
+  if (
+    opts.paid_amount_inr != null &&
+    Math.round(opts.paid_amount_inr) !== Math.round(booking.total_amount || 0)
+  ) {
+    console.error(
+      `[payments] AMOUNT MISMATCH order=${opts.gateway_order_id} expected=${booking.total_amount} got=${opts.paid_amount_inr}`,
+    )
+    await db
+      .update(bookings)
+      .set({ payment_status: 'failed' })
+      .where(eq(bookings.id, booking.id))
+    return null
   }
 
   await db

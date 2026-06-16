@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { escapeHtml, stripHeader } from '@/lib/sanitize'
 
 // ---------------------------------------------------------------------------
 // Resend client (lazy — avoids crash when RESEND_API_KEY isn't set at build)
@@ -85,7 +86,7 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData) {
 
       <div style="padding: 32px 24px;">
         <p style="color: #333; font-size: 16px; margin: 0 0 24px;">
-          Dear <strong>${guest_name}</strong>,<br/>
+          Dear <strong>${escapeHtml(guest_name)}</strong>,<br/>
           Thank you for choosing Madhuban Garden Resort. Your booking has been confirmed.
         </p>
 
@@ -97,7 +98,7 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData) {
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: 600; color: #333;">Room</td>
-              <td style="padding: 8px 0; text-align: right;">${room_name}</td>
+              <td style="padding: 8px 0; text-align: right;">${escapeHtml(room_name)}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: 600; color: #333;">Check-in</td>
@@ -150,7 +151,7 @@ export async function sendBookingConfirmationEmail(data: BookingEmailData) {
   const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
     to: guest_email,
-    subject: `Booking Confirmed — ${room_name} | Madhuban Garden Resort`,
+    subject: `Booking Confirmed — ${stripHeader(room_name)} | Madhuban Garden Resort`,
     html,
   })
 
@@ -187,7 +188,7 @@ export async function adminInquiryNotification(inquiry: InquiryEmailData) {
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background: #fffdf8; border: 1px solid #e8e4da; border-radius: 16px; overflow: hidden;">
       <div style="background: #386a0e; padding: 32px 24px; text-align: center;">
-        <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">New ${eventLabel} Inquiry</h1>
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">New ${escapeHtml(eventLabel)} Inquiry</h1>
         <p style="color: #c0dd97; margin: 8px 0 0; font-size: 14px;">Madhuban Garden Resort</p>
       </div>
 
@@ -196,19 +197,19 @@ export async function adminInquiryNotification(inquiry: InquiryEmailData) {
           <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #555;">
             <tr>
               <td style="padding: 8px 0; font-weight: 600; color: #333;">Name</td>
-              <td style="padding: 8px 0; text-align: right;">${inquiry.name}</td>
+              <td style="padding: 8px 0; text-align: right;">${escapeHtml(inquiry.name)}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: 600; color: #333;">Phone</td>
-              <td style="padding: 8px 0; text-align: right;"><a href="tel:+91${inquiry.phone}" style="color: #386a0e;">${inquiry.phone}</a></td>
+              <td style="padding: 8px 0; text-align: right;"><a href="tel:+91${escapeHtml(inquiry.phone)}" style="color: #386a0e;">${escapeHtml(inquiry.phone)}</a></td>
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: 600; color: #333;">Email</td>
-              <td style="padding: 8px 0; text-align: right;"><a href="mailto:${inquiry.email}" style="color: #386a0e;">${inquiry.email}</a></td>
+              <td style="padding: 8px 0; text-align: right;"><a href="mailto:${escapeHtml(inquiry.email)}" style="color: #386a0e;">${escapeHtml(inquiry.email)}</a></td>
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: 600; color: #333;">Event Type</td>
-              <td style="padding: 8px 0; text-align: right;">${eventLabel}</td>
+              <td style="padding: 8px 0; text-align: right;">${escapeHtml(eventLabel)}</td>
             </tr>
             ${inquiry.event_date ? `<tr><td style="padding: 8px 0; font-weight: 600; color: #333;">Event Date</td><td style="padding: 8px 0; text-align: right;">${formatDate(inquiry.event_date)}</td></tr>` : ''}
             ${inquiry.guests_count ? `<tr><td style="padding: 8px 0; font-weight: 600; color: #333;">Expected Guests</td><td style="padding: 8px 0; text-align: right;">${inquiry.guests_count}</td></tr>` : ''}
@@ -217,7 +218,7 @@ export async function adminInquiryNotification(inquiry: InquiryEmailData) {
 
         <div style="background: #fff4ee; border-radius: 12px; padding: 16px 20px;">
           <p style="margin: 0 0 4px; font-weight: 600; font-size: 13px; color: #333;">Message</p>
-          <p style="margin: 0; font-size: 14px; color: #555; white-space: pre-line;">${inquiry.message}</p>
+          <p style="margin: 0; font-size: 14px; color: #555; white-space: pre-line;">${escapeHtml(inquiry.message)}</p>
         </div>
       </div>
 
@@ -238,7 +239,7 @@ export async function adminInquiryNotification(inquiry: InquiryEmailData) {
   const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
     to: adminEmail,
-    subject: `New ${eventLabel} Inquiry from ${inquiry.name}`,
+    subject: `New ${stripHeader(eventLabel)} Inquiry from ${stripHeader(inquiry.name)}`,
     html,
   })
 
@@ -262,7 +263,7 @@ export async function guestInquiryAcknowledgement(inquiry: InquiryEmailData) {
 
       <div style="padding: 32px 24px;">
         <p style="color: #333; font-size: 16px; margin: 0 0 24px;">
-          Dear <strong>${inquiry.name}</strong>,<br/>
+          Dear <strong>${escapeHtml(inquiry.name)}</strong>,<br/>
           Thank you for reaching out to Madhuban Garden Resort. We've received your inquiry and our team will get back to you within 24 hours.
         </p>
 

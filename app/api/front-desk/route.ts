@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/db/client'
 import { rooms, bookings, blockedDates } from '@/db/schema'
 import { and, eq, lte, gte, asc, inArray } from 'drizzle-orm'
+import { getSession } from '@/lib/auth'
+import { canAccess } from '@/lib/permissions'
 
 export async function GET(request: NextRequest) {
+  const session = await getSession()
+  if (!session || !canAccess(session.role, 'front-desk')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   try {
     const db = getDb()
     const { searchParams } = request.nextUrl
