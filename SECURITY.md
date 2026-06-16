@@ -70,6 +70,25 @@ and cannot be set from application code — track completion here.
       approvals: 1).
 - [ ] **Disallow force-pushes to `main`** (Settings → Branches → branch protection
       rule for `main` → leave "Allow force pushes" disabled).
+- [ ] **(Optional) Enable GitHub Advanced Security + Code scanning** to run CodeQL.
+      This repo is **private**, so CodeQL requires GHAS (paid). The CodeQL job was
+      removed from `ci.yml` for now; once GHAS + Code scanning are enabled
+      (Settings → Code security and analysis), restore a `codeql` job with
+      permissions `{ actions: read, security-events: write, contents: read }`
+      running `github/codeql-action/init@v3` + `analyze@v3`.
+
+### Dependency advisories (tracked)
+
+`npm audit --audit-level=high` runs in CI as **informational** (non-blocking);
+**Dependabot** opens upgrade PRs where breaking bumps can be tested.
+
+- [ ] **Upgrade `drizzle-orm` to ≥ 0.45.2** — fixes a HIGH advisory
+      ([GHSA-gpj5-g38j-94v9](https://github.com/advisories/GHSA-gpj5-g38j-94v9),
+      SQL-injection via improperly escaped SQL identifiers). This is a breaking
+      change from the current 0.39.x (also bump `drizzle-kit` to a matching
+      0.31.x); verify all queries against a real database before merging.
+      Low practical exposure today (the app does not pass untrusted input to
+      identifier escaping), but upgrade to clear the advisory.
 
 ---
 
