@@ -533,8 +533,8 @@ export function HomePageView({ featuredRooms, reviews, siteContent }: HomePageVi
                 variants={itemVariants}
                 className="overflow-hidden rounded-card border border-white/60 bg-white shadow-[0_20px_55px_rgba(27,28,25,0.07)]"
               >
-                <div className="grid gap-0 md:grid-cols-[0.9fr_1.1fr]">
-                  <div className="relative aspect-[4/3] md:h-full md:min-h-[300px]">
+                <div className="flex flex-col md:flex-row h-full">
+                  <div className="relative aspect-[4/3] w-full shrink-0 md:w-2/5 md:aspect-auto md:min-h-[300px]">
                     <Image
                       src={attraction.image}
                       alt={attraction.name}
@@ -543,7 +543,7 @@ export function HomePageView({ featuredRooms, reviews, siteContent }: HomePageVi
                       className="object-cover"
                     />
                   </div>
-                  <div className="p-6 sm:p-8">
+                  <div className="flex flex-col justify-center p-6 sm:p-8 md:w-3/5">
                     <h3 className="text-3xl italic text-foreground">
                       {attraction.name}
                     </h3>

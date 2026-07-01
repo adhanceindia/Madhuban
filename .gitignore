@@ -61,3 +61,4 @@ public/favicon.ico.bak
 
 # ui design reference files
 UI design/
+.env*

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { Upload, X, Image as ImageIcon, GripVertical } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { MediaLibraryModal } from './media-library-modal'
 
 type ImageUploaderProps = {
   /** Currently uploaded image URLs */
@@ -31,6 +32,7 @@ export function ImageUploader({
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const [reorderIndex, setReorderIndex] = useState<number | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
 
   async function handleFiles(files: FileList | File[]) {
     const fileArray = Array.from(files)
@@ -120,31 +122,13 @@ export function ImageUploader({
         {value.length < maxImages && (
           <button
             type="button"
-            onClick={() => inputRef.current?.click()}
-            onDragEnter={() => setDragOver(true)}
-            onDragLeave={() => setDragOver(false)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault()
-              setDragOver(false)
-              if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
-            }}
-            disabled={uploading}
-            className={`aspect-video rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors ${
-              dragOver
-                ? 'border-accent-deep bg-accent-soft text-foreground'
-                : 'border-border bg-sage-soft/40 text-muted-foreground hover:border-accent-deep hover:bg-sage-soft'
-            } ${uploading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
+            onClick={() => setModalOpen(true)}
+            className="aspect-video rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors border-border bg-sage-soft/40 text-muted-foreground hover:border-accent-deep hover:bg-sage-soft cursor-pointer"
           >
-            {uploading ? (
-              <>
-                <Upload size={20} className="animate-pulse" />
-                <span className="text-[11px] font-medium">Uploading...</span>
-              </>
-            ) : value.length === 0 ? (
+            {value.length === 0 ? (
               <>
                 <ImageIcon size={20} />
-                <span className="text-[11px] font-medium">Drop or click to upload</span>
+                <span className="text-[11px] font-medium">Browse media library</span>
               </>
             ) : (
               <>
@@ -156,13 +140,16 @@ export function ImageUploader({
         )}
       </div>
 
-      <input
-        ref={inputRef}
-        type="file"
-        multiple={multiple}
-        accept={accept}
-        onChange={(e) => e.target.files && handleFiles(e.target.files)}
-        className="hidden"
+      <MediaLibraryModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onSelect={(url) => {
+          if (value.length + 1 > maxImages) {
+            toast.error(`Maximum ${maxImages} images`)
+            return
+          }
+          onChange([...value, url])
+        }}
       />
 
       <p className="text-[10px] text-muted-foreground">

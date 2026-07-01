@@ -7,7 +7,7 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://mercury.phonepe.com https://sdk.cashfree.com https://maps.googleapis.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co https://maps.gstatic.com https://maps.googleapis.com",
+  "img-src 'self' data: blob: https://images.unsplash.com https://*.supabase.co https://*.r2.dev https://maps.gstatic.com https://maps.googleapis.com",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://*.upstash.io https://api.razorpay.com https://api.cashfree.com https://maps.googleapis.com",
   "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com https://mercury.phonepe.com https://sdk.cashfree.com",
@@ -24,6 +24,7 @@ const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'geolocation=(), microphone=(), camera=(), payment=(self)' },
+  { key: 'Document-Policy', value: 'js-profiling' },
 ]
 
 const nextConfig = {
@@ -33,6 +34,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: '*.r2.dev' },
     ],
   },
   async headers() {
@@ -40,4 +42,13 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+import { withSentryConfig } from "@sentry/nextjs";
+
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  silent: !process.env.CI,
+});
