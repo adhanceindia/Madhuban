@@ -4,7 +4,7 @@
  * add an entry here — no UI changes required.
  */
 
-export type FieldType = 'text' | 'textarea' | 'image' | 'url' | 'repeater'
+export type FieldType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'repeater'
 
 export type FieldDef = {
   field: string
@@ -37,7 +37,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'hero_heading', label: 'Hero heading', type: 'text' },
           { field: 'tagline', label: 'Tagline', type: 'text' },
-          { field: 'hero_subtext', label: 'Hero subtext', type: 'textarea' },
+          { field: 'hero_subtext', label: 'Hero subtext', type: 'richtext' },
         ],
       },
       {
@@ -59,7 +59,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'banner_image', label: 'Banner image', type: 'image' },
           { field: 'page_heading', label: 'Heading', type: 'text' },
-          { field: 'page_description', label: 'Description', type: 'textarea' },
+          { field: 'page_description', label: 'Description', type: 'richtext' },
           { field: 'seo_title', label: 'SEO title', type: 'text' },
           { field: 'seo_description', label: 'SEO description', type: 'textarea' },
         ],
@@ -75,8 +75,8 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'wedding_heading', label: 'Heading', type: 'text' },
-          { field: 'wedding_description', label: 'Description', type: 'textarea' },
-          { field: 'packages_text', label: 'Packages text', type: 'textarea' },
+          { field: 'wedding_description', label: 'Description', type: 'richtext' },
+          { field: 'packages_text', label: 'Packages text', type: 'richtext' },
         ],
       },
     ],
@@ -90,7 +90,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'textarea' },
+          { field: 'description', label: 'Description', type: 'richtext' },
           { field: 'capacity_info', label: 'Capacity info', type: 'text' },
         ],
       },
@@ -105,7 +105,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'textarea' },
+          { field: 'description', label: 'Description', type: 'richtext' },
           { field: 'timings', label: 'Timings', type: 'text' },
           { field: 'rules', label: 'Rules', type: 'textarea' },
         ],
@@ -121,7 +121,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'textarea' },
+          { field: 'description', label: 'Description', type: 'richtext' },
         ],
       },
     ],
@@ -135,7 +135,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'textarea' },
+          { field: 'description', label: 'Description', type: 'richtext' },
         ],
       },
     ],
@@ -149,7 +149,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'textarea' },
+          { field: 'description', label: 'Description', type: 'richtext' },
         ],
       },
     ],
@@ -197,7 +197,7 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'about_text', label: 'About text', type: 'textarea' },
+          { field: 'about_text', label: 'About text', type: 'richtext' },
           { field: 'copyright_text', label: 'Copyright text', type: 'text' },
         ],
       },

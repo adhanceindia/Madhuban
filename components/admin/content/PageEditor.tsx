@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { FormCard } from '@/components/admin/shared/form-card'
 import { Field, TextInput, Textarea } from '@/components/admin/shared/form-field'
 import { ImageUploader } from '@/components/admin/shared/image-uploader'
+import { RichTextEditor } from '@/components/admin/shared/rich-text-editor'
 import type { PageSchema, FieldDef } from '@/lib/cms-schema'
 
 type EditorProps = {
@@ -118,6 +119,18 @@ function FieldRenderer({
     return (
       <Field label={def.label} hint={def.hint} required={def.required}>
         <Textarea rows={4} value={(value as string) || ''} onChange={(e) => onChange(e.target.value)} />
+      </Field>
+    )
+  }
+
+  if (def.type === 'richtext') {
+    return (
+      <Field label={def.label} hint={def.hint} required={def.required}>
+        <RichTextEditor
+          value={(value as string) || ''}
+          onChange={(html) => onChange(html)}
+          placeholder={`Enter ${def.label.toLowerCase()}...`}
+        />
       </Field>
     )
   }
