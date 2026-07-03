@@ -4,6 +4,8 @@ import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteNavbar } from '@/components/layout/site-navbar'
 import { getSiteContent } from '@/lib/data'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PagesLayout({
   children,
 }: Readonly<{
