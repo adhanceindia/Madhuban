@@ -193,13 +193,19 @@ export function MenuBuilder({
   
   // Update parent when internal items state changes (debounced/effect)
   const isFirstRender = useRef(true)
+  const onChangeRef = useRef(onChange)
+
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false
       return
     }
-    onChange(items)
-  }, [items, onChange])
+    onChangeRef.current(items)
+  }, [items])
 
   const [collapsedIds, setCollapsedIds] = useState<string[]>([])
   const [activeId, setActiveId] = useState<string | null>(null)
