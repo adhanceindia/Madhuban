@@ -70,3 +70,16 @@ UI design/
 .reticle.json
 opencode.json
 test-login.mjs
+
+# Temp logs, test scripts, and backups
+*.log
+*.stats
+build-stats.txt
+.debug/
+next.config.mjs.bak
+test-*.mjs
+delete-test-item.mjs
+fix_images.mjs
+run_tests.sh
+update-homepage-content.mjs
+test-switch.html

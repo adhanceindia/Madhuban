@@ -22,6 +22,16 @@ function getDefaults() {
   }
 }
 
+function handleDateClick(e: React.MouseEvent<HTMLInputElement>) {
+  try {
+    if (typeof e.currentTarget.showPicker === 'function') {
+      e.currentTarget.showPicker()
+    }
+  } catch {
+    // The native picker can reject programmatic opening in some browsers.
+  }
+}
+
 export function HeroBookingBar() {
   const router = useRouter()
   const defaults = getDefaults()
@@ -89,6 +99,7 @@ export function HeroBookingBar() {
               value={checkIn}
               min={todayStr}
               onChange={(e) => handleCheckInChange(e.target.value)}
+              onClick={handleDateClick}
               className="absolute inset-0 cursor-pointer opacity-0"
               aria-label="Check-in date"
             />
@@ -113,6 +124,7 @@ export function HeroBookingBar() {
               value={checkOut}
               min={checkIn ? formatDateInput(addDays(new Date(`${checkIn}T00:00:00`), 1)) : todayStr}
               onChange={(e) => setCheckOut(e.target.value)}
+              onClick={handleDateClick}
               className="absolute inset-0 cursor-pointer opacity-0"
               aria-label="Check-out date"
             />
@@ -178,6 +190,7 @@ export function HeroBookingBar() {
                 value={checkIn}
                 min={todayStr}
                 onChange={(e) => handleCheckInChange(e.target.value)}
+                onClick={handleDateClick}
                 className="absolute inset-0 cursor-pointer opacity-0"
                 aria-label="Check-in date"
               />
@@ -199,6 +212,7 @@ export function HeroBookingBar() {
                 value={checkOut}
                 min={checkIn ? formatDateInput(addDays(new Date(`${checkIn}T00:00:00`), 1)) : todayStr}
                 onChange={(e) => setCheckOut(e.target.value)}
+                onClick={handleDateClick}
                 className="absolute inset-0 cursor-pointer opacity-0"
                 aria-label="Check-out date"
               />

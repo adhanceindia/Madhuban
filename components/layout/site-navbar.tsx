@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  Leaf,
   Menu,
   MessageCircle,
   Instagram,
@@ -87,41 +87,30 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         'sticky top-0 z-50 w-full transition-[background-color,box-shadow] duration-300',
-        scrolled
-          ? 'border-b border-content-border/60 bg-background/95 shadow-[0_14px_40px_rgba(27,28,25,0.08)] backdrop-blur-2xl'
-          : 'border-b border-white/10 bg-[rgba(20,26,16,0.45)] backdrop-blur-xl',
+        'border-b border-content-border/60 bg-background/95 shadow-[0_14px_40px_rgba(27,28,25,0.08)] backdrop-blur-2xl'
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex items-center gap-3">
-          <span
-            className={cn(
-              'flex size-11 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-105',
-              scrolled
-                ? 'bg-primary/12 text-primary-dark'
-                : 'bg-white/20 text-white backdrop-blur-md',
-            )}
-          >
-            <Leaf className="size-5" />
-          </span>
-          <span className="flex flex-col">
+        <Link href="/" className="group flex min-w-0 items-center">
+          {siteContent.header?.logo_url ? (
+            <Image
+              src={siteContent.header.logo_url}
+              alt={`${siteContent.name} logo`}
+              width={220}
+              height={80}
+              priority
+              className="h-12 w-auto max-w-[180px] object-contain transition-transform duration-300 group-hover:scale-[1.02] sm:max-w-[220px]"
+            />
+          ) : (
             <span
               className={cn(
-                'font-display text-2xl leading-none sm:text-[1.7rem]',
-                scrolled ? 'text-primary-dark' : 'text-white',
+                'truncate font-display text-2xl leading-none sm:text-[1.7rem]',
+                'text-primary-dark',
               )}
             >
-              Madhuban Garden
+              {siteContent.name}
             </span>
-            <span
-              className={cn(
-                'text-[0.68rem] uppercase tracking-eyebrow',
-                scrolled ? 'text-foreground/55' : 'text-white/80',
-              )}
-            >
-              Resort
-            </span>
-          </span>
+          )}
         </Link>
 
         <nav className="hidden items-center lg:flex">
@@ -134,7 +123,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                       <NavigationMenuTrigger 
                         className={cn(
                           'bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent font-display text-lg italic tracking-wide transition-colors duration-200',
-                          scrolled ? 'text-foreground/70 hover:text-primary-dark data-[state=open]:text-primary-dark' : 'text-white/80 hover:text-white data-[state=open]:text-white'
+                          'text-foreground/70 hover:text-primary-dark data-[state=open]:text-primary-dark'
                         )}
                       >
                         {link.title}
@@ -171,12 +160,8 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                           navigationMenuTriggerStyle(),
                           'bg-transparent hover:bg-transparent focus:bg-transparent font-display text-lg italic tracking-wide transition-colors duration-200',
                           pathname === link.href
-                            ? scrolled
-                              ? 'border-b border-primary-dark/25 text-primary-dark'
-                              : 'border-b border-white/50 text-white'
-                            : scrolled
-                              ? 'border-b border-transparent text-foreground/70 hover:text-primary-dark'
-                              : 'border-b border-transparent text-white/80 hover:text-white'
+                            ? 'border-b-2 border-primary-dark font-bold text-primary-dark'
+                            : 'border-b-2 border-transparent text-foreground/80 hover:text-foreground'
                         )}
                       >
                         {link.label}
@@ -194,11 +179,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
             asChild
             variant="outline"
             size="sm"
-            className={cn(
-              'rounded-full',
-              !scrolled &&
-                'border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white',
-            )}
+            className="rounded-full"
           >
             <Link
               href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
@@ -220,12 +201,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
         <button
           type="button"
           onClick={() => setIsOpen((open) => !open)}
-          className={cn(
-            'inline-flex size-11 items-center justify-center rounded-full shadow-[0_10px_30px_rgba(27,28,25,0.08)] transition-transform duration-200 hover:scale-[1.02] lg:hidden',
-            scrolled
-              ? 'bg-white/80 text-foreground'
-              : 'bg-white/20 text-white backdrop-blur-md',
-          )}
+          className="inline-flex size-11 items-center justify-center rounded-full shadow-[0_10px_30px_rgba(27,28,25,0.08)] transition-transform duration-200 hover:scale-[1.02] lg:hidden bg-white/80 text-foreground"
           aria-expanded={isOpen}
           aria-label="Toggle navigation"
         >

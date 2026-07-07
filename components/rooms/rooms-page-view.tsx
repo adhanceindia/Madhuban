@@ -101,7 +101,7 @@ export function RoomsPageView({
   }
 
   return (
-    <div className="-mt-navbar overflow-x-clip">
+    <div className="overflow-x-clip">
       <motion.section
         initial={false}
         animate="show"
@@ -120,8 +120,8 @@ export function RoomsPageView({
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,22,14,0.48),rgba(17,22,14,0.28)_45%,rgba(17,22,14,0.62))]" />
         </div>
 
-        <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-center justify-center px-4 pb-20 pt-36 text-center sm:px-6 lg:px-8">
-          <p className="text-white/12 pointer-events-none absolute inset-x-0 top-1/2 hidden -translate-y-1/2 select-none font-display text-[clamp(5rem,18vw,12rem)] italic leading-none sm:block">
+        <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-center justify-center px-4 pb-20 pt-36 text-center text-white sm:px-6 lg:px-8">
+          <p className="pointer-events-none absolute inset-x-0 top-1/2 hidden -translate-y-1/2 select-none font-display text-[clamp(5rem,18vw,12rem)] italic leading-none text-white/10 sm:block">
             Comfort
           </p>
 
@@ -132,7 +132,7 @@ export function RoomsPageView({
             <h1 className="mt-6 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl">
               Our Rooms &amp; Suites
             </h1>
-            <p className="text-white/88 mt-6 text-balance text-lg leading-8 sm:text-xl">
+            <p className="mt-6 text-balance text-lg leading-8 text-white/90 sm:text-xl">
               Discover six thoughtfully styled rooms built around restful
               comfort, lush views, and the calm, premium atmosphere that defines
               Madhuban Garden Resort.
@@ -230,8 +230,17 @@ export function RoomsPageView({
             className="grid gap-8 md:grid-cols-2 md:gap-10 xl:gap-12"
           >
             {filteredRooms.map((room, index) => (
-              <motion.div key={room.slug} layout variants={itemVariants}>
-                <RoomCard room={room} priority={index < 2} searchParams={searchParams} />
+              <motion.div
+                key={room.slug}
+                layout
+                variants={itemVariants}
+                className="min-w-0"
+              >
+                <RoomCard
+                  room={room}
+                  priority={index < 2}
+                  searchParams={searchParams}
+                />
               </motion.div>
             ))}
           </motion.div>

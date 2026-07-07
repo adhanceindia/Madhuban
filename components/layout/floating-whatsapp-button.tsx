@@ -17,17 +17,17 @@ export function FloatingWhatsAppButton({ siteContent }: { siteContent: SiteConte
       initial={false}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: 0.2, duration: 0.3 }}
-      className="fixed bottom-24 right-5 z-40 lg:bottom-5"
+      className="fixed bottom-24 right-4 z-40 sm:right-5 lg:bottom-5"
     >
       <Link
         href={`https://wa.me/${phone}?text=${message}`}
         target="_blank"
         rel="noreferrer"
         aria-label="Chat on WhatsApp"
-        className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(37,211,102,0.28)] transition-transform duration-200 hover:scale-[1.03]"
+        className="inline-flex size-14 items-center justify-center rounded-full bg-[#25D366] text-sm font-semibold text-white shadow-[0_18px_40px_rgba(37,211,102,0.28)] transition-transform duration-200 hover:scale-[1.03] sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-3"
       >
         <MessageCircle className="size-5" />
-        WhatsApp
+        <span className="hidden sm:inline">WhatsApp</span>
       </Link>
     </motion.div>
   )

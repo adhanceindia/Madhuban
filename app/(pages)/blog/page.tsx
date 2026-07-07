@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPublishedBlogPosts, getCategories, getTags } from '@/lib/data/blog'
@@ -44,12 +45,8 @@ export default async function BlogListingPage() {
                 <article key={post.id} className="group bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border flex flex-col md:flex-row">
                   {post.cover_image && (
                     <div className="md:w-2/5 aspect-[4/3] md:aspect-auto relative overflow-hidden bg-muted">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
-                        src={post.cover_image} 
-                        alt={post.title} 
-                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
-                      />
+                      {}
+                      <Image src={post.cover_image} alt={post.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" fill />
                     </div>
                   )}
                   <div className="p-6 md:p-8 md:w-3/5 flex flex-col justify-center">

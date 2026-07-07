@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, BedDouble } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -25,6 +25,8 @@ type CellState =
   | { type: 'pending'; booking: Booking; isStart: boolean }
   | { type: 'blocked_manual'; block: BlockedDate }
   | { type: 'blocked_ical'; block: BlockedDate }
+
+const AVAILABLE_CELL_STATE: CellState = { type: 'available' }
 
 const STATUS_STYLES: Record<string, { bg: string; border: string; text: string }> = {
   confirmed: { bg: '#d6ed5e', border: '#9ab53b', text: '#1a1f12' },
@@ -62,24 +64,54 @@ export function CalendarGrid() {
     return Array.from({ length: days }, (_, i) => addDays(startDate, i))
   }, [startDate, days])
 
-  function cellState(roomId: number, date: string): CellState {
-    if (!data) return { type: 'available' }
-    const booking = data.bookings.find(
-      (b) => b.room_id === roomId && b.check_in <= date && b.check_out > date,
-    )
-    if (booking) {
-      return {
-        type: booking.status === 'confirmed' ? 'confirmed' : 'pending',
-        booking,
-        isStart: booking.check_in === date,
+  const cellStatesByRoom = useMemo(() => {
+    const states = new Map<number, Map<string, CellState>>()
+    if (!data) return states
+
+    const statesForRoom = (roomId: number) => {
+      let roomStates = states.get(roomId)
+      if (!roomStates) {
+        roomStates = new Map<string, CellState>()
+        states.set(roomId, roomStates)
+      }
+      return roomStates
+    }
+
+    const endExclusive = addDays(endDate, 1)
+
+    // Bookings take priority over blocks, matching the previous lookup order.
+    for (const booking of data.bookings) {
+      const roomStates = statesForRoom(booking.room_id)
+      const firstVisibleDate = booking.check_in < startDate ? startDate : booking.check_in
+      const lastVisibleDate = booking.check_out > endExclusive ? endExclusive : booking.check_out
+
+      for (let date = firstVisibleDate; date < lastVisibleDate; date = addDays(date, 1)) {
+        if (!roomStates.has(date)) {
+          roomStates.set(date, {
+            type: booking.status === 'confirmed' ? 'confirmed' : 'pending',
+            booking,
+            isStart: booking.check_in === date,
+          })
+        }
       }
     }
-    const block = data.blocked.find((b) => b.room_id === roomId && b.date === date)
-    if (block) {
-      return { type: block.source === 'ical' ? 'blocked_ical' : 'blocked_manual', block }
+
+    for (const block of data.blocked) {
+      if (block.date < startDate || block.date > endDate) continue
+
+      const roomStates = statesForRoom(block.room_id)
+      if (!roomStates.has(block.date)) {
+        roomStates.set(block.date, {
+          type: block.source === 'ical' ? 'blocked_ical' : 'blocked_manual',
+          block,
+        })
+      }
     }
-    return { type: 'available' }
-  }
+
+    return states
+  }, [data, startDate, endDate])
+
+  const today = todayISO()
 
   async function createBlock() {
     if (!blockTarget) return
@@ -121,7 +153,7 @@ export function CalendarGrid() {
     }
   }
 
-  function handleCellClick(roomId: number, date: string, state: CellState, roomName: string) {
+  const handleCellClick = useCallback((roomId: number, date: string, state: CellState, roomName: string) => {
     if (state.type === 'available') {
       setBlockTarget({ roomId, date, roomName })
     } else if (state.type === 'blocked_manual') {
@@ -130,7 +162,7 @@ export function CalendarGrid() {
       toast('iCal blocks sync automatically — remove from the source calendar.', { icon: 'ℹ️' })
     }
     // Booking cells use Link to navigate, handled by the markup
-  }
+  }, [])
 
   return (
     <div className="max-w-[1500px]">
@@ -172,7 +204,7 @@ export function CalendarGrid() {
           type="button"
           onClick={() => setStartDate(todayISO())}
           className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-colors ${
-            startDate === todayISO()
+            startDate === today
               ? 'bg-accent text-foreground'
               : 'text-muted-foreground hover:text-foreground hover:bg-sage-soft'
           }`}
@@ -211,7 +243,7 @@ export function CalendarGrid() {
               </div>
               {dateColumns.map((d) => {
                 const date = new Date(d + 'T00:00:00')
-                const isToday = d === todayISO()
+                const isToday = d === today
                 const isWeekend = date.getDay() === 0 || date.getDay() === 6
                 return (
                   <div
@@ -236,8 +268,9 @@ export function CalendarGrid() {
                   key={room.id}
                   room={room}
                   dateColumns={dateColumns}
-                  cellState={(d) => cellState(room.id, d)}
-                  onCellClick={(d, state) => handleCellClick(room.id, d, state, room.name)}
+                  cellStates={cellStatesByRoom.get(room.id)}
+                  today={today}
+                  onCellClick={handleCellClick}
                 />
               ))}
             </div>
@@ -296,16 +329,18 @@ export function CalendarGrid() {
   )
 }
 
-function RoomRow({
+const RoomRow = memo(function RoomRow({
   room,
   dateColumns,
-  cellState,
+  cellStates,
+  today,
   onCellClick,
 }: {
   room: Room
   dateColumns: string[]
-  cellState: (date: string) => CellState
-  onCellClick: (date: string, state: CellState) => void
+  cellStates: Map<string, CellState> | undefined
+  today: string
+  onCellClick: (roomId: number, date: string, state: CellState, roomName: string) => void
 }) {
   return (
     <>
@@ -318,28 +353,45 @@ function RoomRow({
         </Link>
       </div>
       {dateColumns.map((d) => {
-        const state = cellState(d)
+        const state = cellStates?.get(d) ?? AVAILABLE_CELL_STATE
         return (
           <Cell
             key={d}
             date={d}
             state={state}
-            onClick={() => onCellClick(d, state)}
+            isToday={d === today}
+            roomId={room.id}
+            roomName={room.name}
+            onCellClick={onCellClick}
           />
         )
       })}
     </>
   )
-}
+})
 
-function Cell({ date, state, onClick }: { date: string; state: CellState; onClick: () => void }) {
-  const isToday = date === todayISO()
+const Cell = memo(function Cell({
+  date,
+  state,
+  isToday,
+  roomId,
+  roomName,
+  onCellClick,
+}: {
+  date: string
+  state: CellState
+  isToday: boolean
+  roomId: number
+  roomName: string
+  onCellClick: (roomId: number, date: string, state: CellState, roomName: string) => void
+}) {
+  const handleClick = () => onCellClick(roomId, date, state, roomName)
 
   if (state.type === 'available') {
     return (
       <button
         type="button"
-        onClick={onClick}
+        onClick={handleClick}
         title={`Available · click to block`}
         className={`border-b border-border/40 border-r border-border/20 min-h-[44px] p-0.5 hover:bg-sage-soft/60 transition-colors ${
           isToday ? 'bg-accent-soft/40' : ''
@@ -353,7 +405,7 @@ function Cell({ date, state, onClick }: { date: string; state: CellState; onClic
     return (
       <button
         type="button"
-        onClick={onClick}
+        onClick={handleClick}
         title={state.type === 'blocked_manual' ? 'Blocked (manual) · click to unblock' : 'Blocked (synced from OTA)'}
         className="border-b border-border/40 border-r border-border/20 min-h-[44px] p-0.5 relative"
       >
@@ -392,4 +444,4 @@ function Cell({ date, state, onClick }: { date: string; state: CellState; onClic
       </div>
     </Link>
   )
-}
+})

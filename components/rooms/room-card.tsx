@@ -41,7 +41,7 @@ export function RoomCard({ room, priority = false, className, searchParams }: Ro
   return (
     <article
       className={cn(
-        'group overflow-hidden rounded-card-inner border border-card-accent/80 bg-warm-cream shadow-[0_20px_55px_rgba(53,102,9,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(53,102,9,0.12)]',
+        'group w-full min-w-0 overflow-hidden rounded-card-inner border border-card-accent/80 bg-warm-cream shadow-[0_20px_55px_rgba(53,102,9,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(53,102,9,0.12)]',
         className,
       )}
     >
@@ -62,9 +62,9 @@ export function RoomCard({ room, priority = false, className, searchParams }: Ro
         </div>
       </Link>
 
-      <div className="p-6 sm:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+      <div className="min-w-0 p-5 sm:p-8">
+        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <h2 className="text-3xl italic leading-tight text-foreground">
               {room.name}
             </h2>
@@ -73,7 +73,7 @@ export function RoomCard({ room, priority = false, className, searchParams }: Ro
             </p>
           </div>
 
-          <div className="shrink-0 text-right">
+          <div className="self-start text-left sm:shrink-0 sm:self-auto sm:text-right">
             <span className="block text-2xl font-bold text-gold">
               {formatIndianCurrency(room.price_per_night)}
             </span>
@@ -94,11 +94,11 @@ export function RoomCard({ room, priority = false, className, searchParams }: Ro
           </span>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-x-2 gap-y-2.5">
+        <div className="no-scrollbar mt-6 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1">
           {keyAmenities.map((amenity) => (
             <span
               key={amenity}
-              className="inline-flex items-center gap-2 rounded-full bg-badge-green px-3 py-1.5 text-xs font-semibold uppercase tracking-tag text-primary-deep transition-colors hover:bg-badge-green/80"
+              className="inline-flex shrink-0 items-center gap-2 rounded-full bg-badge-green px-3 py-1.5 text-xs font-semibold uppercase tracking-tag text-primary-deep transition-colors hover:bg-badge-green/80"
             >
               <RoomAmenityIcon label={amenity} className="size-3.5" />
               {amenity}
@@ -106,7 +106,7 @@ export function RoomCard({ room, priority = false, className, searchParams }: Ro
           ))}
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3">
+        <div className="mt-8 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
           <Button
             asChild
             variant="outline"

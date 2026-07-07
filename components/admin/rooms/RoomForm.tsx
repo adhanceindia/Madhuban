@@ -7,7 +7,8 @@ import toast from 'react-hot-toast'
 
 import { FormCard } from '@/components/admin/shared/form-card'
 import { Field, FormRow, TextInput, Select } from '@/components/admin/shared/form-field'
-import { RichTextEditor } from '@/components/admin/shared/rich-text-editor'
+import dynamic from 'next/dynamic'
+const RichTextEditor = dynamic(() => import('@/components/admin/shared/rich-text-editor').then(mod => mod.RichTextEditor), { ssr: false, loading: () => <div className="h-[200px] w-full bg-card border border-border rounded-lg animate-pulse" /> })
 import { Toggle } from '@/components/admin/shared/toggle'
 import { ConfirmDialog } from '@/components/admin/shared/confirm-dialog'
 import { ImageUploader } from '@/components/admin/shared/image-uploader'
@@ -34,6 +35,8 @@ export function RoomForm({ room }: { room?: Room }) {
   const [deleting, setDeleting] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [amenityInput, setAmenityInput] = useState('')
+  const [priceInput, setPriceInput] = useState(room ? String(room.price_per_night) : '')
+  const [capacityInput, setCapacityInput] = useState(String(room?.capacity ?? 2))
 
   const [form, setForm] = useState<RoomFormData>({
     name: room?.name || '',
@@ -164,8 +167,13 @@ export function RoomForm({ room }: { room?: Room }) {
               required
               type="number"
               min={0}
-              value={form.price_per_night || ''}
-              onChange={(e) => update('price_per_night', parseInt(e.target.value) || 0)}
+              value={priceInput}
+              onChange={(e) => {
+                setPriceInput(e.target.value)
+                if (!Number.isNaN(e.target.valueAsNumber)) {
+                  update('price_per_night', e.target.valueAsNumber)
+                }
+              }}
             />
           </Field>
           <Field label="Capacity (guests)" required>
@@ -173,8 +181,13 @@ export function RoomForm({ room }: { room?: Room }) {
               required
               type="number"
               min={1}
-              value={form.capacity}
-              onChange={(e) => update('capacity', parseInt(e.target.value) || 1)}
+              value={capacityInput}
+              onChange={(e) => {
+                setCapacityInput(e.target.value)
+                if (!Number.isNaN(e.target.valueAsNumber)) {
+                  update('capacity', e.target.valueAsNumber)
+                }
+              }}
             />
           </Field>
         </div>

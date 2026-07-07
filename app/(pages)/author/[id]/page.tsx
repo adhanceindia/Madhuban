@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -49,7 +50,7 @@ export default async function AuthorPage({ params }: Props) {
             <Link key={post.id} href={`/blog/${post.slug}`} className="group block bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border">
               {post.cover_image && (
                 <div className="aspect-[16/10] relative overflow-hidden bg-muted">
-                  <img src={post.cover_image} alt={post.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+                  <Image src={post.cover_image} alt={post.title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" fill />
                 </div>
               )}
               <div className="p-6">

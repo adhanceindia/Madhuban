@@ -163,11 +163,11 @@ export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
               </div>
 
               <div className="rounded-card bg-[linear-gradient(135deg,rgba(56,106,14,0.95),rgba(102,146,48,0.93))] p-7 text-white shadow-[0_24px_70px_rgba(56,106,14,0.18)]">
-                <p className="text-white/72 text-xs font-semibold uppercase tracking-eyebrow">
+                <p className="text-xs font-semibold uppercase tracking-eyebrow text-white/70">
                   Instant Contact
                 </p>
                 <h3 className="mt-4 text-3xl italic">Prefer WhatsApp?</h3>
-                <p className="text-white/82 mt-4 text-sm leading-7">
+                <p className="mt-4 text-sm leading-7 text-white/80">
                   Send a quick message for room enquiries, wedding walkthrough
                   requests, or general planning help from the Madhuban team.
                 </p>

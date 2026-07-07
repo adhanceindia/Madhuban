@@ -1,12 +1,14 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { PageHeader } from '@/components/admin/shared/page-header'
-import { RichTextEditor } from '@/components/admin/shared/rich-text-editor'
+import dynamic from 'next/dynamic'
+const RichTextEditor = dynamic(() => import('@/components/admin/shared/rich-text-editor').then(mod => mod.RichTextEditor), { ssr: false, loading: () => <div className="h-[200px] w-full bg-card border border-border rounded-lg animate-pulse" /> })
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -204,7 +206,7 @@ export function BlogEditor({ initialData, categories, tags }: Props) {
               />
               {formData.cover_image && (
                 <div className="mt-2 aspect-video rounded-md overflow-hidden bg-muted border border-border">
-                  <img src={formData.cover_image} alt="Preview" className="w-full h-full object-cover" />
+                  <Image src={formData.cover_image} alt="Preview" className="w-full h-full object-cover" width={500} height={300} />
                 </div>
               )}
             </div>

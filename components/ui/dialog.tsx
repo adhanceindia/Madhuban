@@ -18,7 +18,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'bg-[#1b1c19]/62 fixed inset-0 z-50 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'bg-[#1b1c19]/62 fixed inset-0 z-50 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:pointer-events-none',
       className,
     )}
     {...props}
@@ -35,7 +35,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        'bg-warm-base/96 fixed left-1/2 top-1/2 z-50 w-[min(94vw,72rem)] -translate-x-1/2 -translate-y-1/2 rounded-card p-6 shadow-[0_32px_90px_rgba(27,28,25,0.24)] backdrop-blur-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:p-8',
+        'bg-warm-base/96 fixed left-1/2 top-1/2 z-50 w-[min(94vw,72rem)] -translate-x-1/2 -translate-y-1/2 rounded-card p-6 shadow-[0_32px_90px_rgba(27,28,25,0.24)] backdrop-blur-2xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:pointer-events-none sm:p-8',
         className,
       )}
       {...props}

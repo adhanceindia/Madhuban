@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getBlogPostBySlug } from '@/lib/data/blog'
@@ -141,8 +142,8 @@ export default async function BlogPostPage({ params }: Props) {
 
           {post.cover_image && (
             <figure className="mb-12 rounded-2xl overflow-hidden shadow-sm">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={post.cover_image} alt={post.title} className="w-full h-auto object-cover max-h-[500px]" />
+              {}
+              <Image src={post.cover_image} alt={post.title} className="w-full h-auto object-cover max-h-[500px]" width={1200} height={500} />
             </figure>
           )}
 

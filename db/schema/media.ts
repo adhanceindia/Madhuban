@@ -9,6 +9,7 @@ export const media = pgTable('media', {
   size: integer('size'),
   width: integer('width'),
   height: integer('height'),
+  folder: text('folder').notNull().default('General'),
   created_at: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
 

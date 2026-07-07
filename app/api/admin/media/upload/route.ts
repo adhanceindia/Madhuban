@@ -118,6 +118,7 @@ export async function POST(request: NextRequest) {
       size: file.size,
       width,
       height,
+      folder: folder || 'General',
     })
   } catch (dbError) {
     console.error('Failed to save media record to DB', dbError)

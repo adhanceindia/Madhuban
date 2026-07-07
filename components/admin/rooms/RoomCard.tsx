@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { BedDouble, Users, Maximize2 } from 'lucide-react'
 import { StatusBadge } from '@/components/admin/shared/status-badge'
@@ -16,8 +17,7 @@ export function RoomCard({ room }: { room: Room }) {
     >
       <div className="w-24 h-20 rounded-lg overflow-hidden bg-sage-soft flex-shrink-0">
         {thumbnail ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={thumbnail} alt={room.name} className="w-full h-full object-cover" />
+          <Image src={thumbnail || ""} alt={room.name} className="w-full h-full object-cover" width={100} height={80} />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-sage-deep/40">
             <BedDouble size={28} />

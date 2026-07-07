@@ -153,8 +153,8 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
         </div>
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl px-4 pb-16 pt-36 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <p className="text-white/78 text-sm font-semibold uppercase tracking-eyebrow">
+          <div className="max-w-4xl text-white">
+            <p className="text-sm font-semibold uppercase tracking-eyebrow text-white/80">
               {weddingPage.hero.eyebrow}
             </p>
             <p className="pointer-events-none mt-2 hidden select-none font-display text-[clamp(4.5rem,14vw,9rem)] italic leading-none text-white/10 lg:block">
@@ -164,9 +164,9 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
               {siteContent.wedding_heading || weddingPage.hero.title}
             </h1>
             {siteContent.wedding_description ? (
-              <RichTextContent html={siteContent.wedding_description} className="text-white/88 mt-6 max-w-2xl text-lg leading-8 sm:text-xl [&_a]:text-gold [&_a]:hover:text-gold-dark" />
+              <RichTextContent html={siteContent.wedding_description} className="mt-6 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl [&_a]:text-gold [&_a]:hover:text-gold-dark" />
             ) : (
-              <p className="text-white/88 mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl">
                 {weddingPage.hero.subtitle}
               </p>
             )}
@@ -181,7 +181,7 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <div className="text-white/82 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm backdrop-blur">
+              <div className="rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm text-white/80 backdrop-blur">
                 Wedding venue in Agar Malwa District, Madhya Pradesh
               </div>
             </div>
@@ -454,15 +454,15 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
                 </div>
 
                 <div className="border-white/12 bg-white/8 mt-10 space-y-4 rounded-card-inner border p-5 backdrop-blur">
-                  <div className="text-white/88 flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 text-sm text-white/90">
                     <MapPin className="size-4 text-[#f3d7a2]" />
                     {siteContent.address}
                   </div>
-                  <div className="text-white/88 flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 text-sm text-white/90">
                     <CalendarDays className="size-4 text-[#f3d7a2]" />
                     Venue visits by appointment
                   </div>
-                  <div className="text-white/88 flex items-center gap-3 text-sm">
+                  <div className="flex items-center gap-3 text-sm text-white/90">
                     <Users className="size-4 text-[#f3d7a2]" />
                     Wedding desk: {siteContent.phone}
                   </div>

@@ -9,6 +9,7 @@ import { BedDouble, ChevronRight, Ruler, Users, Star, Trees, Phone, ChevronLeft,
 import { RoomAmenityIcon } from '@/components/rooms/room-amenity-icon'
 import { RoomBookingWidget } from '@/components/rooms/room-booking-widget'
 import { RoomCard } from '@/components/rooms/room-card'
+import { RoomGalleryLightbox } from '@/components/rooms/room-gallery-lightbox'
 import type { RoomData } from '@/lib/types'
 import { formatIndianCurrency, getRoomGalleryImages } from '@/lib/room-helpers'
 
@@ -30,6 +31,14 @@ export function RoomDetailPageView({
   const reduceMotion = useReducedMotion()
   const galleryImages = getRoomGalleryImages(room, 5) // Ensure we have enough for main + 4 thumbs
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+  
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index)
+    setLightboxOpen(true)
+  }
 
   const detailHighlights = [
     {
@@ -148,7 +157,10 @@ export function RoomDetailPageView({
           <div className="space-y-10">
             {/* Gallery First Experience */}
             <motion.div variants={sectionVariants}>
-              <div className="group relative overflow-hidden rounded-card border border-content-border bg-white shadow-[0_28px_80px_rgba(53,102,9,0.1)]">
+              <div 
+                className="group relative overflow-hidden rounded-card border border-content-border bg-white shadow-[0_28px_80px_rgba(53,102,9,0.1)] cursor-pointer"
+                onClick={() => openLightbox(activeImageIndex)}
+              >
                 <div className="relative aspect-[16/11] sm:aspect-[16/10]">
                   <Image
                     src={galleryImages[activeImageIndex]}
@@ -161,6 +173,10 @@ export function RoomDetailPageView({
                 </div>
                 <button 
                   type="button" 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    openLightbox(0)
+                  }}
                   className="absolute bottom-6 right-6 inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-foreground shadow-md backdrop-blur transition hover:bg-white"
                 >
                   View all photos ({room.images.length})
@@ -432,6 +448,14 @@ export function RoomDetailPageView({
            </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      <RoomGalleryLightbox
+        images={room.images}
+        isOpen={lightboxOpen}
+        initialIndex={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+      />
     </div>
   )
 }

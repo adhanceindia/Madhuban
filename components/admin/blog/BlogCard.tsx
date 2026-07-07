@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { FileText, Eye, Clock } from 'lucide-react'
 import { StatusBadge } from '@/components/admin/shared/status-badge'
@@ -14,8 +15,7 @@ export function BlogCard({ post }: { post: BlogPost }) {
     >
       <div className="w-24 h-20 rounded-lg overflow-hidden bg-sage-soft flex-shrink-0">
         {post.cover_image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+          <Image src={post.cover_image} alt={post.title} className="w-full h-full object-cover" width={100} height={80} />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-sage-deep/40">
             <FileText size={28} />

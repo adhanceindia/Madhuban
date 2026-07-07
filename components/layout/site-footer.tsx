@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Facebook, Instagram, Leaf, MessageCircle } from 'lucide-react'
+import { Facebook, Instagram, MessageCircle } from 'lucide-react'
 
 import { quickLinks } from '@/lib/site-nav'
 import type { SiteContent } from '@/lib/types'
@@ -22,19 +23,19 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
             <h2 className="text-sm uppercase tracking-label text-white/70">
               About
             </h2>
-            <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-full bg-white/10">
-                <Leaf className="size-5" />
-              </span>
-              <div>
-                <p className="font-display text-3xl leading-none">
-                  Madhuban Garden
-                </p>
-                <p className="text-xs uppercase tracking-label text-white/70">
-                  Resort
-                </p>
-              </div>
-            </div>
+            {siteContent.header?.logo_url ? (
+              <Image
+                src={siteContent.header.logo_url}
+                alt={`${siteContent.name} logo`}
+                width={220}
+                height={80}
+                className="h-16 w-auto max-w-[220px] object-contain"
+              />
+            ) : (
+              <p className="font-display text-3xl leading-none">
+                {siteContent.name}
+              </p>
+            )}
             <div className="mt-6 max-w-sm text-sm leading-7 text-white/80">
               {siteContent.footer?.about_text ? (
                 <div dangerouslySetInnerHTML={{ __html: siteContent.footer.about_text }} />
@@ -53,7 +54,7 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm text-white/85 transition-colors hover:text-white"
+                  className="text-sm text-white/80 transition-colors hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -65,7 +66,7 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
             <h2 className="text-sm uppercase tracking-label text-white/70">
               Contact
             </h2>
-            <div className="mt-6 space-y-3 text-sm text-white/85">
+            <div className="mt-6 space-y-3 text-sm text-white/80">
               <p>{siteContent.address}</p>
               <p>{siteContent.phone}</p>
               <p>{siteContent.email}</p>

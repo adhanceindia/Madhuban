@@ -15,16 +15,17 @@ export default async function EditBlogPage({ params }: { params: Promise<{ id: s
   }
 
   // Fetch associated tags
-  const tagsResult = await db
-    .select({ tag: blogTags })
-    .from(blogPostTags)
-    .innerJoin(blogTags, eq(blogPostTags.tag_id, blogTags.id))
-    .where(eq(blogPostTags.post_id, post.id))
+  const [tagsResult, categories, tags] = await Promise.all([
+    db
+      .select({ tag: blogTags })
+      .from(blogPostTags)
+      .innerJoin(blogTags, eq(blogPostTags.tag_id, blogTags.id))
+      .where(eq(blogPostTags.post_id, post.id)),
+    db.select().from(blogCategories),
+    db.select().from(blogTags)
+  ])
 
   const postTags = tagsResult.map(r => r.tag)
-  
-  const categories = await db.select().from(blogCategories)
-  const tags = await db.select().from(blogTags)
 
   return <BlogEditor initialData={{ ...post, tags: postTags }} categories={categories} tags={tags} />
 }

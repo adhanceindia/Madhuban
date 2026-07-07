@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { Upload, X, Image as ImageIcon, GripVertical } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -55,8 +56,8 @@ export function ImageUploader({
             }}
             className="relative group rounded-lg overflow-hidden bg-sage-soft aspect-video border border-border"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt="" className="w-full h-full object-cover" />
+            {}
+            <Image src={url} alt="" className="w-full h-full object-cover" fill sizes="200px" />
 
             <button
               type="button"
@@ -103,12 +104,14 @@ export function ImageUploader({
       <MediaLibraryModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        onSelect={(url) => {
-          if (value.length + 1 > maxImages) {
-            toast.error(`Maximum ${maxImages} images`)
+        onSelect={(urls) => {
+          if (value.length + urls.length > maxImages) {
+            toast.error(`Maximum ${maxImages} images allowed.`)
+            const allowed = maxImages - value.length
+            onChange([...value, ...urls.slice(0, allowed)])
             return
           }
-          onChange([...value, url])
+          onChange([...value, ...urls])
         }}
       />
 

@@ -8,15 +8,12 @@ import { eq, and, lte } from 'drizzle-orm'
 const URL = 'https://madhubangarden.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const publishedPosts = await db
-    .select()
-    .from(blogPosts)
-    .where(and(eq(blogPosts.is_published, true), lte(blogPosts.published_at, new Date())))
-
-  const categories = await db.select().from(blogCategories)
-  const tags = await db.select().from(blogTags)
-  
-  const activeRooms = await db.select().from(rooms).where(eq(rooms.is_active, true))
+  const [publishedPosts, categories, tags, activeRooms] = await Promise.all([
+    db.select().from(blogPosts).where(and(eq(blogPosts.is_published, true), lte(blogPosts.published_at, new Date()))),
+    db.select().from(blogCategories),
+    db.select().from(blogTags),
+    db.select().from(rooms).where(eq(rooms.is_active, true))
+  ])
 
   const routes = [
     '',

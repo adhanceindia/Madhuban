@@ -30,6 +30,9 @@ const securityHeaders = [
 const nextConfig = {
   devIndicators: false,
   poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns']
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
@@ -45,11 +48,16 @@ const nextConfig = {
 import { withSentryConfig } from "@sentry/nextjs";
 import { withReticle } from '@reticlehq/core/next';
 
-export default withReticle(withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
-  widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
-  silent: !process.env.CI,
-}));
+const finalConfig = process.env.NODE_ENV === 'development'
+  ? withReticle(nextConfig)
+  : withReticle(withSentryConfig(nextConfig, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      widenClientFileUpload: true,
+      tunnelRoute: "/monitoring",
+      silent: !process.env.CI,
+      sourcemaps: { disable: process.env.VERCEL_ENV !== 'production' }
+    }));
+
+export default finalConfig;

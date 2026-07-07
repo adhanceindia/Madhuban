@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDashboardData } from '@/db/queries/dashboard'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const session = await getSession()
   if (!session) {

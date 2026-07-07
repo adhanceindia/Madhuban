@@ -44,7 +44,7 @@ export function HeroBlock({ image, heading, subtext, cta_text, cta_link }: HeroB
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,18,10,0.58),rgba(12,18,10,0.38)_35%,rgba(12,18,10,0.65))]" />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-20 pt-36 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-20 pt-36 text-white sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           <p className="text-sm font-semibold uppercase tracking-eyebrow text-white/80">Welcome</p>
           <h1 className="mt-6 max-w-5xl text-balance text-4xl italic leading-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
