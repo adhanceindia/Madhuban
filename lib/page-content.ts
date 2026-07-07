@@ -746,14 +746,14 @@ export const attractions: Attraction[] = [
     description:
       'A revered spiritual destination near Nalkheda, known for its sacred atmosphere and lasting cultural significance.',
     distance: '15 km from the resort',
-    image: 'https://images.unsplash.com/photo-1609766857041-ed0703465262?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80',
   },
   {
     name: 'Mahakaleshwar Temple',
     description:
       'The iconic Jyotirlinga temple in Ujjain, a meaningful day trip for guests exploring Madhya Pradesh.',
     distance: '65 km from the resort',
-    image: 'https://images.unsplash.com/photo-1621427638996-d57d0c1b3a2c?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80',
   },
 ]
 

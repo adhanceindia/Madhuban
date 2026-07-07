@@ -131,7 +131,7 @@ export function GalleryPageView({ galleryItems, siteContent }: { galleryItems: G
         whileInView="show"
         viewport={{ once: true, amount: 0.12 }}
         variants={sectionVariants}
-        className="bg-background py-16 sm:py-20"
+        className="bg-background py-12 sm:py-16 lg:py-20"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading

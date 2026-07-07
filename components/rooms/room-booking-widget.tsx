@@ -14,6 +14,7 @@ import {
   Users,
   X,
   XCircle,
+  Check,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -553,6 +554,21 @@ function BookingCard({
           </Button>
         </div>
       )}
+
+      {/* Trust Indicators */}
+      <div className="mt-8 space-y-3">
+        {[
+          'Free cancellation up to 48 hrs',
+          'Secure booking',
+          'Instant confirmation',
+          'Best price guarantee',
+        ].map((item) => (
+          <div key={item} className="flex items-center gap-3 text-sm text-foreground/70">
+            <Check className="size-4 text-primary-deep" />
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -561,11 +577,25 @@ function BookingCard({
 // Main widget — state management + API calls
 // ---------------------------------------------------------------------------
 
-export function RoomBookingWidget({ room }: { room: RoomData }) {
+export function RoomBookingWidget({
+  room,
+  initialCheckIn,
+  initialCheckOut,
+  initialGuests,
+}: {
+  room: RoomData
+  initialCheckIn?: string
+  initialCheckOut?: string
+  initialGuests?: number
+}) {
   const defaults = getDefaultBookingDates()
-  const [checkIn, setCheckIn] = useState(defaults.checkIn)
-  const [checkOut, setCheckOut] = useState(defaults.checkOut)
-  const [guests, setGuests] = useState(Math.min(room.capacity || 4, 4))
+  const [checkIn, setCheckIn] = useState(initialCheckIn || defaults.checkIn)
+  const [checkOut, setCheckOut] = useState(initialCheckOut || defaults.checkOut)
+  const [guests, setGuests] = useState(
+    initialGuests && initialGuests > 0
+      ? Math.min(initialGuests, room.capacity || 6)
+      : Math.min(room.capacity || 4, 4),
+  )
   const [availabilityStatus, setAvailabilityStatus] =
     useState<AvailabilityStatus>('idle')
   const [blockedDates, setBlockedDates] = useState<string[]>([])
@@ -584,6 +614,7 @@ export function RoomBookingWidget({ room }: { room: RoomData }) {
   const [bookingResult, setBookingResult] = useState<BookingResult | null>(null)
 
   const abortRef = useRef<AbortController | null>(null)
+  const autoCheckedRef = useRef(false)
 
   useEffect(() => {
     document.body.style.overflow = mobileSheetOpen ? 'hidden' : ''
@@ -664,6 +695,19 @@ export function RoomBookingWidget({ room }: { room: RoomData }) {
       setAvailabilityStatus('error')
     }
   }, [checkIn, checkOut, room.id])
+
+  // Auto-check availability on mount when initial dates are provided from hero search
+  useEffect(() => {
+    if (
+      !autoCheckedRef.current &&
+      initialCheckIn &&
+      initialCheckOut &&
+      calculateNights(initialCheckIn, initialCheckOut) > 0
+    ) {
+      autoCheckedRef.current = true
+      handleCheckAvailability()
+    }
+  }, [initialCheckIn, initialCheckOut, handleCheckAvailability])
 
   // -----------------------------------------------------------------------
   // Pay at Reception flow

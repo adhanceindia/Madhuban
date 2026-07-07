@@ -2,7 +2,10 @@ import { FloatingWhatsAppButton } from '@/components/layout/floating-whatsapp-bu
 import { PageTransitionWrapper } from '@/components/layout/page-transition-wrapper'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { SiteNavbar } from '@/components/layout/site-navbar'
+import { PreviewProvider } from '@/components/ui/preview-provider'
 import { getSiteContent } from '@/lib/data'
+
+export const dynamic = 'force-dynamic'
 
 export default async function PagesLayout({
   children,
@@ -12,13 +15,13 @@ export default async function PagesLayout({
   const siteContent = await getSiteContent()
 
   return (
-    <>
+    <PreviewProvider>
       <SiteNavbar siteContent={siteContent} />
       <main className="relative">
         <PageTransitionWrapper>{children}</PageTransitionWrapper>
       </main>
       <SiteFooter siteContent={siteContent} />
       <FloatingWhatsAppButton siteContent={siteContent} />
-    </>
+    </PreviewProvider>
   )
 }

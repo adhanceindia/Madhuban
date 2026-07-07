@@ -6,7 +6,8 @@ import { Save, Trash2, X, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { FormCard } from '@/components/admin/shared/form-card'
-import { Field, FormRow, TextInput, Textarea, Select } from '@/components/admin/shared/form-field'
+import { Field, FormRow, TextInput, Select } from '@/components/admin/shared/form-field'
+import { RichTextEditor } from '@/components/admin/shared/rich-text-editor'
 import { Toggle } from '@/components/admin/shared/toggle'
 import { ConfirmDialog } from '@/components/admin/shared/confirm-dialog'
 import { ImageUploader } from '@/components/admin/shared/image-uploader'
@@ -196,10 +197,9 @@ export function RoomForm({ room }: { room?: Room }) {
         </FormRow>
 
         <Field label="Description">
-          <Textarea
+          <RichTextEditor
             value={form.description}
-            onChange={(e) => update('description', e.target.value)}
-            rows={4}
+            onChange={(html) => update('description', html)}
             placeholder="A spacious garden-facing suite with..."
           />
         </Field>

@@ -24,7 +24,7 @@ export function PagesList() {
 
           <div className="flex items-center gap-2 mt-4">
             <Link
-              href={`/admin/content/${page.key}`}
+              href={`/editor/${page.key}`}
               className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold bg-accent hover:bg-accent-deep text-foreground rounded-md no-underline transition-colors"
             >
               Edit <ChevronRight size={12} />

@@ -16,6 +16,7 @@ export function canAccess(userRole: UserRole, module: string): boolean {
     reviews: ['super_admin', 'resort_manager', 'event_manager', 'content_manager'],
     inquiries: ['super_admin', 'resort_manager', 'front_desk', 'event_manager'],
     content: ['super_admin', 'resort_manager', 'content_manager'],
+    blog: ['super_admin', 'resort_manager', 'content_manager'],
     analytics: ['super_admin', 'resort_manager', 'accountant'],
     'audit-log': ['super_admin'],
     users: ['super_admin'],

@@ -59,24 +59,28 @@ export async function getSiteContent(): Promise<SiteContent> {
     const social = (contentMap['social'] as SocialContent) || {}
     const heroData = (contentMap['hero_images'] as HeroImagesContent) || {}
 
-    const hero_images: HeroImage[] = Array.isArray(heroData.images)
-      ? heroData.images.filter((x) => x?.url)
-      : []
+
+    const homepage = (contentMap['homepage'] as Record<string, unknown>) || {}
+    const headerData = (contentMap['header'] as SiteContent['header']) || {}
+    const footerData = (contentMap['footer'] as SiteContent['footer']) || {}
 
     return {
-      name: 'Madhuban Garden Resort',
+      name: defaultSiteContent.name,
       tagline: general.tagline || defaultSiteContent.tagline,
-      hero_heading: general.hero_heading || defaultSiteContent.hero_heading,
-      hero_subtext: general.hero_subtext || defaultSiteContent.hero_subtext,
-      wedding_heading: general.wedding_heading || defaultSiteContent.wedding_heading,
-      wedding_description: general.wedding_description || defaultSiteContent.wedding_description,
       phone: contact.phone || defaultSiteContent.phone,
       email: contact.email || defaultSiteContent.email,
       address: contact.address || defaultSiteContent.address,
       whatsapp: contact.whatsapp || defaultSiteContent.whatsapp,
       instagram: social.instagram || defaultSiteContent.instagram,
       facebook: social.facebook || defaultSiteContent.facebook,
-      hero_images,
+      hero_heading: general.hero_heading || defaultSiteContent.hero_heading,
+      hero_subtext: general.hero_subtext || defaultSiteContent.hero_subtext,
+      wedding_heading: general.wedding_heading || defaultSiteContent.wedding_heading,
+      wedding_description: general.wedding_description || defaultSiteContent.wedding_description,
+      hero_images: heroData.images || [],
+      homepage_blocks: Array.isArray(homepage.homepage_blocks) ? homepage.homepage_blocks : [],
+      header: headerData,
+      footer: footerData,
     }
   } catch (error) {
     console.error('[data] getSiteContent error:', error)

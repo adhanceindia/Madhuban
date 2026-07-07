@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Upload, X, Image as ImageIcon, GripVertical } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { MediaLibraryModal } from './media-library-modal'
 
 type ImageUploaderProps = {
   /** Currently uploaded image URLs */
@@ -15,54 +16,15 @@ type ImageUploaderProps = {
   maxImages?: number
   /** Folder in storage (e.g., 'rooms', 'gallery') */
   folder?: string
-  /** Accept attribute — default is images only */
-  accept?: string
 }
 
 export function ImageUploader({
   value,
   onChange,
-  multiple = true,
   maxImages = 20,
-  folder = 'uploads',
-  accept = 'image/*',
 }: ImageUploaderProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
-  const [dragOver, setDragOver] = useState(false)
   const [reorderIndex, setReorderIndex] = useState<number | null>(null)
-
-  async function handleFiles(files: FileList | File[]) {
-    const fileArray = Array.from(files)
-    if (value.length + fileArray.length > maxImages) {
-      toast.error(`Maximum ${maxImages} images`)
-      return
-    }
-
-    setUploading(true)
-    const uploaded: string[] = []
-    try {
-      for (const file of fileArray) {
-        const fd = new FormData()
-        fd.append('file', file)
-        fd.append('folder', folder)
-        const res = await fetch('/api/admin/media/upload', { method: 'POST', body: fd })
-        const data = await res.json()
-        if (!res.ok || !data.url) {
-          toast.error(data.error || `Failed to upload ${file.name}`)
-          continue
-        }
-        uploaded.push(data.url)
-      }
-      if (uploaded.length > 0) {
-        onChange([...value, ...uploaded])
-        toast.success(`Uploaded ${uploaded.length} image${uploaded.length > 1 ? 's' : ''}`)
-      }
-    } finally {
-      setUploading(false)
-      if (inputRef.current) inputRef.current.value = ''
-    }
-  }
+  const [modalOpen, setModalOpen] = useState(false)
 
   function remove(i: number) {
     onChange(value.filter((_, idx) => idx !== i))
@@ -120,31 +82,13 @@ export function ImageUploader({
         {value.length < maxImages && (
           <button
             type="button"
-            onClick={() => inputRef.current?.click()}
-            onDragEnter={() => setDragOver(true)}
-            onDragLeave={() => setDragOver(false)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault()
-              setDragOver(false)
-              if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files)
-            }}
-            disabled={uploading}
-            className={`aspect-video rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors ${
-              dragOver
-                ? 'border-accent-deep bg-accent-soft text-foreground'
-                : 'border-border bg-sage-soft/40 text-muted-foreground hover:border-accent-deep hover:bg-sage-soft'
-            } ${uploading ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
+            onClick={() => setModalOpen(true)}
+            className="aspect-video rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 transition-colors border-border bg-sage-soft/40 text-muted-foreground hover:border-accent-deep hover:bg-sage-soft cursor-pointer"
           >
-            {uploading ? (
-              <>
-                <Upload size={20} className="animate-pulse" />
-                <span className="text-[11px] font-medium">Uploading...</span>
-              </>
-            ) : value.length === 0 ? (
+            {value.length === 0 ? (
               <>
                 <ImageIcon size={20} />
-                <span className="text-[11px] font-medium">Drop or click to upload</span>
+                <span className="text-[11px] font-medium">Browse media library</span>
               </>
             ) : (
               <>
@@ -156,13 +100,16 @@ export function ImageUploader({
         )}
       </div>
 
-      <input
-        ref={inputRef}
-        type="file"
-        multiple={multiple}
-        accept={accept}
-        onChange={(e) => e.target.files && handleFiles(e.target.files)}
-        className="hidden"
+      <MediaLibraryModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onSelect={(url) => {
+          if (value.length + 1 > maxImages) {
+            toast.error(`Maximum ${maxImages} images`)
+            return
+          }
+          onChange([...value, url])
+        }}
       />
 
       <p className="text-[10px] text-muted-foreground">

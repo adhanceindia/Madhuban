@@ -119,7 +119,7 @@ export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-background py-20 sm:py-24"
+        className="bg-background py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.96fr_1.04fr] lg:gap-16">

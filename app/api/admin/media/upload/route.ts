@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import crypto from 'node:crypto'
+import sharp from 'sharp'
 import { getSession } from '@/lib/auth'
+import { getDb } from '@/db/client'
+import { media } from '@/db/schema'
 
 /**
- * Upload an image/video to Supabase Storage and return its public URL.
- * Uses the service-role key to bypass RLS (admin-only endpoint).
+ * Upload an image/video to Cloudflare R2 and return its public URL.
  */
 export async function POST(request: NextRequest) {
   const session = await getSession()
@@ -13,11 +15,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  const bucket = process.env.SUPABASE_S3_BUCKET
+  const r2AccountId = process.env.R2_ACCOUNT_ID
+  const r2AccessKey = process.env.R2_ACCESS_KEY_ID
+  const r2SecretKey = process.env.R2_SECRET_ACCESS_KEY
+  const r2Bucket = process.env.R2_BUCKET_NAME
+  const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 
-  if (!url || !serviceKey || !bucket) {
+  if (!r2AccountId || !r2AccessKey || !r2SecretKey || !r2Bucket || !r2PublicUrl) {
     return NextResponse.json({ error: 'Storage not configured on server' }, { status: 500 })
   }
 
@@ -59,27 +63,65 @@ export async function POST(request: NextRequest) {
   const safeFolder = folder.replace(/[^a-z0-9/_-]/gi, '').replace(/\.\.+/g, '') || 'uploads'
   const path = `${safeFolder}/${crypto.randomUUID()}.${spec.ext}`
 
-  const supabase = createClient(url, serviceKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
+  const r2 = new S3Client({
+    region: 'auto',
+    endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: r2AccessKey,
+      secretAccessKey: r2SecretKey,
+    },
   })
 
-  const { error: uploadError } = await supabase.storage
-    .from(bucket)
-    .upload(path, arrayBuffer, {
-      contentType: declared,
-      cacheControl: '31536000',
-      upsert: false,
-    })
-
-  if (uploadError) {
+  try {
+    await r2.send(
+      new PutObjectCommand({
+        Bucket: r2Bucket,
+        Key: path,
+        Body: Buffer.from(arrayBuffer),
+        ContentType: declared,
+        CacheControl: 'max-age=31536000',
+      })
+    )
+  } catch (uploadError: unknown) {
     console.error('[media/upload] Upload failed:', uploadError)
-    return NextResponse.json({ error: uploadError.message }, { status: 500 })
+    const message = uploadError instanceof Error ? uploadError.message : String(uploadError)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 
-  const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(path)
-  if (!publicUrlData?.publicUrl) {
-    return NextResponse.json({ error: 'Could not derive public URL' }, { status: 500 })
+  const publicUrl = `${r2PublicUrl.replace(/\/$/, '')}/${path}`
+
+  let width = null
+  let height = null
+
+  if (declared.startsWith('image/')) {
+    try {
+      const metadata = await sharp(Buffer.from(arrayBuffer)).metadata()
+      width = metadata.width || null
+      height = metadata.height || null
+    } catch (err) {
+      console.warn('Could not get image dimensions:', err)
+    }
   }
 
-  return NextResponse.json({ url: publicUrlData.publicUrl, path })
+  const db = getDb()
+  const originalName = (file as File).name
+  let filename = originalName
+  if (!filename || filename === 'image.jpg' || filename === 'image.png' || filename === 'blob') {
+     filename = `Untitled-${crypto.randomBytes(2).toString('hex')}.${spec.ext}`
+  }
+
+  try {
+    await db.insert(media).values({
+      filename,
+      url: publicUrl,
+      mime_type: declared,
+      size: file.size,
+      width,
+      height,
+    })
+  } catch (dbError) {
+    console.error('Failed to save media record to DB', dbError)
+  }
+
+  return NextResponse.json({ url: publicUrl, path })
 }

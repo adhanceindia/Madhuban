@@ -10,6 +10,8 @@ import toast from 'react-hot-toast'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { Button } from '@/components/ui/button'
+import { RichTextContent } from '@/components/ui/rich-text-content'
+import { useSiteContent } from '@/components/ui/preview-provider'
 import { weddingPage } from '@/lib/page-content'
 import { formatDateInput } from '@/lib/room-helpers'
 import { getHeroImage, getHeroAlt, type SiteContent } from '@/lib/types'
@@ -35,7 +37,8 @@ const defaultInquiryState: InquiryFormState = {
   message: '',
 }
 
-export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
+export function WeddingPageView({ siteContent: initialSiteContent }: { siteContent: SiteContent }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
   const reduceMotion = useReducedMotion()
   const galleryRef = useRef<HTMLDivElement | null>(null)
   const [formState, setFormState] =
@@ -60,8 +63,8 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.12,
-        delayChildren: reduceMotion ? 0 : 0.06,
+        staggerChildren: reduceMotion ? 0 : 0.08,
+        delayChildren: reduceMotion ? 0 : 0.04,
       },
     },
   }
@@ -158,11 +161,15 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
               Forever
             </p>
             <h1 className="mt-4 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
-              {weddingPage.hero.title}
+              {siteContent.wedding_heading || weddingPage.hero.title}
             </h1>
-            <p className="text-white/88 mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
-              {weddingPage.hero.subtitle}
-            </p>
+            {siteContent.wedding_description ? (
+              <RichTextContent html={siteContent.wedding_description} className="text-white/88 mt-6 max-w-2xl text-lg leading-8 sm:text-xl [&_a]:text-gold [&_a]:hover:text-gold-dark" />
+            ) : (
+              <p className="text-white/88 mt-6 max-w-2xl text-lg leading-8 sm:text-xl">
+                {weddingPage.hero.subtitle}
+              </p>
+            )}
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Button
                 asChild
@@ -187,7 +194,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
-        className="bg-warm-base py-20 sm:py-24"
+        className="bg-warm-base py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-16">
@@ -263,7 +270,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-primary-light py-20 sm:py-24"
+        className="bg-primary-light py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -304,7 +311,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.12 }}
         variants={sectionVariants}
-        className="bg-warm-base py-20 sm:py-24"
+        className="bg-warm-base py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -388,7 +395,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-warm-sand py-20 sm:py-24"
+        className="bg-warm-sand py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -428,7 +435,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.12 }}
         variants={sectionVariants}
-        className="bg-primary-light py-20 sm:py-24"
+        className="bg-primary-light py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-card border border-[#d8e0cf] bg-warm-cream shadow-[0_28px_90px_rgba(56,106,14,0.12)]">
@@ -625,7 +632,7 @@ export function WeddingPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
-        className="bg-warm-base py-20 sm:py-24"
+        className="bg-warm-base py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">

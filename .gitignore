@@ -61,3 +61,12 @@ public/favicon.ico.bak
 
 # ui design reference files
 UI design/
+.env*
+
+# AI Agent / Dev Tools
+.agents/
+.codex/
+.codegraph/
+.reticle.json
+opencode.json
+test-login.mjs

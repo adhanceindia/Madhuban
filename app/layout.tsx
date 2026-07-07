@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { getSiteContent } from '@/lib/data'
 import { cn } from '@/lib/utils'
 import '@/app/globals.css'
+import { ReticleDev } from './reticle-dev'
 
 const displayFont = Cormorant_Garamond({
   subsets: ['latin'],
@@ -56,6 +57,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         displayFont.variable,
         bodyFont.variable,
@@ -63,7 +65,8 @@ export default function RootLayout({
         'scroll-smooth',
       )}
     >
-      <body className="min-h-screen bg-background font-body text-foreground antialiased">
+      <body suppressHydrationWarning className="min-h-screen bg-background font-body text-foreground antialiased">
+        {process.env.NODE_ENV === 'development' ? <ReticleDev /> : null}
         {children}
         <Toaster position="top-right" />
       </body>
