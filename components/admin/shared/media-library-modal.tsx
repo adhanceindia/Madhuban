@@ -41,7 +41,7 @@ export function MediaLibraryModal({ open, onOpenChange, onSelect }: Props) {
       if (data.items) {
         setItems(data.items)
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to load media')
     } finally {
       setLoading(false)
@@ -86,7 +86,7 @@ export function MediaLibraryModal({ open, onOpenChange, onSelect }: Props) {
       toast.success('Deleted successfully')
       setSelected(null)
       fetchMedia(search)
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete media')
     }
   }

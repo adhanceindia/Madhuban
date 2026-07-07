@@ -46,6 +46,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
       { label: 'Reviews', href: '/admin/reviews', icon: <Star size={18} />, module: 'reviews' },
       { label: 'Inquiries', href: '/admin/inquiries', icon: <Inbox size={18} />, module: 'inquiries' },
       { label: 'Pages', href: '/admin/content', icon: <FileText size={18} />, module: 'content' },
+      { label: 'Blog', href: '/admin/blog', icon: <FileText size={18} />, module: 'blog' },
     ],
   },
   {

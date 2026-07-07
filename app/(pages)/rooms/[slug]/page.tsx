@@ -8,6 +8,11 @@ type RoomDetailPageProps = {
   params: Promise<{
     slug: string
   }>
+  searchParams: Promise<{
+    check_in?: string
+    check_out?: string
+    guests?: string
+  }>
 }
 
 export async function generateStaticParams() {
@@ -42,8 +47,9 @@ export async function generateMetadata({
   }
 }
 
-export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
+export default async function RoomDetailPage({ params, searchParams }: RoomDetailPageProps) {
   const { slug } = await params
+  const sp = await searchParams
   const room = await getRoomBySlug(slug)
 
   if (!room) {
@@ -52,5 +58,13 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
 
   const relatedRooms = await getRelatedRooms(room.slug)
 
-  return <RoomDetailPageView room={room} relatedRooms={relatedRooms} />
+  return (
+    <RoomDetailPageView
+      room={room}
+      relatedRooms={relatedRooms}
+      initialCheckIn={sp.check_in}
+      initialCheckOut={sp.check_out}
+      initialGuests={sp.guests ? parseInt(sp.guests, 10) : undefined}
+    />
+  )
 }

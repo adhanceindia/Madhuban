@@ -9,13 +9,15 @@ export function clientIp(req: Request): string {
   )
 }
 
-/** Fixed-window limiter. Returns true when the caller is OVER the limit. */
+/** Fixed-window/Sliding-window limiter. Returns true when the caller is OVER the limit. */
 export async function isRateLimited(key: string, max: number, windowSec: number): Promise<boolean> {
   const redis = getRedis()
-  if (!redis) return false // fail-open (matches existing behavior)
+  if (!redis) return false
   try {
-    const count = await redis.incr(key)
-    if (count === 1) await redis.expire(key, windowSec)
+    const p = redis.pipeline()
+    p.incr(key)
+    p.expire(key, windowSec) // Sliding window
+    const [count] = await p.exec() as [number, number]
     return count > max
   } catch {
     return false
@@ -26,20 +28,34 @@ export async function isRateLimited(key: string, max: number, windowSec: number)
 export async function isLockedOut(email: string): Promise<boolean> {
   const redis = getRedis()
   if (!redis) return false
-  const fails = await redis.get<number>(`login:fail:${email.toLowerCase()}`)
-  return (fails ?? 0) >= 5
+  try {
+    const fails = await redis.get<number>(`login:fail:${email.toLowerCase()}`)
+    return (fails ?? 0) >= 5
+  } catch {
+    return false
+  }
 }
 
 export async function recordLoginFailure(email: string): Promise<void> {
   const redis = getRedis()
   if (!redis) return
-  const key = `login:fail:${email.toLowerCase()}`
-  const n = await redis.incr(key)
-  if (n === 1) await redis.expire(key, 900) // 15-minute window
+  try {
+    const key = `login:fail:${email.toLowerCase()}`
+    const p = redis.pipeline()
+    p.incr(key)
+    p.expire(key, 900) // 15-minute sliding window
+    await p.exec()
+  } catch {
+    // Ignore
+  }
 }
 
 export async function clearLoginFailures(email: string): Promise<void> {
   const redis = getRedis()
   if (!redis) return
-  await redis.del(`login:fail:${email.toLowerCase()}`)
+  try {
+    await redis.del(`login:fail:${email.toLowerCase()}`)
+  } catch {
+    // Ignore
+  }
 }

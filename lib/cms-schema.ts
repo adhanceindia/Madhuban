@@ -4,7 +4,13 @@
  * add an entry here — no UI changes required.
  */
 
-export type FieldType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'repeater'
+export type FieldType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'repeater' | 'blocks' | 'menu_builder'
+
+export type BlockDef = {
+  type: string
+  label: string
+  fields: FieldDef[]
+}
 
 export type FieldDef = {
   field: string
@@ -13,7 +19,9 @@ export type FieldDef = {
   hint?: string
   required?: boolean
   /** For repeater fields, defines the shape of each item */
-  itemFields?: { field: string; label: string; type: 'text' | 'url' }[]
+  itemFields?: FieldDef[]
+  /** For 'blocks' fields, defines which blocks can be added */
+  availableBlocks?: BlockDef[]
 }
 
 export type PageSchema = {
@@ -24,27 +32,134 @@ export type PageSchema = {
   sections: { title?: string; fields: FieldDef[] }[]
 }
 
+export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
+  hero: {
+    type: 'hero',
+    label: 'Hero Section',
+    fields: [
+      { field: 'image', label: 'Background Image', type: 'image' },
+      { field: 'heading', label: 'Heading', type: 'text' },
+      { field: 'subtext', label: 'Subtext', type: 'richtext' },
+      { field: 'cta_text', label: 'CTA Button Text', type: 'text' },
+      { field: 'cta_link', label: 'CTA Link URL', type: 'url' },
+    ],
+  },
+  rich_text: {
+    type: 'rich_text',
+    label: 'Rich Text Block',
+    fields: [
+      { field: 'content', label: 'Content', type: 'richtext' },
+    ],
+  },
+  gallery: {
+    type: 'gallery',
+    label: 'Image Gallery',
+    fields: [
+      { field: 'title', label: 'Gallery Title', type: 'text' },
+    ],
+  },
+  features: {
+    type: 'features',
+    label: 'Features List',
+    fields: [
+      { field: 'title', label: 'Section Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+    ],
+  },
+  highlights: {
+    type: 'highlights',
+    label: 'Highlights Grid',
+    fields: [
+      { field: 'items', label: 'Highlight Items', type: 'repeater', itemFields: [{ field: 'title', label: 'Title', type: 'text' }, { field: 'description', label: 'Description', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+    ],
+  },
+  wedding_feature: {
+    type: 'wedding_feature',
+    label: 'Wedding Feature',
+    fields: [
+      { field: 'badge', label: 'Badge', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'image', label: 'Image', type: 'image' },
+      { field: 'ctaLabel', label: 'CTA Label', type: 'text' },
+      { field: 'points', label: 'Highlights', type: 'repeater', itemFields: [{ field: 'label', label: 'Label', type: 'text' }, { field: 'value', label: 'Value', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+    ],
+  },
+  featured_rooms: {
+    type: 'featured_rooms',
+    label: 'Featured Rooms',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+    ],
+  },
+  core_services: {
+    type: 'core_services',
+    label: 'Core Services',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'items', label: 'Services', type: 'repeater', itemFields: [{ field: 'title', label: 'Title', type: 'text' }, { field: 'description', label: 'Description', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+    ],
+  },
+  amenities: {
+    type: 'amenities',
+    label: 'Amenities Grid',
+    fields: [
+      { field: 'items', label: 'Amenities', type: 'repeater', itemFields: [{ field: 'label', label: 'Label', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+    ],
+  },
+  instagram_feed: {
+    type: 'instagram_feed',
+    label: 'Instagram Feed',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'instagramHandle', label: 'Instagram Handle', type: 'text' },
+      { field: 'instagramLink', label: 'Instagram Link', type: 'url' },
+      { field: 'photos', label: 'Photos', type: 'repeater', itemFields: [{ field: 'src', label: 'Image URL', type: 'url' }, { field: 'alt', label: 'Alt Text', type: 'text' }] },
+    ],
+  },
+  reviews: {
+    type: 'reviews',
+    label: 'Guest Reviews',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+    ],
+  },
+  attractions: {
+    type: 'attractions',
+    label: 'Nearby Attractions',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'items', label: 'Attractions', type: 'repeater', itemFields: [{ field: 'name', label: 'Name', type: 'text' }, { field: 'description', label: 'Description', type: 'text' }, { field: 'image', label: 'Image URL', type: 'url' }, { field: 'distance', label: 'Distance', type: 'text' }] },
+    ],
+  },
+}
+
 export const PAGE_SCHEMAS: PageSchema[] = [
   {
     key: 'homepage',
     label: 'Homepage',
-    description: 'Hero, tagline, featured rooms callout',
+    description: 'Block-based homepage builder',
     publicPath: '/',
     sections: [
       {
-        title: 'Hero',
+        title: 'Page Blocks',
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'hero_heading', label: 'Hero heading', type: 'text' },
-          { field: 'tagline', label: 'Tagline', type: 'text' },
-          { field: 'hero_subtext', label: 'Hero subtext', type: 'richtext' },
-        ],
-      },
-      {
-        title: 'Call to action',
-        fields: [
-          { field: 'cta_text', label: 'CTA button text', type: 'text' },
-          { field: 'cta_link', label: 'CTA link URL', type: 'url' },
+          {
+            field: 'homepage_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          },
         ],
       },
     ],
@@ -180,12 +295,17 @@ export const PAGE_SCHEMAS: PageSchema[] = [
           { field: 'cta_button_link', label: 'CTA button link', type: 'url' },
           {
             field: 'nav_links',
-            label: 'Navigation links',
+            label: 'Flat Navigation links (Mobile fallback)',
             type: 'repeater',
             itemFields: [
               { field: 'label', label: 'Label', type: 'text' },
               { field: 'href', label: 'URL', type: 'url' },
             ],
+          },
+          {
+            field: 'mega_menu',
+            label: 'Shopify-Style Drag & Drop Mega Menu',
+            type: 'menu_builder',
           },
         ],
       },
@@ -199,6 +319,15 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'about_text', label: 'About text', type: 'richtext' },
           { field: 'copyright_text', label: 'Copyright text', type: 'text' },
+          {
+            field: 'nav_links',
+            label: 'Footer links',
+            type: 'repeater',
+            itemFields: [
+              { field: 'label', label: 'Label', type: 'text' },
+              { field: 'href', label: 'URL', type: 'url' },
+            ],
+          },
         ],
       },
     ],

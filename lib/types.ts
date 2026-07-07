@@ -24,6 +24,16 @@ export function getHeroAlt(siteContent: SiteContent, page: string, fallback: str
   return match?.alt || fallback
 }
 
+export type MenuItem = {
+  id: string
+  label: string
+  href: string
+  description?: string
+  image?: string
+  parentId: string | null
+  sort_order: number
+}
+
 export type SiteContent = {
   name: string
   tagline: string
@@ -38,6 +48,19 @@ export type SiteContent = {
   wedding_heading: string
   wedding_description: string
   hero_images: HeroImage[]
+  homepage_blocks?: unknown[]
+  header?: {
+    logo_url?: string
+    cta_button_text?: string
+    cta_button_link?: string
+    nav_links?: MenuItem[] // Mobile fallback or flat menu
+    mega_menu?: MenuItem[] // The nested drag-and-drop tree
+  }
+  footer?: {
+    about_text?: string
+    copyright_text?: string
+    nav_links?: { label: string; href: string }[]
+  }
 }
 
 // ---------------------------------------------------------------------------

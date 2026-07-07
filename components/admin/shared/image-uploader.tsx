@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Upload, X, Image as ImageIcon, GripVertical } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { MediaLibraryModal } from './media-library-modal'
@@ -16,55 +16,15 @@ type ImageUploaderProps = {
   maxImages?: number
   /** Folder in storage (e.g., 'rooms', 'gallery') */
   folder?: string
-  /** Accept attribute — default is images only */
-  accept?: string
 }
 
 export function ImageUploader({
   value,
   onChange,
-  multiple = true,
   maxImages = 20,
-  folder = 'uploads',
-  accept = 'image/*',
 }: ImageUploaderProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
-  const [dragOver, setDragOver] = useState(false)
   const [reorderIndex, setReorderIndex] = useState<number | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
-
-  async function handleFiles(files: FileList | File[]) {
-    const fileArray = Array.from(files)
-    if (value.length + fileArray.length > maxImages) {
-      toast.error(`Maximum ${maxImages} images`)
-      return
-    }
-
-    setUploading(true)
-    const uploaded: string[] = []
-    try {
-      for (const file of fileArray) {
-        const fd = new FormData()
-        fd.append('file', file)
-        fd.append('folder', folder)
-        const res = await fetch('/api/admin/media/upload', { method: 'POST', body: fd })
-        const data = await res.json()
-        if (!res.ok || !data.url) {
-          toast.error(data.error || `Failed to upload ${file.name}`)
-          continue
-        }
-        uploaded.push(data.url)
-      }
-      if (uploaded.length > 0) {
-        onChange([...value, ...uploaded])
-        toast.success(`Uploaded ${uploaded.length} image${uploaded.length > 1 ? 's' : ''}`)
-      }
-    } finally {
-      setUploading(false)
-      if (inputRef.current) inputRef.current.value = ''
-    }
-  }
 
   function remove(i: number) {
     onChange(value.filter((_, idx) => idx !== i))

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Facebook, Instagram, Leaf, MessageCircle } from 'lucide-react'
 
-import { quickLinks, serviceLinks } from '@/lib/site-nav'
+import { quickLinks } from '@/lib/site-nav'
 import type { SiteContent } from '@/lib/types'
 
 export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
@@ -35,34 +35,21 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
                 </p>
               </div>
             </div>
-            <p className="mt-6 max-w-sm text-sm leading-7 text-white/80">
-              {siteContent.tagline}
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-sm uppercase tracking-label text-white/70">
-              Quick Links
-            </h2>
-            <div className="mt-6 grid gap-3">
-              {quickLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm text-white/85 transition-colors hover:text-white"
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <div className="mt-6 max-w-sm text-sm leading-7 text-white/80">
+              {siteContent.footer?.about_text ? (
+                <div dangerouslySetInnerHTML={{ __html: siteContent.footer.about_text }} />
+              ) : (
+                <p>{siteContent.tagline}</p>
+              )}
             </div>
           </div>
 
           <div>
             <h2 className="text-sm uppercase tracking-label text-white/70">
-              Services
+              Links
             </h2>
             <div className="mt-6 grid gap-3">
-              {serviceLinks.map((link) => (
+              {(siteContent.footer?.nav_links || quickLinks).map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -97,7 +84,7 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
 
           <div className="mt-14 flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-white/75">
-              © {new Date().getFullYear()} Madhuban Garden Resort. All rights
+              {siteContent.footer?.copyright_text || `© ${new Date().getFullYear()} Madhuban Garden Resort. All rights reserved.`}
             reserved.
           </p>
           <div className="flex items-center gap-4 text-white/80">

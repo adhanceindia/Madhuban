@@ -16,8 +16,24 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function RoomsPage() {
-  const rooms = await getRooms()
+type RoomsPageProps = {
+  searchParams: Promise<{
+    check_in?: string
+    check_out?: string
+    guests?: string
+  }>
+}
 
-  return <RoomsPageView rooms={rooms} />
+export default async function RoomsPage({ searchParams }: RoomsPageProps) {
+  const rooms = await getRooms()
+  const params = await searchParams
+
+  return (
+    <RoomsPageView
+      rooms={rooms}
+      initialCheckIn={params.check_in}
+      initialCheckOut={params.check_out}
+      initialGuests={params.guests ? parseInt(params.guests, 10) : undefined}
+    />
+  )
 }

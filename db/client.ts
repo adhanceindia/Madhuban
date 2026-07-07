@@ -10,8 +10,7 @@ export function getDb() {
     // Vercel build environment check
     const isBuild = process.env.npm_lifecycle_event === 'build' || 
                     process.env.NEXT_PHASE === 'phase-production-build' ||
-                    process.env.CI === '1' || 
-                    process.env.VERCEL === '1'
+                    process.env.CI === '1'
     
     // In Vercel build environments, Supabase connections often hang due to IP blocks.
     if (isBuild && !process.env.FORCE_DB_DURING_BUILD) {

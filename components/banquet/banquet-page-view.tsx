@@ -44,7 +44,7 @@ export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.18 }}
         variants={sectionVariants}
-        className="bg-background py-20 sm:py-24"
+        className="bg-background py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.96fr_1.04fr] lg:items-center lg:gap-16">
@@ -120,7 +120,7 @@ export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.16 }}
         variants={sectionVariants}
-        className="bg-primary-light py-20 sm:py-24"
+        className="bg-primary-light py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -160,7 +160,7 @@ export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.16 }}
         variants={sectionVariants}
-        className="bg-background py-20 sm:py-24"
+        className="bg-background py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -179,7 +179,7 @@ export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.3 }}
         variants={sectionVariants}
-        className="bg-warm-gray py-20 sm:py-24"
+        className="bg-warm-gray py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <EditorialCtaPanel

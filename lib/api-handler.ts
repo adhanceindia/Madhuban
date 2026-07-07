@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ZodError, ZodSchema } from 'zod'
+import { ZodError, ZodType, ZodTypeDef } from 'zod'
 import { getSession, type SessionUser } from './auth'
 import { canAccess } from './permissions'
 import { logAudit } from './audit'
@@ -32,7 +32,7 @@ type HandlerOptions<TBody, TParams, TResult> = {
   /** Module key for permissions.ts canAccess() lookup. */
   module?: string
   /** Zod schema for the request body (skipped for GET/DELETE). */
-  schema?: ZodSchema<TBody>
+  schema?: ZodType<TBody, ZodTypeDef, unknown>
   /** Whether to write to audit log on success. */
   audit?: AuditConfig
   /** The actual handler. */

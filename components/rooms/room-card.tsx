@@ -8,13 +8,34 @@ import type { RoomData } from '@/lib/types'
 import { formatIndianCurrency } from '@/lib/room-helpers'
 import { cn } from '@/lib/utils'
 
+type BookingSearchParams = {
+  check_in?: string
+  check_out?: string
+  guests?: string
+}
+
 type RoomCardProps = {
   room: RoomData
   priority?: boolean
   className?: string
+  searchParams?: BookingSearchParams
 }
 
-export function RoomCard({ room, priority = false, className }: RoomCardProps) {
+function buildRoomHref(slug: string, searchParams?: BookingSearchParams, hash?: string) {
+  const base = `/rooms/${slug}`
+  if (!searchParams) return hash ? `${base}${hash}` : base
+
+  const params = new URLSearchParams()
+  if (searchParams.check_in) params.set('check_in', searchParams.check_in)
+  if (searchParams.check_out) params.set('check_out', searchParams.check_out)
+  if (searchParams.guests) params.set('guests', searchParams.guests)
+
+  const qs = params.toString()
+  const url = qs ? `${base}?${qs}` : base
+  return hash ? `${url}${hash}` : url
+}
+
+export function RoomCard({ room, priority = false, className, searchParams }: RoomCardProps) {
   const keyAmenities = room.amenities.slice(0, 4)
 
   return (
@@ -24,7 +45,7 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
         className,
       )}
     >
-      <Link href={`/rooms/${room.slug}`} className="block">
+      <Link href={buildRoomHref(room.slug, searchParams)} className="block">
         <div className="relative aspect-[3/2] overflow-hidden">
           <Image
             src={room.images[0]}
@@ -73,11 +94,11 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
           </span>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-6 flex flex-wrap gap-x-2 gap-y-2.5">
           {keyAmenities.map((amenity) => (
             <span
               key={amenity}
-              className="inline-flex items-center gap-2 rounded-full bg-badge-green px-3 py-1.5 text-xs font-semibold uppercase tracking-tag text-primary-deep"
+              className="inline-flex items-center gap-2 rounded-full bg-badge-green px-3 py-1.5 text-xs font-semibold uppercase tracking-tag text-primary-deep transition-colors hover:bg-badge-green/80"
             >
               <RoomAmenityIcon label={amenity} className="size-3.5" />
               {amenity}
@@ -91,14 +112,14 @@ export function RoomCard({ room, priority = false, className }: RoomCardProps) {
             variant="outline"
             className="h-auto rounded-xl border-content-border bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-label text-foreground hover:bg-warm-sand"
           >
-            <Link href={`/rooms/${room.slug}`}>View Details</Link>
+            <Link href={buildRoomHref(room.slug, searchParams)}>View Details</Link>
           </Button>
 
           <Button
             asChild
             className="h-auto rounded-xl bg-primary px-4 py-3 text-xs font-semibold uppercase tracking-label text-white hover:bg-primary-dark"
           >
-            <Link href={`/rooms/${room.slug}#booking`}>Book Now</Link>
+            <Link href={buildRoomHref(room.slug, searchParams, '#booking')}>Book Now</Link>
           </Button>
         </div>
       </div>

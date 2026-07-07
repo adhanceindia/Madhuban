@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { CalendarDays, X as XIcon } from 'lucide-react'
 
 import { ResortAmenityIcon } from '@/components/rooms/room-amenity-icon'
 import { RoomCard } from '@/components/rooms/room-card'
@@ -13,14 +15,61 @@ import { cn } from '@/lib/utils'
 
 const easing = [0.22, 1, 0.36, 1] as const
 
-export function RoomsPageView({ rooms }: { rooms: RoomData[] }) {
+type RoomsPageViewProps = {
+  rooms: RoomData[]
+  initialCheckIn?: string
+  initialCheckOut?: string
+  initialGuests?: number
+}
+
+export function RoomsPageView({
+  rooms,
+  initialCheckIn,
+  initialCheckOut,
+  initialGuests,
+}: RoomsPageViewProps) {
   const reduceMotion = useReducedMotion()
+  const router = useRouter()
   const [activeFilter, setActiveFilter] = useState<RoomFilter>('All')
 
-  const filteredRooms =
+  const hasSearchParams = Boolean(initialCheckIn || initialCheckOut || initialGuests)
+
+  // Build the search params object to pass down to room cards
+  const searchParams = hasSearchParams
+    ? {
+        check_in: initialCheckIn,
+        check_out: initialCheckOut,
+        guests: initialGuests ? String(initialGuests) : undefined,
+      }
+    : undefined
+
+  // Filter by room type
+  let filteredRooms =
     activeFilter === 'All'
       ? rooms
       : rooms.filter((room) => room.type === activeFilter)
+
+  // If guests search param is provided, filter by capacity
+  if (initialGuests && initialGuests > 0) {
+    filteredRooms = filteredRooms.filter(
+      (room) => (room.capacity || 2) >= initialGuests,
+    )
+  }
+
+  function formatDisplayDate(dateStr?: string) {
+    if (!dateStr) return ''
+    const d = new Date(`${dateStr}T00:00:00`)
+    if (Number.isNaN(d.getTime())) return dateStr
+    return d.toLocaleDateString('en-IN', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+    })
+  }
+
+  function clearSearch() {
+    router.push('/rooms')
+  }
 
   const sectionVariants = {
     hidden: { opacity: 0, y: reduceMotion ? 0 : 26 },
@@ -36,8 +85,8 @@ export function RoomsPageView({ rooms }: { rooms: RoomData[] }) {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: reduceMotion ? 0 : 0.12,
-        delayChildren: reduceMotion ? 0 : 0.06,
+        staggerChildren: reduceMotion ? 0 : 0.08,
+        delayChildren: reduceMotion ? 0 : 0.04,
       },
     },
   }
@@ -92,6 +141,49 @@ export function RoomsPageView({ rooms }: { rooms: RoomData[] }) {
         </div>
       </motion.section>
 
+      {/* Search params banner */}
+      <AnimatePresence>
+        {hasSearchParams && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden border-b border-primary-100 bg-primary-50/60"
+          >
+            <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-primary-deep">
+                <CalendarDays className="size-4 shrink-0" />
+                <span className="font-medium">
+                  {initialCheckIn && initialCheckOut
+                    ? `${formatDisplayDate(initialCheckIn)} — ${formatDisplayDate(initialCheckOut)}`
+                    : initialCheckIn
+                      ? `From ${formatDisplayDate(initialCheckIn)}`
+                      : initialCheckOut
+                        ? `Until ${formatDisplayDate(initialCheckOut)}`
+                        : ''}
+                </span>
+                {initialGuests && (
+                  <span className="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-label">
+                    {initialGuests} {initialGuests === 1 ? 'guest' : 'guests'}
+                  </span>
+                )}
+                <span className="text-foreground/50">
+                  · {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'} found
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary-200 bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-label text-primary-deep transition-colors hover:bg-primary-50"
+              >
+                <XIcon className="size-3" />
+                Clear
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <section className="sticky top-navbar z-40 border-y border-content-border bg-warm-base/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
@@ -139,7 +231,7 @@ export function RoomsPageView({ rooms }: { rooms: RoomData[] }) {
           >
             {filteredRooms.map((room, index) => (
               <motion.div key={room.slug} layout variants={itemVariants}>
-                <RoomCard room={room} priority={index < 2} />
+                <RoomCard room={room} priority={index < 2} searchParams={searchParams} />
               </motion.div>
             ))}
           </motion.div>
@@ -151,7 +243,7 @@ export function RoomsPageView({ rooms }: { rooms: RoomData[] }) {
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
         variants={sectionVariants}
-        className="bg-badge-green/80 py-20 sm:py-24"
+        className="bg-badge-green/80 py-12 sm:py-16 lg:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
