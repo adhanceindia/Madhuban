@@ -1,8 +1,10 @@
 import { pgTable, serial, text, integer, timestamp, date } from 'drizzle-orm/pg-core'
 import { rooms } from './rooms.ts'
+import { users } from './users.ts'
 
 export const bookings = pgTable('bookings', {
   id: serial('id').primaryKey(),
+  user_id: integer('user_id').references(() => users.id),
   room_id: integer('room_id').notNull().references(() => rooms.id),
   guest_name: text('guest_name').notNull(),
   guest_phone: text('guest_phone').notNull(),
