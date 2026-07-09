@@ -39,3 +39,9 @@ Open `http://localhost:3000`.
 - Rooms: `UI design/rooms_suites_madhuban_garden_resort/`
 - Wedding: `UI design/weddings_madhuban_garden_resort/`
 - Shared design language: `UI design/vedic_serenity/DESIGN.md`
+
+## Git Environment
+
+- Configured using portable Git (MinGit)
+- Default commit author: `adhanceindia <adhance.in@gmail.com>`
+
