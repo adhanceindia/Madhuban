@@ -270,7 +270,7 @@ function BookingCard({
           >
             <div className="mt-7 grid gap-4">
               <label className="grid gap-2">
-                <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                <span className="text-foreground/70 text-[13px] font-medium">
                   Check-in
                 </span>
                 <input
@@ -278,12 +278,12 @@ function BookingCard({
                   value={checkIn}
                   min={getDefaultBookingDates().checkIn}
                   onChange={(event) => onCheckInChange(event.target.value)}
-                  className="h-12 rounded-2xl border border-content-border bg-white px-4 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  className="h-12 rounded-2xl border border-content-border bg-white px-4 text-[17px] font-semibold text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
                 />
               </label>
 
               <label className="grid gap-2">
-                <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                <span className="text-foreground/70 text-[13px] font-medium">
                   Check-out
                 </span>
                 <input
@@ -291,12 +291,12 @@ function BookingCard({
                   value={checkOut}
                   min={addDaysToDateInput(checkIn, 1)}
                   onChange={(event) => onCheckOutChange(event.target.value)}
-                  className="h-12 rounded-2xl border border-content-border bg-white px-4 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  className="h-12 rounded-2xl border border-content-border bg-white px-4 text-[17px] font-semibold text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
                 />
               </label>
 
               <label className="grid gap-2">
-                <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                <span className="text-foreground/70 text-[13px] font-medium">
                   Guests
                 </span>
                 <div className="relative">
@@ -304,7 +304,7 @@ function BookingCard({
                   <select
                     value={guests}
                     onChange={(event) => onGuestsChange(Number(event.target.value))}
-                    className="h-12 w-full appearance-none rounded-2xl border border-content-border bg-white pl-11 pr-4 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="h-12 w-full appearance-none rounded-2xl border border-content-border bg-white pl-11 pr-4 text-[17px] font-semibold text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
                   >
                     {Array.from({ length: room.capacity || 6 }, (_, index) => index + 1).map(
                       (count) => (
@@ -415,7 +415,7 @@ function BookingCard({
           >
             <div className="mt-7 grid gap-4">
               <label className="grid gap-2">
-                <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                <span className="text-foreground/70 text-[13px] font-medium">
                   Full Name
                 </span>
                 <div className="relative">
@@ -425,13 +425,13 @@ function BookingCard({
                     value={guestName}
                     onChange={(e) => onGuestNameChange(e.target.value)}
                     placeholder="Your full name"
-                    className="h-12 w-full rounded-2xl border border-content-border bg-white pl-11 pr-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="h-12 w-full rounded-2xl border border-content-border bg-white pl-11 pr-4 text-[17px] font-semibold text-foreground shadow-sm outline-none transition placeholder:text-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
                   />
                 </div>
               </label>
 
               <label className="grid gap-2">
-                <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                <span className="text-foreground/70 text-[13px] font-medium">
                   Phone Number
                 </span>
                 <div className="relative">
@@ -442,13 +442,13 @@ function BookingCard({
                     onChange={(e) => onGuestPhoneChange(e.target.value)}
                     placeholder="10-digit mobile number"
                     maxLength={10}
-                    className="h-12 w-full rounded-2xl border border-content-border bg-white pl-11 pr-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="h-12 w-full rounded-2xl border border-content-border bg-white pl-11 pr-4 text-[17px] font-semibold text-foreground shadow-sm outline-none transition placeholder:text-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
                   />
                 </div>
               </label>
 
               <label className="grid gap-2">
-                <span className="text-foreground/55 text-xs font-semibold uppercase tracking-label">
+                <span className="text-foreground/70 text-[13px] font-medium">
                   Email
                 </span>
                 <div className="relative">
@@ -458,7 +458,7 @@ function BookingCard({
                     value={guestEmail}
                     onChange={(e) => onGuestEmailChange(e.target.value)}
                     placeholder="your@email.com"
-                    className="h-12 w-full rounded-2xl border border-content-border bg-white pl-11 pr-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="h-12 w-full rounded-2xl border border-content-border bg-white pl-11 pr-4 text-[17px] font-semibold text-foreground shadow-sm outline-none transition placeholder:text-foreground/30 focus:border-primary focus:ring-2 focus:ring-primary/15"
                   />
                 </div>
               </label>

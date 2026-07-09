@@ -7,6 +7,7 @@ const roleEnum = z.enum([
   'event_manager',
   'accountant',
   'content_manager',
+  'customer',
 ])
 
 export const strongPassword = z
@@ -44,4 +45,5 @@ export const ROLE_LABELS: Record<z.infer<typeof roleEnum>, string> = {
   event_manager: 'Event Manager',
   accountant: 'Accountant',
   content_manager: 'Content Manager',
+  customer: 'Customer',
 }

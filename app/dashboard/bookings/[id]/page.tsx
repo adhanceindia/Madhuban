@@ -4,10 +4,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, Download, Search, HelpCircle } from 'lucide-react'
 
-export default function BookingDetailsPage({ params }: { params: { id: string } }) {
+export default async function BookingDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+
   // Mock data for display based on UI reference
   const booking = {
-    id: params.id,
+    id: id,
     roomName: 'Luxury Garden Room',
     checkIn: '20 Dec 2025 (2:00 PM)',
     checkOut: '22 Dec 2025 (11:00 AM)',

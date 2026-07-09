@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { getSession } from '@/lib/auth.ts'
+import { redirect } from 'next/navigation'
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const session = await getSession()
+  if (!session) {
+    redirect('/login')
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -18,7 +25,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center group">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Full name</p>
-                <p className="font-medium text-foreground text-[15px]">Yuvraj Singh</p>
+                <p className="font-medium text-foreground text-[15px]">{session.name}</p>
               </div>
               <button className="text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
             </div>
@@ -26,7 +33,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center group">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Email Address</p>
-                <p className="font-medium text-foreground text-[15px]">yuvraj@example.com</p>
+                <p className="font-medium text-foreground text-[15px]">{session.email}</p>
               </div>
               <button className="text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
             </div>
@@ -42,7 +49,7 @@ export default function ProfilePage() {
             <div className="flex justify-between items-center group">
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Address</p>
-                <p className="font-medium text-foreground text-[15px]">Jabalpur, Madhya Pradesh, India</p>
+                <p className="font-medium text-foreground text-[15px]">Agar Malwa, Madhya Pradesh, India</p>
               </div>
               <button className="text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
             </div>

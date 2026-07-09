@@ -7,6 +7,8 @@ import { getSiteContent } from '@/lib/data'
 
 export const dynamic = 'force-dynamic'
 
+import { GlobalMap } from '@/components/shared/global-map'
+
 export default async function PagesLayout({
   children,
 }: Readonly<{
@@ -20,6 +22,7 @@ export default async function PagesLayout({
       <main className="relative">
         <PageTransitionWrapper>{children}</PageTransitionWrapper>
       </main>
+      <GlobalMap />
       <SiteFooter siteContent={siteContent} />
       <FloatingWhatsAppButton siteContent={siteContent} />
     </PreviewProvider>

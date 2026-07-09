@@ -1,22 +1,48 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { redirect } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Calendar, FileText, User, Users, ArrowRight } from 'lucide-react'
+import { Calendar, FileText, User, Users } from 'lucide-react'
+import { getSession } from '@/lib/auth.ts'
+import { getCustomerBookings } from '@/actions/dashboard.ts'
 
-export default function DashboardPage() {
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+export default async function DashboardPage() {
+  const session = await getSession()
+  if (!session) {
+    redirect('/login')
+  }
+
+  const userBookings = await getCustomerBookings()
+
+  // Find the most recent upcoming or ongoing booking (checkout in the future)
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  
+  const upcomingBooking = userBookings
+    .filter((ub) => ub.booking.status !== 'cancelled')
+    .find((ub) => new Date(ub.booking.check_out) >= now)
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500 font-body">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-display font-semibold text-foreground tracking-tight">
-            Welcome back, Yuvraj 👋
+            Welcome back, {session.name} 👋
           </h1>
-          <p className="text-muted-foreground mt-1">Here's what's happening with your stays</p>
+          <p className="text-muted-foreground mt-1">Here&apos;s what&apos;s happening with your stays</p>
         </div>
-        <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl h-11 px-6 shadow-sm">
-          Book a Stay
+        <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl h-11 px-6 shadow-sm" asChild>
+          <Link href="/rooms">Book a Stay</Link>
         </Button>
       </div>
 
@@ -24,63 +50,90 @@ export default function DashboardPage() {
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-foreground">Upcoming Stay</h3>
         
-        <Card className="rounded-[2rem] border-none shadow-sm overflow-hidden bg-white">
-          <div className="flex flex-col md:flex-row">
-            {/* Image Section */}
-            <div className="relative w-full md:w-[340px] h-48 md:h-auto shrink-0">
-              <Image 
-                src="https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1000&auto=format&fit=crop" 
-                alt="Luxury Garden Room" 
-                fill
-                className="object-cover"
-              />
-            </div>
-            
-            {/* Details Section */}
-            <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="text-2xl font-display font-semibold text-foreground">Luxury Garden Room</h4>
-                  <div className="flex items-center gap-6 mt-4 text-sm text-muted-foreground">
-                    <div>
-                      <p className="text-xs uppercase tracking-wider mb-1">Check-in</p>
-                      <p className="font-medium text-foreground">20 Dec 2025</p>
+        {upcomingBooking ? (
+          <Card className="rounded-[2rem] border-none shadow-sm overflow-hidden bg-white">
+            <div className="flex flex-col md:flex-row">
+              {/* Image Section */}
+              <div className="relative w-full md:w-[340px] h-48 md:h-auto shrink-0 bg-warm-sand">
+                <Image 
+                  src={upcomingBooking.room?.images?.[0] || "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1000&auto=format&fit=crop"} 
+                  alt={upcomingBooking.room?.name || "Room Image"} 
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              
+              {/* Details Section */}
+              <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                  <div>
+                    <h4 className="text-2xl font-display font-semibold text-foreground">
+                      {upcomingBooking.room?.name || "Resort Room"}
+                    </h4>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 text-sm text-muted-foreground">
+                      <div>
+                        <p className="text-xs uppercase tracking-wider mb-1">Check-in</p>
+                        <p className="font-medium text-foreground">{formatDate(upcomingBooking.booking.check_in)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-wider mb-1">Check-out</p>
+                        <p className="font-medium text-foreground">{formatDate(upcomingBooking.booking.check_out)}</p>
+                      </div>
+                      <div className="flex items-end pb-[2px]">
+                        <Users className="w-4 h-4 mr-1.5" />
+                        <span>{upcomingBooking.booking.guests_count} Guests</span>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wider mb-1">Check-out</p>
-                      <p className="font-medium text-foreground">22 Dec 2025</p>
+                  </div>
+                  
+                  <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
+                    <div className="flex gap-2">
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full capitalize ${
+                        upcomingBooking.booking.status === 'confirmed' 
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                          : upcomingBooking.booking.status === 'pending'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}>
+                        ● {upcomingBooking.booking.status}
+                      </span>
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full capitalize ${
+                        upcomingBooking.booking.payment_status === 'paid' 
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      }`}>
+                        ● {upcomingBooking.booking.payment_status}
+                      </span>
                     </div>
-                    <div className="flex items-end pb-[2px]">
-                      <Users className="w-4 h-4 mr-1.5" />
-                      <span>2 Guests</span>
+                    <div className="mt-2 sm:text-right">
+                      <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Booking ID</p>
+                      <p className="font-bold text-foreground">#MGR-{upcomingBooking.booking.id}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex gap-2">
-                    <span className="px-3 py-1 bg-status-confirmed-bg text-status-confirmed text-xs font-semibold rounded-full">
-                      ● Confirmed
-                    </span>
-                    <span className="px-3 py-1 bg-status-confirmed-bg text-status-confirmed text-xs font-semibold rounded-full">
-                      ● Paid
-                    </span>
-                  </div>
-                  <div className="mt-4 text-right">
-                    <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">Booking ID</p>
-                    <p className="font-bold text-foreground">#MGR-12578</p>
-                  </div>
+                <div className="mt-8 flex justify-end">
+                  <Button variant="outline" className="rounded-xl border-border hover:bg-gray-50 h-11 px-6 text-foreground" asChild>
+                    <Link href={`/dashboard/bookings/${upcomingBooking.booking.id}`}>View Details</Link>
+                  </Button>
                 </div>
               </div>
-              
-              <div className="mt-8 flex justify-end">
-                <Button variant="outline" className="rounded-xl border-border hover:bg-gray-50 h-11 px-6 text-foreground" asChild>
-                  <Link href="/dashboard/bookings/12578">View Details</Link>
-                </Button>
-              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        ) : (
+          <Card className="rounded-[2rem] border-none shadow-sm overflow-hidden bg-white p-8 md:p-12 text-center max-w-xl mx-auto mt-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
+              <Calendar className="w-8 h-8" />
+            </div>
+            <h4 className="text-2xl font-display font-semibold text-foreground mb-3">No upcoming stays</h4>
+            <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+              You don&apos;t have any reservations scheduled. Start planning your next peaceful getaway at Madhuban Garden Resort.
+            </p>
+            <Button className="bg-primary hover:bg-primary-dark text-white rounded-xl h-11 px-8 shadow-sm" asChild>
+              <Link href="/rooms">Explore Rooms & Book</Link>
+            </Button>
+          </Card>
+        )}
       </div>
 
       {/* Quick Links */}

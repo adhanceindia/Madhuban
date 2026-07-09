@@ -5,6 +5,13 @@ import { Star } from 'lucide-react'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { cn } from '@/lib/utils'
 import type { ReviewData } from '@/lib/types'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 function ReviewStars({ rating }: { rating: number }) {
   return (
@@ -86,36 +93,47 @@ export function ReviewsBlock({ eyebrow, title, description, reviews }: ReviewsBl
           description={description}
         />
 
-        <motion.div
-          variants={containerVariants}
-          className="mt-12 grid gap-6 lg:grid-cols-3"
-        >
-          {reviewList.slice(0, 3).map((review, reviewIndex) => (
-            <motion.article
-              key={`${review.guest_name}-${reviewIndex}`}
-              variants={itemVariants}
-              className="rounded-card border border-primary/10 bg-[#fcfdf9] p-7 shadow-[0_18px_50px_rgba(27,28,25,0.06)] flex flex-col justify-between"
-            >
-              <div>
-                <ReviewStars rating={review.rating} />
-                <p className="mt-6 text-lg italic leading-8 text-foreground line-clamp-6">
-                  &ldquo;{review.review_text}&rdquo;
-                </p>
-              </div>
-              <div className="mt-6 border-t border-primary/10 pt-5">
-                <p className="text-base font-semibold text-foreground">
-                  {review.guest_name}
-                </p>
-                <p className="mt-1 text-sm text-foreground/55">
-                  {new Date(review.createdAt).toLocaleDateString('en-IN', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
-                </p>
-              </div>
-            </motion.article>
-          ))}
+        <motion.div variants={containerVariants} className="mt-12">
+          <Carousel
+            opts={{
+              align: "start",
+            }}
+            className="w-full relative"
+          >
+            <CarouselContent className="-ml-4 sm:-ml-6">
+              {reviewList.map((review, reviewIndex) => (
+                <CarouselItem key={`${review.guest_name}-${reviewIndex}`} className="pl-4 sm:pl-6 basis-full md:basis-1/3">
+                  <motion.article
+                    variants={itemVariants}
+                    className="h-full rounded-card border border-primary/10 bg-[#fcfdf9] p-7 shadow-[0_18px_50px_rgba(27,28,25,0.06)] flex flex-col justify-between"
+                  >
+                    <div>
+                      <ReviewStars rating={review.rating} />
+                      <p className="mt-6 text-lg italic leading-8 text-foreground line-clamp-6">
+                        &ldquo;{review.review_text}&rdquo;
+                      </p>
+                    </div>
+                    <div className="mt-6 border-t border-primary/10 pt-5">
+                      <p className="text-base font-semibold text-foreground">
+                        {review.guest_name}
+                      </p>
+                      <p className="mt-1 text-sm text-foreground/55">
+                        {new Date(review.createdAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  </motion.article>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="mt-8 flex items-center justify-end gap-3">
+              <CarouselPrevious className="static translate-y-0 translate-x-0 h-11 w-11 border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:text-primary-dark" />
+              <CarouselNext className="static translate-y-0 translate-x-0 h-11 w-11 border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:text-primary-dark" />
+            </div>
+          </Carousel>
         </motion.div>
       </div>
     </motion.section>

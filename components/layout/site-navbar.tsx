@@ -11,60 +11,21 @@ import {
   Instagram,
   Facebook,
   X,
-  ChevronDown
+  ChevronDown,
+  ArrowRight
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { navLinks, megaNavLinks } from '@/lib/site-nav'
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu" 
-import type { SiteContent, MenuItem } from '@/lib/types'
-
-type NavItem = {
-  id?: string
-  title?: string
-  label?: string
-  href?: string
-  description?: string
-  items?: NavItem[]
-}
-
-function buildMenuTree(items: MenuItem[]) {
-  if (!items || !Array.isArray(items)) return []
-  const rootItems = items.filter(i => !i.parentId).sort((a, b) => a.sort_order - b.sort_order)
-  return rootItems.map(root => ({
-    ...root,
-    title: root.label, // bridge the gap between flat item label and existing rendering logic
-    items: items.filter(i => i.parentId === root.id).sort((a, b) => a.sort_order - b.sort_order).map(child => ({
-      ...child,
-      title: child.label,
-    }))
-  }))
-}
+import { mainNavigation } from '@/lib/site-nav'
+import type { SiteContent } from '@/lib/types'
 
 export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [expandedSection, setExpandedSection] = useState<string | null>(megaNavLinks[0].title)
-
-  const displayMenu = React.useMemo(() => {
-    if (siteContent.header?.mega_menu && siteContent.header.mega_menu.length > 0) {
-      return buildMenuTree(siteContent.header.mega_menu)
-    }
-    if (siteContent.header?.nav_links && siteContent.header.nav_links.length > 0) {
-      return siteContent.header.nav_links
-    }
-    return navLinks
-  }, [siteContent.header])
+  const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const [activeMenu, setActiveMenu] = useState<string | null>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16)
@@ -80,6 +41,12 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
     }
   }, [isOpen])
 
+  // Close menus on route change
+  useEffect(() => {
+    setActiveMenu(null)
+    setIsOpen(false)
+  }, [pathname])
+
   return (
     <motion.header
       initial={false}
@@ -89,6 +56,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
         'sticky top-0 z-50 w-full transition-[background-color,box-shadow] duration-300',
         'border-b border-content-border/60 bg-background/95 shadow-[0_14px_40px_rgba(27,28,25,0.08)] backdrop-blur-2xl'
       )}
+      onMouseLeave={() => setActiveMenu(null)}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex min-w-0 items-center">
@@ -113,65 +81,40 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
           )}
         </Link>
 
-        <nav className="hidden items-center lg:flex">
-          <NavigationMenu>
-            <NavigationMenuList className="gap-2">
-              {displayMenu.map((link: NavItem) => {
-                if (link.items && Array.isArray(link.items) && link.items.length > 0) {
-                  return (
-                    <NavigationMenuItem key={link.title}>
-                      <NavigationMenuTrigger 
-                        className={cn(
-                          'bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent font-display text-lg italic tracking-wide transition-colors duration-200',
-                          'text-foreground/70 hover:text-primary-dark data-[state=open]:text-primary-dark'
-                        )}
-                      >
-                        {link.title}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] bg-white rounded-xl shadow-xl border-border/50">
-                          {link.items.map((item: NavItem) => (
-                            <li key={item.title}>
-                              <NavigationMenuLink asChild>
-                                <Link
-                                  href={item.href || '#'}
-                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent/40 focus:bg-accent/40"
-                                >
-                                  <div className="text-sm font-semibold leading-none text-foreground">{item.title}</div>
-                                  <p className="line-clamp-2 text-sm leading-snug text-foreground/70">
-                                    {item.description}
-                                  </p>
-                                </Link>
-                              </NavigationMenuLink>
-                            </li>
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  )
-                }
-
-                // It's a flat link
-                return (
-                  <NavigationMenuItem key={link.label}>
-                    <Link href={link.href || '#'} legacyBehavior passHref>
-                      <NavigationMenuLink 
-                        className={cn(
-                          navigationMenuTriggerStyle(),
-                          'bg-transparent hover:bg-transparent focus:bg-transparent font-display text-lg italic tracking-wide transition-colors duration-200',
-                          pathname === link.href
-                            ? 'border-b-2 border-primary-dark font-bold text-primary-dark'
-                            : 'border-b-2 border-transparent text-foreground/80 hover:text-foreground'
-                        )}
-                      >
-                        {link.label}
-                      </NavigationMenuLink>
+        {/* DESKTOP NAVIGATION */}
+        <nav className="hidden items-center lg:flex h-full">
+          <ul className="flex items-center gap-8">
+            {mainNavigation.map((link) => {
+              const hasItems = link.items && link.items.length > 0;
+              return (
+                <li key={link.label} className="flex h-16 items-center">
+                  {hasItems ? (
+                    <button
+                      onMouseEnter={() => setActiveMenu(link.label)}
+                      className={cn(
+                        'flex h-full items-center gap-1.5 font-body text-[15px] font-medium tracking-normal transition-colors duration-200 outline-none',
+                        activeMenu === link.label ? 'text-primary-dark' : 'text-foreground/80 hover:text-primary-dark'
+                      )}
+                    >
+                      {link.label}
+                      <ChevronDown className={cn("size-3.5 transition-transform duration-300", activeMenu === link.label && "rotate-180")} />
+                    </button>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      onMouseEnter={() => setActiveMenu(null)}
+                      className={cn(
+                        'flex h-full items-center font-body text-[15px] font-medium tracking-normal transition-colors duration-200 outline-none',
+                        pathname === link.href ? 'text-primary-dark border-b-2 border-primary-dark font-semibold' : 'text-foreground/80 hover:text-primary-dark border-b-2 border-transparent'
+                      )}
+                    >
+                      {link.label}
                     </Link>
-                  </NavigationMenuItem>
-                )
-              })}
-            </NavigationMenuList>
-          </NavigationMenu>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
@@ -179,7 +122,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
             asChild
             variant="outline"
             size="sm"
-            className="rounded-full"
+            className="rounded-full font-body font-semibold tracking-[0.08em]"
           >
             <Link
               href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
@@ -191,13 +134,14 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
               WhatsApp
             </Link>
           </Button>
-          <Button asChild size="sm" className="rounded-full px-5">
+          <Button asChild size="sm" className="rounded-full px-5 font-body font-semibold tracking-[0.08em]">
             <Link href={siteContent.header?.cta_button_link || '/rooms'}>
               {siteContent.header?.cta_button_text || 'Book Now'}
             </Link>
           </Button>
         </div>
 
+        {/* MOBILE TRIGGER */}
         <button
           type="button"
           onClick={() => setIsOpen((open) => !open)}
@@ -209,6 +153,71 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
         </button>
       </div>
 
+      {/* DESKTOP MEGA MENU PANEL */}
+      <AnimatePresence>
+        {activeMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="absolute left-0 top-full w-full border-t border-content-border/60 bg-background/95 shadow-2xl backdrop-blur-3xl"
+          >
+            {mainNavigation.map((link) => {
+              if (link.label !== activeMenu || !link.items) return null;
+              return (
+                <div key={link.label} className="mx-auto flex max-w-7xl justify-between px-4 py-12 sm:px-6 lg:px-8">
+                  {/* Links Column */}
+                  <div className="w-1/2 pr-12">
+                    <h3 className="font-display text-3xl italic text-foreground mb-8">Discover {link.label}</h3>
+                    <div className="grid grid-cols-2 gap-x-12 gap-y-8">
+                      {link.items.map(item => (
+                        <Link
+                          key={item.title}
+                          href={item.href}
+                          onClick={() => setActiveMenu(null)}
+                          className="group flex flex-col gap-1.5 transition-colors"
+                        >
+                          <span className="font-body text-[17px] font-semibold text-foreground group-hover:text-primary-dark transition-colors">{item.title}</span>
+                          <span className="font-body text-sm text-foreground/60 leading-relaxed group-hover:text-foreground/80 transition-colors">{item.description}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Featured Image & CTA Column */}
+                  {link.featuredImage && (
+                    <div className="relative w-[45%] h-[280px] overflow-hidden rounded-2xl bg-warm-sand">
+                      <Image
+                        src={link.featuredImage}
+                        alt={link.label}
+                        fill
+                        className="object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
+                        <div>
+                          <h4 className="font-display text-2xl text-white mb-2 tracking-wide">Experience {link.label}</h4>
+                        </div>
+                        {link.ctaLink && (
+                          <Button asChild variant="default" className="rounded-full bg-white text-foreground hover:bg-white/90 border-0 font-body font-semibold tracking-[0.08em]">
+                            <Link href={link.ctaLink} onClick={() => setActiveMenu(null)}>
+                              {link.ctaText}
+                              <ArrowRight className="ml-2 size-4" />
+                            </Link>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MOBILE MENU */}
       <AnimatePresence>
         {isOpen ? (
           <motion.div
@@ -216,27 +225,22 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="max-h-[calc(100vh-80px)] overflow-y-auto border-t border-white/10 bg-background/95 px-4 py-5 shadow-[0_20px_40px_rgba(27,28,25,0.06)] backdrop-blur-2xl lg:hidden"
+            className="absolute left-0 top-full w-full max-h-[calc(100vh-80px)] overflow-y-auto border-t border-white/10 bg-background/95 px-4 py-5 shadow-[0_20px_40px_rgba(27,28,25,0.06)] backdrop-blur-2xl lg:hidden"
           >
             <div className="mx-auto flex max-w-7xl flex-col gap-6 pt-2 pb-6">
               <div className="flex flex-col gap-1">
-                {(siteContent.header?.mega_menu && siteContent.header.mega_menu.length > 0
-                  ? siteContent.header.mega_menu
-                  : siteContent.header?.nav_links && siteContent.header.nav_links.length > 0
-                  ? siteContent.header.nav_links
-                  : navLinks
-                ).map((link: NavItem) => {
-                  if (link.items && Array.isArray(link.items)) {
+                {mainNavigation.map((link) => {
+                  if (link.items && link.items.length > 0) {
                     return (
-                      <div key={link.title} className="flex flex-col border-b border-content-border/40 last:border-0">
+                      <div key={link.label} className="flex flex-col border-b border-content-border/40 last:border-0">
                         <button
                           type="button"
-                          onClick={() => setExpandedSection(expandedSection === link.title ? null : (link.title ?? null))}
-                          className="flex w-full items-center justify-between py-4 text-left font-display text-[1.4rem] italic text-foreground transition-colors hover:text-primary-dark"
+                          onClick={() => setExpandedSection(expandedSection === link.label ? null : link.label)}
+                          className="flex w-full items-center justify-between py-4 text-left font-display text-[1.6rem] italic text-foreground transition-colors hover:text-primary-dark"
                         >
-                          {link.title}
+                          {link.label}
                           <motion.div
-                            animate={{ rotate: expandedSection === link.title ? 180 : 0 }}
+                            animate={{ rotate: expandedSection === link.label ? 180 : 0 }}
                             transition={{ duration: 0.3 }}
                           >
                             <ChevronDown className="size-5 text-foreground/40" />
@@ -244,7 +248,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                         </button>
                         
                         <AnimatePresence initial={false}>
-                          {expandedSection === link.title && (
+                          {expandedSection === link.label && (
                             <motion.div
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: 'auto', opacity: 1 }}
@@ -254,19 +258,26 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                             >
                               <div className="flex flex-col gap-4 pb-5 pt-2">
                                 <div className="flex flex-col gap-1.5">
-                                  {link.items.map((item: NavItem) => (
+                                  {link.items.map((item) => (
                                     <Link
                                       key={item.title}
-                                      href={item.href || '#'}
+                                      href={item.href}
                                       onClick={() => setIsOpen(false)}
-                                      className="group flex items-center justify-between rounded-lg py-2 text-[15px] font-medium text-foreground/80 transition-colors hover:text-primary-dark"
+                                      className="group flex flex-col justify-center rounded-lg py-3 text-[15px] font-medium text-foreground/80 transition-colors hover:text-primary-dark font-body"
                                     >
-                                      {item.title}
-                                      <span className="text-[10px] tracking-widest text-foreground/40 opacity-0 transition-opacity group-hover:opacity-100 uppercase">
-                                        Explore
-                                      </span>
+                                      <span className="font-semibold">{item.title}</span>
+                                      <span className="text-xs text-foreground/50 font-normal">{item.description}</span>
                                     </Link>
                                   ))}
+                                  {link.ctaLink && (
+                                    <Link
+                                      href={link.ctaLink}
+                                      onClick={() => setIsOpen(false)}
+                                      className="mt-2 inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-primary-dark uppercase font-body"
+                                    >
+                                      {link.ctaText} <ArrowRight className="size-4" />
+                                    </Link>
+                                  )}
                                 </div>
                               </div>
                             </motion.div>
@@ -280,9 +291,9 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                   return (
                     <div key={link.label} className="flex flex-col border-b border-content-border/40 last:border-0">
                       <Link
-                        href={link.href || '#'}
+                        href={link.href}
                         onClick={() => setIsOpen(false)}
-                        className="flex w-full items-center justify-between py-4 text-left font-display text-[1.4rem] italic text-foreground transition-colors hover:text-primary-dark"
+                        className="flex w-full items-center justify-between py-4 text-left font-display text-[1.6rem] italic text-foreground transition-colors hover:text-primary-dark"
                       >
                         {link.label}
                       </Link>
@@ -292,12 +303,12 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
               </div>
               
               <div className="mt-2 flex flex-col gap-3">
-                <Button asChild size="lg" className="w-full rounded-full text-base font-semibold tracking-wide uppercase h-14 bg-primary hover:bg-primary-dark">
+                <Button asChild size="lg" className="w-full rounded-full text-base font-semibold tracking-wide uppercase h-14 bg-primary hover:bg-primary-dark font-body">
                   <Link href={siteContent.header?.cta_button_link || '/rooms'} onClick={() => setIsOpen(false)}>
                     {siteContent.header?.cta_button_text || 'Book Your Stay'}
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="w-full justify-center rounded-full text-[13px] font-semibold tracking-wide uppercase h-14 border-primary/20 hover:bg-primary-50/40">
+                <Button asChild variant="outline" size="lg" className="w-full justify-center rounded-full text-[13px] font-semibold tracking-wide uppercase h-14 border-primary/20 hover:bg-primary-50/40 font-body">
                   <Link
                     href={`https://wa.me/${siteContent.whatsapp.replace(/\D/g, '')}`}
                     target="_blank"

@@ -25,43 +25,127 @@ export const serviceLinks = [
   { label: 'Nearby Attractions', href: '/attractions' },
 ]
 
-export const megaNavLinks = [
+export const mainNavigation = [
   {
-    title: 'Stay With Us',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
-    items: [
-      { title: 'Rooms', href: '/rooms', description: 'Explore our 19 luxury rooms.' },
-      { title: 'Swimming Pool', href: '/pool', description: 'Relax by our outdoor pool.' },
-    ],
+    label: 'Home',
+    href: '/',
   },
   {
-    title: 'Celebrations',
-    image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800',
+    label: 'About',
+    featuredImage: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
+    ctaText: 'Explore More',
+    ctaLink: '/attractions',
     items: [
-      { title: 'Wedding Venue', href: '/wedding', description: 'The perfect backdrop for your big day.' },
-      { title: 'Banquet Hall', href: '/banquet', description: 'Premium indoor event spaces.' },
-      { title: 'Events & Parties', href: '/events', description: 'Birthdays, anniversaries, and corporate meets.' },
-    ],
+      {
+        title: 'Our Story',
+        href: '/#about',
+        description: 'Discover the heritage of Madhuban.'
+      },
+      {
+        title: 'Resort Overview',
+        href: '/',
+        description: 'A glimpse into our luxurious premises.'
+      },
+      {
+        title: 'Nearby Attractions',
+        href: '/attractions',
+        description: 'Explore the Agar Malwa district.'
+      }
+    ]
   },
   {
-    title: 'Discover Madhuban',
-    image: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=800',
+    label: 'Stay',
+    featuredImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    ctaText: 'Check Availability',
+    ctaLink: '/rooms',
     items: [
-      { title: 'Gallery', href: '/gallery', description: 'View our stunning resort photos.' },
-      { title: 'Nearby Attractions', href: '/attractions', description: 'Explore Agar Malwa.' },
-    ],
+      {
+        title: 'Rooms & Suites',
+        href: '/rooms',
+        description: 'Explore our 19 luxury rooms.'
+      },
+      {
+        title: 'Amenities & Pool',
+        href: '/pool',
+        description: 'Relax and rejuvenate.'
+      },
+      {
+        title: 'Packages',
+        href: '/rooms',
+        description: 'Special offers for your stay.'
+      }
+    ]
   },
-]
-
-export const defaultMegaMenuFlat = [
-  { id: '1', label: 'Stay With Us', href: '#', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', parentId: null, sort_order: 0 },
-  { id: '1-1', label: 'Rooms', href: '/rooms', description: 'Explore our 19 luxury rooms.', parentId: '1', sort_order: 1 },
-  { id: '1-2', label: 'Swimming Pool', href: '/pool', description: 'Relax by our outdoor pool.', parentId: '1', sort_order: 2 },
-  { id: '2', label: 'Celebrations', href: '#', image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800', parentId: null, sort_order: 3 },
-  { id: '2-1', label: 'Wedding Venue', href: '/wedding', description: 'The perfect backdrop for your big day.', parentId: '2', sort_order: 4 },
-  { id: '2-2', label: 'Banquet Hall', href: '/banquet', description: 'Premium indoor event spaces.', parentId: '2', sort_order: 5 },
-  { id: '2-3', label: 'Events & Parties', href: '/events', description: 'Birthdays, anniversaries, and corporate meets.', parentId: '2', sort_order: 6 },
-  { id: '3', label: 'Discover Madhuban', href: '#', image: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=800', parentId: null, sort_order: 7 },
-  { id: '3-1', label: 'Gallery', href: '/gallery', description: 'View our stunning resort photos.', parentId: '3', sort_order: 8 },
-  { id: '3-2', label: 'Nearby Attractions', href: '/attractions', description: 'Explore Agar Malwa.', parentId: '3', sort_order: 9 },
+  {
+    label: 'Dining',
+    featuredImage: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800',
+    ctaText: 'View Menu',
+    ctaLink: '/restaurant',
+    items: [
+      {
+        title: 'Restaurant',
+        href: '/restaurant',
+        description: 'Fine dining indoor and outdoor.'
+      },
+      {
+        title: 'Private Dining',
+        href: '/banquet',
+        description: 'Exclusive culinary experiences.'
+      }
+    ]
+  },
+  {
+    label: 'Weddings',
+    featuredImage: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800',
+    ctaText: 'Plan Your Wedding',
+    ctaLink: '/wedding',
+    items: [
+      {
+        title: 'Destination Weddings',
+        href: '/wedding',
+        description: 'The perfect backdrop for your big day.'
+      },
+      {
+        title: 'Venues',
+        href: '/wedding',
+        description: 'Lush green lawns and elegant spaces.'
+      },
+      {
+        title: 'Wedding Gallery',
+        href: '/gallery',
+        description: 'Real celebrations at Madhuban.'
+      }
+    ]
+  },
+  {
+    label: 'Events',
+    featuredImage: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=800',
+    ctaText: 'Enquire Now',
+    ctaLink: '/contact',
+    items: [
+      {
+        title: 'Corporate Events',
+        href: '/events',
+        description: 'Conferences and team meets.'
+      },
+      {
+        title: 'Social Celebrations',
+        href: '/events',
+        description: 'Birthdays and anniversaries.'
+      },
+      {
+        title: 'Banquet Spaces',
+        href: '/banquet',
+        description: 'Premium indoor halls.'
+      }
+    ]
+  },
+  {
+    label: 'Gallery',
+    href: '/gallery',
+  },
+  {
+    label: 'Contact',
+    href: '/contact',
+  }
 ]

@@ -3,6 +3,17 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server.ts'
 import { getDb } from '@/db/client.ts'
 import { users } from '@/db/schema/users.ts'
+import { eq } from 'drizzle-orm'
+
+export async function checkUserExists(email: string) {
+  const db = getDb()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email.toLowerCase().trim()))
+    .limit(1)
+  return !!user
+}
 
 export async function signInWithOtp(email: string) {
   const supabase = await createSupabaseServerClient()

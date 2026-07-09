@@ -21,8 +21,17 @@
     @apply bg-background text-foreground;
     min-height: 100vh;
     background-image:
-      radial-gradient(circle at top, rgba(56, 106, 14, 0.12), transparent 30%),
+      radial-gradient(circle at top, rgba(107, 175, 69, 0.12), transparent 30%),
       linear-gradient(180deg, #fbfdf8 0%, #f8f9f4 100%);
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  @screen md {
+    body {
+      font-size: 18px;
+      line-height: 1.8;
+    }
   }
   h1,
   h2,
@@ -31,6 +40,19 @@
   h5,
   h6 {
     @apply font-display;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  
+  /* Form Inputs and Labels globally */
+  label {
+    font-family: var(--font-body), sans-serif;
+    font-weight: 500;
+  }
+  input, select, textarea {
+    font-family: var(--font-body), sans-serif;
+    font-weight: 400;
   }
 }
 

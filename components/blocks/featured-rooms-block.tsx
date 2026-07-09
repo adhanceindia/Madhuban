@@ -6,6 +6,13 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { SectionHeading } from '@/components/shared/section-heading'
 import type { RoomData } from '@/lib/types'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 function formatIndianCurrency(value: number) {
   return new Intl.NumberFormat('en-IN', {
@@ -81,51 +88,64 @@ export function FeaturedRoomsBlock({ eyebrow, title, description, featuredRooms 
           description={description || defaultDescription}
         />
 
-        <motion.div
-          variants={containerVariants}
-          className="mt-12 grid gap-6 lg:grid-cols-3"
-        >
-          {rooms.map((room, roomIndex) => (
-            <motion.article
-              key={room.slug || roomIndex}
-              variants={itemVariants}
-              className="overflow-hidden rounded-card border border-primary/10 bg-[#fbfdf8] shadow-[0_22px_55px_rgba(27,28,25,0.06)]"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <Image
-                  src={room.images[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80'}
-                  alt={room.name}
-                  fill
-                  sizes="(min-width: 1024px) 30vw, 100vw"
-                  className="object-cover transition-transform duration-700 hover:scale-105"
-                />
-              </div>
-              <div className="p-6 sm:p-7">
-                <p className="text-xs font-semibold uppercase tracking-label text-gold">
-                  {room.type}
-                </p>
-                <h3 className="mt-3 text-3xl italic text-foreground">
-                  {room.name}
-                </h3>
-                <p className="text-foreground/70 mt-4 text-sm leading-7 line-clamp-2">
-                  {room.description}
-                </p>
-                <div className="mt-6 flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xl font-semibold text-foreground">
-                      {formatIndianCurrency(room.price_per_night)}
-                    </p>
-                    <p className="mt-1 text-sm text-foreground/55">
-                      Sleeps {room.capacity} guests
-                    </p>
-                  </div>
-                  <Button asChild className="rounded-full px-5">
-                    <Link href={`/rooms/${room.slug}`}>Book Now</Link>
-                  </Button>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+        <motion.div variants={containerVariants} className="mt-12">
+          <Carousel
+            opts={{
+              align: "start",
+            }}
+            className="w-full relative"
+          >
+            <CarouselContent className="-ml-4 sm:-ml-6">
+              {rooms.map((room, roomIndex) => (
+                <CarouselItem key={room.slug || roomIndex} className="pl-4 sm:pl-6 basis-full md:basis-1/3">
+                  <motion.article
+                    variants={itemVariants}
+                    className="h-full overflow-hidden rounded-card border border-primary/10 bg-[#fbfdf8] shadow-[0_22px_55px_rgba(27,28,25,0.06)]"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <Image
+                        src={room.images[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80'}
+                        alt={room.name}
+                        fill
+                        sizes="(min-width: 1024px) 30vw, 100vw"
+                        className="object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-6 sm:p-7 flex flex-col justify-between h-[calc(100%-75%)]">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-label text-gold">
+                          {room.type}
+                        </p>
+                        <h3 className="mt-3 text-3xl italic text-foreground">
+                          {room.name}
+                        </h3>
+                        <p className="text-foreground/70 mt-4 text-sm leading-7 line-clamp-2">
+                          {room.description}
+                        </p>
+                      </div>
+                      <div className="mt-6 flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-xl font-semibold text-foreground">
+                            {formatIndianCurrency(room.price_per_night)}
+                          </p>
+                          <p className="mt-1 text-sm text-foreground/55">
+                            Sleeps {room.capacity} guests
+                          </p>
+                        </div>
+                        <Button asChild className="rounded-full px-5 font-body">
+                          <Link href={`/rooms/${room.slug}`}>Book Now</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.article>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="mt-8 flex items-center justify-end gap-3">
+              <CarouselPrevious className="static translate-y-0 translate-x-0 h-11 w-11 border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:text-primary-dark" />
+              <CarouselNext className="static translate-y-0 translate-x-0 h-11 w-11 border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:text-primary-dark" />
+            </div>
+          </Carousel>
         </motion.div>
 
         <motion.div
@@ -136,7 +156,7 @@ export function FeaturedRoomsBlock({ eyebrow, title, description, featuredRooms 
             asChild
             variant="outline"
             size="lg"
-            className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-label"
+            className="h-auto rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-label font-body"
           >
             <Link href="/rooms">View All Rooms</Link>
           </Button>

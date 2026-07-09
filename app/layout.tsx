@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, DM_Sans, Lato } from 'next/font/google'
+import { Instrument_Serif, Manrope } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 
 import { getSiteContent } from '@/lib/data'
@@ -7,26 +7,26 @@ import { cn } from '@/lib/utils'
 import '@/app/globals.css'
 import { ReticleDev } from './reticle-dev'
 
-const displayFont = Cormorant_Garamond({
+const displayFont = Instrument_Serif({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
+  weight: ['400'],
   style: ['normal', 'italic'],
-  weight: ['400', '500', '600', '700'],
 })
 
-const bodyFont = DM_Sans({
+const bodyFont = Manrope({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '600', '700'],
 })
 
-const adminFont = Lato({
+const adminFont = Manrope({
   subsets: ['latin'],
   variable: '--font-admin',
   display: 'swap',
-  weight: ['400', '700', '900'],
+  weight: ['400', '500', '600', '700'],
 })
 
 export async function generateMetadata(): Promise<Metadata> {

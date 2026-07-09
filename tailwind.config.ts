@@ -13,20 +13,20 @@ const config: Config = {
       colors: {
         // Brand garden green — reserved for brand mark + dark text accent
         primary: {
-          DEFAULT: '#386a0e',
+          DEFAULT: '#6baf45',
           foreground: '#ffffff',
-          light: '#eef4e7',
-          deep: '#356609',
-          50: '#f2f9ec',
-          100: '#e3f2d4',
-          200: '#a3d47a',
-          300: '#6aad3a',
-          400: '#4a8a1a',
-          500: '#386a0e',
-          600: '#2f590b',
-          700: '#264808',
-          800: '#1e3806',
-          900: '#152804',
+          light: '#f1f8ed',
+          deep: '#4b7f2e',
+          50: '#f5f9f0',
+          100: '#e7f3dd',
+          200: '#d0e8bd',
+          300: '#b1da98',
+          400: '#8dc86f',
+          500: '#6baf45',
+          600: '#528a32',
+          700: '#416a29',
+          800: '#345524',
+          900: '#2b471f',
         },
         // Lime-yellow — the signature accent (Lodgify-style)
         // Active sidebar pill, primary CTAs, chart highlights, status pills
@@ -95,7 +95,7 @@ const config: Config = {
           'maintenance-bg': '#fce8d4',
         },
         // Legacy alias
-        'primary-dark': '#2f590b',
+        'primary-dark': '#528a32',
         // Semantic tokens — warm sage-cream background
         background: '#f5f7ed',
         foreground: '#1a1f12',

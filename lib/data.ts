@@ -1,5 +1,10 @@
 import 'server-only'
 
+const isBuild = process.env.npm_lifecycle_event === 'build' || 
+                process.env.NEXT_PHASE === 'phase-production-build' ||
+                process.env.CI === '1'
+const shouldBypassDb = isBuild && !process.env.FORCE_DB_DURING_BUILD
+
 import { getDb } from '@/db/client'
 import { rooms, reviews, gallery, siteContent } from '@/db/schema'
 import { eq, asc, desc } from 'drizzle-orm'
@@ -106,6 +111,14 @@ type HeroImagesContent = {
 }
 
 export async function getSiteContent(): Promise<SiteContent> {
+  const isBuild = process.env.npm_lifecycle_event === 'build' || 
+                  process.env.NEXT_PHASE === 'phase-production-build' ||
+                  process.env.CI === '1'
+                  
+  if (isBuild && !process.env.FORCE_DB_DURING_BUILD) {
+    return defaultSiteContent
+  }
+
   try {
     const db = getDb()
     const rows = await db.select().from(siteContent)
@@ -166,6 +179,7 @@ function normalizeRoom(room: typeof rooms.$inferSelect): RoomData {
 }
 
 export async function getRooms(): Promise<RoomData[]> {
+  if (shouldBypassDb) return []
   try {
     const db = getDb()
     const results = await db.select().from(rooms).where(eq(rooms.is_active, true)).orderBy(asc(rooms.price_per_night))
@@ -177,6 +191,7 @@ export async function getRooms(): Promise<RoomData[]> {
 }
 
 export async function getRoomBySlug(slug: string): Promise<RoomData | null> {
+  if (shouldBypassDb) return null
   try {
     const db = getDb()
     const [room] = await db.select().from(rooms).where(eq(rooms.slug, slug)).limit(1)
@@ -189,6 +204,7 @@ export async function getRoomBySlug(slug: string): Promise<RoomData | null> {
 }
 
 export async function getFeaturedRooms(): Promise<RoomData[]> {
+  if (shouldBypassDb) return []
   try {
     const db = getDb()
     const results = await db
@@ -210,6 +226,7 @@ export async function getRelatedRooms(currentSlug: string, limit = 3): Promise<R
 }
 
 export async function getReviews(): Promise<ReviewData[]> {
+  if (shouldBypassDb) return []
   try {
     const db = getDb()
     const results = await db
@@ -232,6 +249,7 @@ export async function getReviews(): Promise<ReviewData[]> {
 }
 
 export async function getGallery(category?: string): Promise<GalleryItemData[]> {
+  if (shouldBypassDb) return []
   try {
     const db = getDb()
     const results = category && category !== 'all'

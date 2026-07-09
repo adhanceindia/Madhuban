@@ -56,13 +56,16 @@ export function HeroBlock({ image, heading, subtext, cta_text, cta_link }: HeroB
             <p className="mt-6 max-w-2xl text-balance text-lg leading-8 text-white/80 sm:text-xl">Your subtext here</p>
           )}
           
-          {(cta_text || cta_link) && (
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row justify-center">
+            {(cta_text || cta_link) && (
               <Button asChild size="lg" className="h-auto rounded-full px-8 py-4 text-sm font-semibold uppercase tracking-label">
                 <Link href={cta_link || '#'}>{cta_text || 'Click here'}</Link>
               </Button>
-            </div>
-          )}
+            )}
+            <Button asChild size="lg" variant="outline" className="h-auto rounded-full px-8 py-4 text-sm font-semibold uppercase tracking-label border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-md">
+              <Link href="/wedding">Plan Your Wedding</Link>
+            </Button>
+          </div>
 
           <div className="mt-10 w-full sm:mt-12">
             <HeroBookingBar />

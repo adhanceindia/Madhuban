@@ -20,7 +20,7 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h2 className="text-sm uppercase tracking-label text-white/70">
+            <h2 className="font-body text-sm uppercase tracking-label text-white/70">
               About
             </h2>
             {siteContent.header?.logo_url ? (
@@ -46,7 +46,7 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
           </div>
 
           <div>
-            <h2 className="text-sm uppercase tracking-label text-white/70">
+            <h2 className="font-body text-sm uppercase tracking-label text-white/70">
               Links
             </h2>
             <div className="mt-6 grid gap-3">
@@ -63,7 +63,7 @@ export function SiteFooter({ siteContent }: { siteContent: SiteContent }) {
           </div>
 
           <div>
-            <h2 className="text-sm uppercase tracking-label text-white/70">
+            <h2 className="font-body text-sm uppercase tracking-label text-white/70">
               Contact
             </h2>
             <div className="mt-6 space-y-3 text-sm text-white/80">

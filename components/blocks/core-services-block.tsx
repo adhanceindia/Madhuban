@@ -4,6 +4,13 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { services as defaultServices } from '@/lib/page-content'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 type ServiceItem = {
   title: string
@@ -69,28 +76,39 @@ export function CoreServicesBlock({ eyebrow, title, description, items }: CoreSe
           description={description || 'Our spaces are designed to feel welcoming, flexible, and distinctly nature-led.'}
         />
 
-        <motion.div
-          variants={containerVariants}
-          className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
-        >
-          {displayItems.map((service) => (
-            <motion.article
-              key={service.title}
-              variants={itemVariants}
-              className="rounded-card border border-white/70 bg-white/90 p-6 shadow-[0_18px_50px_rgba(46,125,50,0.08)]"
-            >
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary-dark">
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <SiteIcon icon={service.icon as any} className="size-6" />
-              </div>
-              <h3 className="mt-5 text-2xl italic text-foreground">
-                {service.title}
-              </h3>
-              <p className="text-foreground/70 mt-3 text-sm leading-7">
-                {service.description}
-              </p>
-            </motion.article>
-          ))}
+        <motion.div variants={containerVariants} className="mt-12">
+          <Carousel
+            opts={{
+              align: "start",
+            }}
+            className="w-full relative"
+          >
+            <CarouselContent className="-ml-4 sm:-ml-6">
+              {displayItems.map((service) => (
+                <CarouselItem key={service.title} className="pl-4 sm:pl-6 basis-full md:basis-1/3">
+                  <motion.article
+                    variants={itemVariants}
+                    className="h-full rounded-card border border-white/70 bg-white/90 p-6 shadow-[0_18px_50px_rgba(46,125,50,0.08)]"
+                  >
+                    <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary-dark">
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                      <SiteIcon icon={service.icon as any} className="size-6" />
+                    </div>
+                    <h3 className="mt-5 text-2xl italic text-foreground">
+                      {service.title}
+                    </h3>
+                    <p className="text-foreground/70 mt-3 text-sm leading-7">
+                      {service.description}
+                    </p>
+                  </motion.article>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="mt-8 flex items-center justify-end gap-3">
+              <CarouselPrevious className="static translate-y-0 translate-x-0 h-11 w-11 border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:text-primary-dark" />
+              <CarouselNext className="static translate-y-0 translate-x-0 h-11 w-11 border-primary/20 bg-transparent text-primary hover:bg-primary/5 hover:text-primary-dark" />
+            </div>
+          </Carousel>
         </motion.div>
       </div>
     </motion.section>
