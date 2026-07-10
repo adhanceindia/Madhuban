@@ -2,7 +2,7 @@ import { getDb } from '@/db/client'
 import { siteContent } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 
-import { defaultMegaMenuFlat, navLinks, quickLinks } from '@/lib/site-nav'
+import { mainNavigation, navLinks, quickLinks } from '@/lib/site-nav'
 
 export async function getPageContentAdmin(page: string): Promise<Record<string, unknown>> {
   const db = getDb()
@@ -11,7 +11,7 @@ export async function getPageContentAdmin(page: string): Promise<Record<string, 
   if (!row) {
     if (page === 'header') {
       return {
-        mega_menu: defaultMegaMenuFlat,
+        mega_menu: mainNavigation,
         nav_links: navLinks,
         cta_button_text: 'Book Now',
         cta_button_link: '/rooms',

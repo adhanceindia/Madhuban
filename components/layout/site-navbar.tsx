@@ -101,7 +101,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                     </button>
                   ) : (
                     <Link
-                      href={link.href}
+                      href={link.href || '#'}
                       onMouseEnter={() => setActiveMenu(null)}
                       className={cn(
                         'flex h-full items-center font-body text-[15px] font-medium tracking-normal transition-colors duration-200 outline-none',
@@ -291,7 +291,7 @@ export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
                   return (
                     <div key={link.label} className="flex flex-col border-b border-content-border/40 last:border-0">
                       <Link
-                        href={link.href}
+                        href={link.href || '#'}
                         onClick={() => setIsOpen(false)}
                         className="flex w-full items-center justify-between py-4 text-left font-display text-[1.6rem] italic text-foreground transition-colors hover:text-primary-dark"
                       >
