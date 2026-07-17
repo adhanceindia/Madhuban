@@ -14,7 +14,7 @@ const BASE_URLS = {
   production: 'https://api.cashfree.com/pg',
 }
 
-const API_VERSION = '2025-01-01'
+const API_VERSION = '2023-08-01'
 
 export class CashfreeGateway implements PaymentGateway {
   readonly name = 'cashfree' as const
@@ -25,7 +25,8 @@ export class CashfreeGateway implements PaymentGateway {
   private secretKey: string
 
   constructor(cfg: PaymentConfigData) {
-    this.env = cfg.cashfree_environment || 'sandbox'
+    const envStr = (cfg.cashfree_environment || '').toLowerCase()
+    this.env = (envStr === 'prod' || envStr === 'production') ? 'production' : 'sandbox'
     this.appId = cfg.cashfree_app_id!
     this.secretKey = cfg.cashfree_secret_key!
   }
