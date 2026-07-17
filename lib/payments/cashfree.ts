@@ -54,7 +54,7 @@ export class CashfreeGateway implements PaymentGateway {
           customer_phone: params.guest_phone,
         },
         order_meta: {
-          return_url: `${params.site_url}/booking/status?gateway=cashfree&order_id=${orderId}`,
+          return_url: `${params.site_url.replace('http://', 'https://')}/booking/status?gateway=cashfree&order_id=${orderId}`,
           payment_methods: '',
         },
         order_tags: {
