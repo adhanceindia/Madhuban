@@ -127,7 +127,8 @@ export async function POST(request: NextRequest) {
     const [policiesRow] = await db.select().from(siteContent).where(eq(siteContent.page, 'hotel_policies')).limit(1)
     let gstPercent = 12
     if (policiesRow?.content && typeof policiesRow.content === 'object' && 'gst_percentage' in policiesRow.content) {
-      const g = parseInt((policiesRow.content as any).gst_percentage)
+      const content = policiesRow.content as Record<string, unknown>
+      const g = parseInt(String(content.gst_percentage))
       if (!isNaN(g)) gstPercent = g
     }
 

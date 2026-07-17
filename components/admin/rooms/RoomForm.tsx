@@ -40,8 +40,8 @@ export function RoomForm({ room }: { room?: Room }) {
   const [amenityInput, setAmenityInput] = useState('')
   const [priceInput, setPriceInput] = useState(room ? String(room.price_per_night) : '')
   const [capacityInput, setCapacityInput] = useState(String(room?.capacity ?? 2))
-  const [quantityInput, setQuantityInput] = useState(String((room as any)?.quantity ?? 1))
-  const [extraBedPriceInput, setExtraBedPriceInput] = useState(String((room as any)?.extra_bed_price ?? 0))
+  const [quantityInput, setQuantityInput] = useState(String(room?.quantity ?? 1))
+  const [extraBedPriceInput, setExtraBedPriceInput] = useState(String(room?.extra_bed_price ?? 0))
 
   const [form, setForm] = useState<RoomFormData>({
     name: room?.name || '',
@@ -49,9 +49,9 @@ export function RoomForm({ room }: { room?: Room }) {
     type: room?.type || 'standard',
     price_per_night: room?.price_per_night || 0,
     capacity: room?.capacity || 2,
-    quantity: (room as any)?.quantity ?? 1,
-    extra_bed_price: (room as any)?.extra_bed_price ?? 0,
-    breakfast_included: (room as any)?.breakfast_included ?? false,
+    quantity: room?.quantity ?? 1,
+    extra_bed_price: room?.extra_bed_price ?? 0,
+    breakfast_included: room?.breakfast_included ?? false,
     bed_type: room?.bed_type || '',
     room_size: room?.room_size || '',
     description: room?.description || '',
