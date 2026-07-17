@@ -12,7 +12,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
   }
 
   const settingsData = await getSiteSettings('invoice_settings')
-  const settings = settingsData || {}
+  const settings = (settingsData || {}) as Record<string, string>
 
   const nights = nightsBetween(booking.check_in, booking.check_out)
   const subtotal = booking.total_amount ? Math.round(booking.total_amount / 1.12) : 0
@@ -26,7 +26,6 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
         <div className="flex justify-end mb-8 print:hidden">
           <button
             type="button"
-            onClick="window.print()"
             className="px-4 py-2 bg-sage text-white text-sm font-semibold rounded-lg hover:bg-sage-deep transition-colors"
           >
             Print Invoice
