@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getDb } from '@/db/client'
-import { bookings, blockedDates, rooms } from '@/db/schema'
+import { bookings, blockedDates, rooms, siteContent } from '@/db/schema'
 import { and, eq, lt, gt, gte, inArray } from 'drizzle-orm'
 import { getRedis } from '@/lib/redis'
 import { sendBookingConfirmationEmail } from '@/lib/email'
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     const db = getDb()
 
     const overlapping = await db
-      .select({ id: bookings.id })
+      .select({ check_in: bookings.check_in, check_out: bookings.check_out })
       .from(bookings)
       .where(and(
         eq(bookings.room_id, roomIdNum),
@@ -69,24 +69,17 @@ export async function POST(request: NextRequest) {
         lt(bookings.check_in, check_out),
         gt(bookings.check_out, check_in),
       ))
-      .limit(1)
 
-    const blocked = await db
-      .select({ id: blockedDates.id })
+    const blockedRows = await db
+      .select({ date: blockedDates.date })
       .from(blockedDates)
       .where(and(
         eq(blockedDates.room_id, roomIdNum),
         gte(blockedDates.date, check_in),
         lt(blockedDates.date, check_out),
       ))
-      .limit(1)
 
-    if (overlapping.length > 0 || blocked.length > 0) {
-      return NextResponse.json(
-        { error: 'Room not available for selected dates', code: 'UNAVAILABLE' },
-        { status: 409 },
-      )
-    }
+    const blocked = blockedRows.map((b) => typeof b.date === 'string' ? b.date : new Date(b.date).toISOString().split('T')[0])
 
     const [room] = await db.select().from(rooms).where(eq(rooms.id, roomIdNum)).limit(1)
     if (!room) {
@@ -102,8 +95,44 @@ export async function POST(request: NextRequest) {
       1,
       Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000),
     )
+
+    const quantity = room.quantity || 1
+    let isAvailable = true
+    for (let i = 0; i < nights; i++) {
+      const d = new Date(checkInDate)
+      d.setDate(d.getDate() + i)
+      const dString = d.toISOString().split('T')[0]
+      const blocksCount = blocked.filter(b => b === dString).length
+      let overlapsCount = 0
+      for (const b of overlapping) {
+        const bCheckIn = typeof b.check_in === 'string' ? b.check_in : new Date(b.check_in).toISOString().split('T')[0]
+        const bCheckOut = typeof b.check_out === 'string' ? b.check_out : new Date(b.check_out).toISOString().split('T')[0]
+        if (dString >= bCheckIn && dString < bCheckOut) {
+          overlapsCount++
+        }
+      }
+      if (overlapsCount + blocksCount >= quantity) {
+        isAvailable = false
+        break
+      }
+    }
+
+    if (!isAvailable) {
+      return NextResponse.json(
+        { error: 'Room not available for selected dates', code: 'UNAVAILABLE' },
+        { status: 409 },
+      )
+    }
+
+    const [policiesRow] = await db.select().from(siteContent).where(eq(siteContent.page, 'hotel_policies')).limit(1)
+    let gstPercent = 12
+    if (policiesRow?.content && typeof policiesRow.content === 'object' && 'gst_percentage' in policiesRow.content) {
+      const g = parseInt((policiesRow.content as any).gst_percentage)
+      if (!isNaN(g)) gstPercent = g
+    }
+
     const subtotal = room.price_per_night * nights
-    const gst = Math.round(subtotal * 0.12)
+    const gst = Math.round(subtotal * (gstPercent / 100))
     const totalAmount = subtotal + gst
 
     const [booking] = await db.insert(bookings).values({

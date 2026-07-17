@@ -20,6 +20,9 @@ type RoomFormData = {
   type: 'standard' | 'deluxe' | 'suite'
   price_per_night: number
   capacity: number
+  quantity: number
+  extra_bed_price: number
+  breakfast_included: boolean
   bed_type: string
   room_size: string
   description: string
@@ -37,6 +40,8 @@ export function RoomForm({ room }: { room?: Room }) {
   const [amenityInput, setAmenityInput] = useState('')
   const [priceInput, setPriceInput] = useState(room ? String(room.price_per_night) : '')
   const [capacityInput, setCapacityInput] = useState(String(room?.capacity ?? 2))
+  const [quantityInput, setQuantityInput] = useState(String((room as any)?.quantity ?? 1))
+  const [extraBedPriceInput, setExtraBedPriceInput] = useState(String((room as any)?.extra_bed_price ?? 0))
 
   const [form, setForm] = useState<RoomFormData>({
     name: room?.name || '',
@@ -44,6 +49,9 @@ export function RoomForm({ room }: { room?: Room }) {
     type: room?.type || 'standard',
     price_per_night: room?.price_per_night || 0,
     capacity: room?.capacity || 2,
+    quantity: (room as any)?.quantity ?? 1,
+    extra_bed_price: (room as any)?.extra_bed_price ?? 0,
+    breakfast_included: (room as any)?.breakfast_included ?? false,
     bed_type: room?.bed_type || '',
     room_size: room?.room_size || '',
     description: room?.description || '',
@@ -189,6 +197,46 @@ export function RoomForm({ room }: { room?: Room }) {
                 }
               }}
             />
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Field label="Inventory Quantity" required>
+            <TextInput
+              required
+              type="number"
+              min={1}
+              value={quantityInput}
+              onChange={(e) => {
+                setQuantityInput(e.target.value)
+                if (!Number.isNaN(e.target.valueAsNumber)) {
+                  update('quantity', e.target.valueAsNumber)
+                }
+              }}
+            />
+          </Field>
+          <Field label="Extra Bed Price (₹)" required>
+            <TextInput
+              required
+              type="number"
+              min={0}
+              value={extraBedPriceInput}
+              onChange={(e) => {
+                setExtraBedPriceInput(e.target.value)
+                if (!Number.isNaN(e.target.valueAsNumber)) {
+                  update('extra_bed_price', e.target.valueAsNumber)
+                }
+              }}
+            />
+          </Field>
+          <Field label="Breakfast Included">
+            <div className="pt-2">
+              <Toggle
+                checked={form.breakfast_included}
+                onChange={(v) => update('breakfast_included', v)}
+                label=""
+              />
+            </div>
           </Field>
         </div>
 

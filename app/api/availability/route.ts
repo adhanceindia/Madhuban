@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     const db = getDb()
 
     const overlapping = await db
-      .select({ id: bookings.id })
+      .select({ check_in: bookings.check_in, check_out: bookings.check_out })
       .from(bookings)
       .where(
         and(
@@ -74,7 +74,6 @@ export async function GET(request: NextRequest) {
           gt(bookings.check_out, check_in),
         )
       )
-      .limit(1)
 
     const blockedRows = await db
       .select({ date: blockedDates.date })
@@ -86,18 +85,39 @@ export async function GET(request: NextRequest) {
           lt(blockedDates.date, check_out),
         )
       )
-      .limit(100)
 
-    const blocked = blockedRows.map((b) => b.date)
+    const blocked = blockedRows.map((b) => typeof b.date === 'string' ? b.date : new Date(b.date).toISOString().split('T')[0])
 
-    const [room] = await db.select({ price_per_night: rooms.price_per_night }).from(rooms).where(eq(rooms.id, roomIdNum)).limit(1)
+    const [room] = await db.select({ price_per_night: rooms.price_per_night, quantity: rooms.quantity }).from(rooms).where(eq(rooms.id, roomIdNum)).limit(1)
     const pricePerNight = room?.price_per_night || 0
+    const quantity = room?.quantity || 1
 
     const checkInDate = new Date(check_in)
     const checkOutDate = new Date(check_out)
     const nights = Math.max(1, Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000))
 
-    const available = overlapping.length === 0 && blocked.length === 0
+    let available = true
+    for (let i = 0; i < nights; i++) {
+      const d = new Date(checkInDate)
+      d.setDate(d.getDate() + i)
+      const dString = d.toISOString().split('T')[0]
+
+      const blocksCount = blocked.filter(b => b === dString).length
+
+      let overlapsCount = 0
+      for (const b of overlapping) {
+        const bCheckIn = typeof b.check_in === 'string' ? b.check_in : new Date(b.check_in).toISOString().split('T')[0]
+        const bCheckOut = typeof b.check_out === 'string' ? b.check_out : new Date(b.check_out).toISOString().split('T')[0]
+        if (dString >= bCheckIn && dString < bCheckOut) {
+          overlapsCount++
+        }
+      }
+
+      if (overlapsCount + blocksCount >= quantity) {
+        available = false
+        break
+      }
+    }
 
     const result = {
       available,

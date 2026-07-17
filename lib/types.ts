@@ -75,6 +75,9 @@ export type RoomData = {
   description: string
   price_per_night: number
   capacity: number
+  quantity: number
+  extra_bed_price: number
+  breakfast_included: boolean
   bed_type: string
   room_size: string
   amenities: string[]

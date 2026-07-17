@@ -20,6 +20,12 @@ const sections = [
     title: 'Invoice & Tax',
     description: 'Configure GST details, business name, and terms for printable booking invoices.',
   },
+  {
+    href: '/admin/settings/policies',
+    icon: <FileText size={20} className="text-sage-deep" />,
+    title: 'Hotel Policies',
+    description: 'Configure check-in/out times, cancellation policies, and refund rules.',
+  },
 ]
 
 export function SettingsLanding() {
