@@ -15,6 +15,16 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         subtitle={`Booking #${booking.id} · ${booking.room_name}`}
         backHref="/admin/bookings"
         backLabel="Back to bookings"
+        actions={
+          <a
+            href={`/admin/bookings/${booking.id}/invoice`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[12px] font-semibold bg-white border border-border hover:bg-sage-soft text-foreground rounded-lg transition-colors no-underline"
+          >
+            Print Invoice
+          </a>
+        }
       />
       <BookingDetail booking={booking} />
     </div>

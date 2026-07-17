@@ -8,10 +8,10 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getSession()
+  const session = await getSession('admin')
 
   if (!session) {
-    redirect('/login')
+    redirect('/admin/login')
   }
 
   return (

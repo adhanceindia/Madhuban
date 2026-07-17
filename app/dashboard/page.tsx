@@ -16,7 +16,7 @@ function formatDate(dateStr: string) {
 }
 
 export default async function DashboardPage() {
-  const session = await getSession()
+  const session = await getSession('customer')
   if (!session) {
     redirect('/login')
   }

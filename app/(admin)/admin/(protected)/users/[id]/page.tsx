@@ -8,7 +8,7 @@ export default async function EditUserPage({ params }: { params: Promise<{ id: s
   const { id } = await params
   const [user, session] = await Promise.all([
     getStaffUserById(parseInt(id)),
-    getSession(),
+    getSession('admin'),
   ])
   if (!user) notFound()
 

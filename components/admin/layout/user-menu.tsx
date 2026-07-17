@@ -23,7 +23,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
   }, [])
 
   async function handleLogout() {
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()

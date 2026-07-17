@@ -1,5 +1,6 @@
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
+import { getSession } from './auth'
 import { getDb } from '@/db/client'
 import { users } from '@/db/schema'
 import { eq, count, and } from 'drizzle-orm'
@@ -96,6 +97,8 @@ export async function updateStaffUser(
 
 export async function resetStaffPassword(authId: string, newPassword: string): Promise<void> {
   const admin = getAdminClient()
+  const session = await getSession('admin')
+  if (!session) throw new Error('Unauthorized')
   const { error } = await admin.auth.admin.updateUserById(authId, { password: newPassword })
   if (error) throw new Error(error.message)
 }
@@ -120,7 +123,7 @@ export async function deleteStaffUser(id: number): Promise<boolean> {
 /**
  * Revoke all active sessions for a Supabase Auth user (e.g. on deactivation or
  * role change). Best-effort: failures are swallowed because per-request
- * getSession() already re-checks is_active/role, so this is defense-in-depth.
+ * getSession('admin') already re-checks is_active/role, so this is defense-in-depth.
  */
 export async function signOutAllSessions(authId: string): Promise<void> {
   const admin = getAdminClient()

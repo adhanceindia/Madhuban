@@ -15,6 +15,13 @@
       "when": 1783370728016,
       "tag": "0001_stale_doctor_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784236860990,
+      "tag": "0002_odd_manta",
+      "breakpoints": true
     }
   ]
 }

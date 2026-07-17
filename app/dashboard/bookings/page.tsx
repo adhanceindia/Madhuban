@@ -9,7 +9,7 @@ import { getSession } from '@/lib/auth.ts'
 import { redirect } from 'next/navigation'
 
 export default async function BookingsPage() {
-  const session = await getSession()
+  const session = await getSession('customer')
   if (!session) {
     redirect('/login')
   }

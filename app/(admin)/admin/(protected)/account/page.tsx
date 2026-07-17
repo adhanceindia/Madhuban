@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/admin/shared/page-header'
 import { MfaCard } from '@/components/admin/settings/mfa-card'
 
 export default async function AccountPage() {
-  const session = await getSession()
+  const session = await getSession('admin')
   if (!session) redirect('/login')
 
   return (

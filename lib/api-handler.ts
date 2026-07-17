@@ -51,7 +51,7 @@ export function apiHandler<TBody = unknown, TParams = Record<string, string>, TR
   return async (request: NextRequest, ctx: NextRouteContext): Promise<NextResponse> => {
     try {
       // 1. Session check
-      const session = await getSession()
+      const session = await getSession('admin')
       if (!session) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }

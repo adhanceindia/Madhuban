@@ -4,6 +4,7 @@ import { getDb } from '@/db/client.ts'
 import { users } from '@/db/schema/users.ts'
 import { eq } from 'drizzle-orm'
 import type { UserRole } from '@/db/schema/users.ts'
+import type { AuthContext } from './supabase/client.ts'
 
 export { hasRole, canAccess } from './permissions.ts'
 
@@ -15,8 +16,8 @@ export type SessionUser = {
   role: UserRole
 }
 
-export async function getSession(): Promise<SessionUser | null> {
-  const supabase = await createSupabaseServerClient()
+export async function getSession(context: AuthContext): Promise<SessionUser | null> {
+  const supabase = await createSupabaseServerClient(context)
   const { data: { user: authUser } } = await supabase.auth.getUser()
 
   if (!authUser) return null

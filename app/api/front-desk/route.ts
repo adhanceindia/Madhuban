@@ -6,7 +6,7 @@ import { getSession } from '@/lib/auth'
 import { canAccess } from '@/lib/permissions'
 
 export async function GET(request: NextRequest) {
-  const session = await getSession()
+  const session = await getSession('admin')
   if (!session || !canAccess(session.role, 'front-desk')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

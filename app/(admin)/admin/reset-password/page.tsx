@@ -26,7 +26,7 @@ export default function ResetPasswordPage() {
   const [updated, setUpdated] = useState(false)
 
   useEffect(() => {
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
 
     // The recovery link establishes a session (PASSWORD_RECOVERY event). Detect
     // either the event or an already-restored session.
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
     }
 
     setUpdateLoading(true)
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     const { error } = await supabase.auth.updateUser({ password })
 
     if (error) {

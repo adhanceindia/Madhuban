@@ -5,13 +5,14 @@ import sharp from 'sharp'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/db/client'
 import { media } from '@/db/schema'
+import { canAccess } from '@/lib/permissions'
 
 /**
  * Upload an image/video to Cloudflare R2 and return its public URL.
  */
 export async function POST(request: NextRequest) {
-  const session = await getSession()
-  if (!session) {
+  const session = await getSession('admin')
+  if (!session || (!canAccess(session.role, 'gallery') && !canAccess(session.role, 'rooms'))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -6,54 +6,82 @@ type CookieToSet = { name: string; value: string; options: CookieOptions }
 export async function middleware(request: NextRequest) {
   try {
     let supabaseResponse = NextResponse.next({ request })
+    const pathname = request.nextUrl.pathname
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll()
-          },
-          setAll(cookiesToSet: CookieToSet[]) {
-            cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
-            )
-            supabaseResponse = NextResponse.next({ request })
-            cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
+    const isAdminRoute = pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !pathname.startsWith('/admin/reset-password')
+    const isAdminAuthRoute = pathname === '/admin/login' || pathname === '/admin/reset-password'
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const isDashboardRoute = pathname.startsWith('/dashboard')
+    const isCustomerAuthRoute = pathname === '/login' || pathname === '/register'
 
-    const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-    const isLoginPage = request.nextUrl.pathname === '/login'
-
-    if (isAdminRoute && !user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      url.searchParams.set('redirect', request.nextUrl.pathname)
-      return NextResponse.redirect(url)
+    let context: 'admin' | 'customer' | null = null
+    if (isAdminRoute || isAdminAuthRoute) {
+      context = 'admin'
+    } else if (isDashboardRoute || isCustomerAuthRoute) {
+      context = 'customer'
     }
 
-    if (isLoginPage && user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/admin'
-      return NextResponse.redirect(url)
+    if (context) {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookieOptions: {
+            name: `sb-${context}-auth-token`,
+          },
+          cookies: {
+            getAll() {
+              return request.cookies.getAll()
+            },
+            setAll(cookiesToSet: CookieToSet[]) {
+              cookiesToSet.forEach(({ name, value }) =>
+                request.cookies.set(name, value)
+              )
+              supabaseResponse = NextResponse.next({ request })
+              cookiesToSet.forEach(({ name, value, options }) =>
+                supabaseResponse.cookies.set(name, value, options)
+              )
+            },
+          },
+        }
+      )
+
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (context === 'admin') {
+        if (isAdminRoute && !user) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/admin/login'
+          url.searchParams.set('redirect', pathname)
+          return NextResponse.redirect(url)
+        }
+        if (isAdminAuthRoute && user) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/admin'
+          return NextResponse.redirect(url)
+        }
+      } else if (context === 'customer') {
+        if (isDashboardRoute && !user) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/login'
+          url.searchParams.set('redirect', pathname)
+          return NextResponse.redirect(url)
+        }
+        if (isCustomerAuthRoute && user) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/dashboard'
+          return NextResponse.redirect(url)
+        }
+      }
     }
 
     return supabaseResponse
   } catch (error) {
     console.error('[Middleware] Unhandled exception:', error)
-    // Fall back to continuing the request if something fails (e.g. Sentry init or missing env vars)
     return NextResponse.next({ request })
   }
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login'],
+  matcher: ['/admin/:path*', '/login', '/register', '/dashboard/:path*'],
 }

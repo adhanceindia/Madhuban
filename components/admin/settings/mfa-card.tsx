@@ -34,7 +34,7 @@ export function MfaCard() {
   const [removingId, setRemovingId] = useState<string | null>(null)
 
   const loadFactors = useCallback(async () => {
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     const { data, error } = await supabase.auth.mfa.listFactors()
     if (error) {
       toast.error(error.message || 'Could not load MFA factors')
@@ -51,7 +51,7 @@ export function MfaCard() {
 
   async function startEnrollment() {
     setEnrolling(true)
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' })
     setEnrolling(false)
     if (error || !data) {
@@ -68,7 +68,7 @@ export function MfaCard() {
 
   async function cancelEnrollment() {
     if (!enrollment) return
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     // Best-effort removal of the unverified factor.
     try {
       await supabase.auth.mfa.unenroll({ factorId: enrollment.factorId })
@@ -84,7 +84,7 @@ export function MfaCard() {
     e.preventDefault()
     if (!enrollment) return
     setVerifying(true)
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     const { error } = await supabase.auth.mfa.challengeAndVerify({
       factorId: enrollment.factorId,
       code: code.trim(),
@@ -102,7 +102,7 @@ export function MfaCard() {
 
   async function unenroll(factorId: string) {
     setRemovingId(factorId)
-    const supabase = createSupabaseBrowserClient()
+    const supabase = createSupabaseBrowserClient('admin')
     const { error } = await supabase.auth.mfa.unenroll({ factorId })
     setRemovingId(null)
     if (error) {

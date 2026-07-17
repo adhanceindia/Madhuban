@@ -7,7 +7,7 @@ import { eq, desc } from 'drizzle-orm'
 import { getSession } from '@/lib/auth.ts'
 
 export async function getCustomerBookings() {
-  const session = await getSession()
+  const session = await getSession('customer')
   if (!session) throw new Error('Unauthorized')
   
   const db = getDb()
@@ -26,7 +26,7 @@ export async function getCustomerBookings() {
 }
 
 export async function getCustomerProfile() {
-  const session = await getSession()
+  const session = await getSession('customer')
   if (!session) throw new Error('Unauthorized')
   return session
 }

@@ -6,7 +6,7 @@ import { desc, asc, ilike, or, and, eq } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 
 export async function GET(request: NextRequest) {
-  const session = await getSession()
+  const session = await getSession('admin')
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

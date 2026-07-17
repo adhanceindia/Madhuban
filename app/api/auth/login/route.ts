@@ -35,6 +35,9 @@ export async function POST(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: {
+        name: 'sb-admin-auth-token',
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll()
@@ -61,7 +64,7 @@ export async function POST(request: NextRequest) {
 
   // Best-effort: resolve the now-authenticated staff row to attribute the audit
   // entry. Falls back to null user_id if the user has no matching/active row.
-  const session = await getSession()
+  const session = await getSession('admin')
   await logAudit({
     user_id: session?.id ?? null,
     action: 'auth.login',

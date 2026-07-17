@@ -5,7 +5,7 @@ import { getDashboardData } from '@/db/queries/dashboard'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
-  const session = await getSession()
+  const session = await getSession('admin')
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

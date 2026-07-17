@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CreditCard, Building2, ChevronRight } from 'lucide-react'
+import { CreditCard, Building2, ChevronRight, FileText } from 'lucide-react'
 
 const sections = [
   {
@@ -13,6 +13,12 @@ const sections = [
     icon: <Building2 size={20} className="text-sage-deep" />,
     title: 'Site Settings',
     description: 'Resort contact info, social links, default SEO, and global website settings.',
+  },
+  {
+    href: '/admin/settings/invoice',
+    icon: <FileText size={20} className="text-sage-deep" />,
+    title: 'Invoice & Tax',
+    description: 'Configure GST details, business name, and terms for printable booking invoices.',
   },
 ]
 
