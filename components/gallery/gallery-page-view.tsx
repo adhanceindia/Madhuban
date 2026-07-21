@@ -34,7 +34,11 @@ function formatCategory(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
-export function GalleryPageView({ galleryItems, siteContent }: { galleryItems: GalleryItemData[]; siteContent: SiteContent }) {
+import { useSiteContent } from '@/components/ui/preview-provider'
+
+export function GalleryPageView({ galleryItems, siteContent: initialSiteContent, pageData: initialPageData }: { galleryItems: GalleryItemData[]; siteContent: SiteContent; pageData?: Record<string, unknown> }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -112,8 +116,12 @@ export function GalleryPageView({ galleryItems, siteContent }: { galleryItems: G
   return (
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
-        hero={galleryPage.hero}
-        imageOverride={getHeroImage(siteContent, 'gallery', '')}
+        hero={{
+          ...galleryPage.hero,
+          title: (pageData.heading as string) || galleryPage.hero.title,
+          subtitle: (pageData.description as string) || galleryPage.hero.subtitle,
+        }}
+        imageOverride={(pageData.hero_image as string) || getHeroImage(siteContent, 'gallery', '')}
         minHeightClassName="min-h-[66svh]"
         imageAlt="Gallery collage of Madhuban Garden Resort spaces"
       >

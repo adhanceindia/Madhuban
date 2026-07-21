@@ -14,15 +14,23 @@ import { createEditorialMotion } from '@/lib/motion'
 import { getHeroImage, type SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
-export function AttractionsPageView({ siteContent }: { siteContent: SiteContent }) {
+import { useSiteContent } from '@/components/ui/preview-provider'
+
+export function AttractionsPageView({ siteContent: initialSiteContent, pageData: initialPageData }: { siteContent: SiteContent; pageData?: Record<string, unknown> }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
 
   return (
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
-        hero={attractionsPage.hero}
-        imageOverride={getHeroImage(siteContent, 'attractions', '')}
+        hero={{
+          ...attractionsPage.hero,
+          title: (pageData.heading as string) || attractionsPage.hero.title,
+          subtitle: (pageData.description as string) || attractionsPage.hero.subtitle,
+        }}
+        imageOverride={(pageData.hero_image as string) || getHeroImage(siteContent, 'attractions', '')}
         minHeightClassName="min-h-[68svh]"
         imageAlt="Nearby attractions and travel mood around Madhuban Garden Resort"
       >

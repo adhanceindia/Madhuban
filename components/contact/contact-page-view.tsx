@@ -38,7 +38,11 @@ const SERVICE_TO_EVENT_TYPE: Record<string, string> = {
 const fieldClassName =
   'w-full rounded-card-inner border border-[#cfd5c6]/70 bg-white px-4 py-3.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15'
 
-export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
+import { useSiteContent } from '@/components/ui/preview-provider'
+
+export function ContactPageView({ siteContent: initialSiteContent, pageData: initialPageData }: { siteContent: SiteContent; pageData?: Record<string, unknown> }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
   const [formState, setFormState] = useState<ContactFormState>(defaultFormState)
@@ -98,7 +102,7 @@ export function ContactPageView({ siteContent }: { siteContent: SiteContent }) {
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
         hero={contactPage.hero}
-        imageOverride={getHeroImage(siteContent, 'contact', '')}
+        imageOverride={(pageData.hero_image as string) || getHeroImage(siteContent, 'contact', '')}
         minHeightClassName="min-h-[68svh]"
         imageAlt="Madhuban Garden Resort exterior and lush grounds"
       >

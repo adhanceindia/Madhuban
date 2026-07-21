@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { AttractionsPageView } from '@/components/attractions/attractions-page-view'
 import { getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -18,5 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AttractionsPage() {
   const siteContent = await getSiteContent()
-  return <AttractionsPageView siteContent={siteContent} />
+  const pageData = await getPageContent('attractions')
+  return <AttractionsPageView siteContent={siteContent} pageData={pageData} />
 }

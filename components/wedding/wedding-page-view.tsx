@@ -37,8 +37,9 @@ const defaultInquiryState: InquiryFormState = {
   message: '',
 }
 
-export function WeddingPageView({ siteContent: initialSiteContent }: { siteContent: SiteContent }) {
+export function WeddingPageView({ siteContent: initialSiteContent, pageData: initialPageData }: { siteContent: SiteContent; pageData?: Record<string, unknown> }) {
   const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const galleryRef = useRef<HTMLDivElement | null>(null)
   const [formState, setFormState] =
@@ -142,7 +143,7 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
       >
         <div className="absolute inset-0">
           <Image
-            src={getHeroImage(siteContent, 'wedding', weddingPage.hero.image)}
+            src={(pageData.hero_image as string) || getHeroImage(siteContent, 'wedding', weddingPage.hero.image)}
             alt={getHeroAlt(siteContent, 'wedding', 'Wedding venue lawn and floral ceremony setup at Madhuban Garden Resort')}
             fill
             priority
@@ -161,10 +162,10 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
               Forever
             </p>
             <h1 className="mt-4 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
-              {siteContent.wedding_heading || weddingPage.hero.title}
+              {(pageData.wedding_heading as string) || siteContent.wedding_heading || weddingPage.hero.title}
             </h1>
-            {siteContent.wedding_description ? (
-              <RichTextContent html={siteContent.wedding_description} className="mt-6 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl [&_a]:text-gold [&_a]:hover:text-gold-dark" />
+            {pageData.wedding_description || siteContent.wedding_description ? (
+              <RichTextContent html={(pageData.wedding_description as string) || (siteContent.wedding_description as string)} className="mt-6 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl [&_a]:text-gold [&_a]:hover:text-gold-dark" />
             ) : (
               <p className="mt-6 max-w-2xl text-lg leading-8 text-white/90 sm:text-xl">
                 {weddingPage.hero.subtitle}
@@ -302,6 +303,11 @@ export function WeddingPageView({ siteContent: initialSiteContent }: { siteConte
               </motion.article>
             ))}
           </motion.div>
+          {pageData.packages_text ? (
+            <motion.div variants={itemVariants} className="mt-16 rounded-card border border-white/70 bg-white/50 p-8 backdrop-blur shadow-sm">
+              <RichTextContent html={pageData.packages_text as string} className="text-foreground/80 leading-8" />
+            </motion.div>
+          ) : null}
         </div>
       </motion.section>
 

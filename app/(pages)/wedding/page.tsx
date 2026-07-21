@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { WeddingPageView } from '@/components/wedding/wedding-page-view'
 import { getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -18,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function WeddingPage() {
   const siteContent = await getSiteContent()
+  const pageData = await getPageContent('wedding')
 
-  return <WeddingPageView siteContent={siteContent} />
+  return <WeddingPageView siteContent={siteContent} pageData={pageData} />
 }

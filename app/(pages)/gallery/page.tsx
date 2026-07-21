@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { GalleryPageView } from '@/components/gallery/gallery-page-view'
 import { getGallery, getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -17,7 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function GalleryPage() {
-  const [galleryItems, siteContent] = await Promise.all([getGallery(), getSiteContent()])
+  const [galleryItems, siteContent, pageData] = await Promise.all([
+    getGallery(),
+    getSiteContent(),
+    getPageContent('gallery_page')
+  ])
 
-  return <GalleryPageView galleryItems={galleryItems} siteContent={siteContent} />
+  return <GalleryPageView galleryItems={galleryItems} siteContent={siteContent} pageData={pageData} />
 }

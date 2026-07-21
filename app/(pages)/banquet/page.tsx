@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { BanquetPageView } from '@/components/banquet/banquet-page-view'
 import { getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -18,5 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function BanquetPage() {
   const siteContent = await getSiteContent()
-  return <BanquetPageView siteContent={siteContent} />
+  const pageData = await getPageContent('banquet')
+  return <BanquetPageView siteContent={siteContent} pageData={pageData} />
 }

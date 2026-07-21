@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { EventsPageView } from '@/components/events/events-page-view'
 import { getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -18,5 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function EventsPage() {
   const siteContent = await getSiteContent()
-  return <EventsPageView siteContent={siteContent} />
+  const pageData = await getPageContent('events')
+  return <EventsPageView siteContent={siteContent} pageData={pageData} />
 }

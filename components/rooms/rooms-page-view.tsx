@@ -11,12 +11,16 @@ import { RoomCard } from '@/components/rooms/room-card'
 import { amenities } from '@/lib/page-content'
 import type { RoomData } from '@/lib/types'
 import { roomFilters, type RoomFilter } from '@/lib/room-helpers'
+import { getHeroImage, type SiteContent } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { useSiteContent } from '@/components/ui/preview-provider'
 
 const easing = [0.22, 1, 0.36, 1] as const
 
 type RoomsPageViewProps = {
   rooms: RoomData[]
+  siteContent: SiteContent
+  pageData?: Record<string, unknown>
   initialCheckIn?: string
   initialCheckOut?: string
   initialGuests?: number
@@ -24,10 +28,14 @@ type RoomsPageViewProps = {
 
 export function RoomsPageView({
   rooms,
+  siteContent: initialSiteContent,
+  pageData: initialPageData,
   initialCheckIn,
   initialCheckOut,
   initialGuests,
 }: RoomsPageViewProps) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const router = useRouter()
   const [activeFilter, setActiveFilter] = useState<RoomFilter>('All')
@@ -110,7 +118,7 @@ export function RoomsPageView({
       >
         <div className="absolute inset-0">
           <Image
-            src={rooms[0]?.images?.[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80'}
+            src={(pageData.hero_image as string) || getHeroImage(siteContent, 'rooms', rooms[0]?.images?.[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80')}
             alt="Luxury room interiors at Madhuban Garden Resort"
             fill
             priority
@@ -130,12 +138,11 @@ export function RoomsPageView({
               Peaceful resort stays in Agar Malwa
             </p>
             <h1 className="mt-6 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl">
-              Our Rooms &amp; Suites
+              {(pageData.page_heading as string) || 'Our Rooms & Suites'}
             </h1>
             <p className="mt-6 text-balance text-lg leading-8 text-white/90 sm:text-xl">
-              Discover six thoughtfully styled rooms built around restful
-              comfort, lush views, and the calm, premium atmosphere that defines
-              Madhuban Garden Resort.
+              {(pageData.page_description as string) ||
+                'Discover six thoughtfully styled rooms built around restful comfort, lush views, and the calm, premium atmosphere that defines Madhuban Garden Resort.'}
             </p>
           </div>
         </div>

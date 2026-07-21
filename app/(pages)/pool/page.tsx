@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { PoolPageView } from '@/components/pool/pool-page-view'
 import { getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -18,5 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PoolPage() {
   const siteContent = await getSiteContent()
-  return <PoolPageView siteContent={siteContent} />
+  const pageData = await getPageContent('pool')
+  return <PoolPageView siteContent={siteContent} pageData={pageData} />
 }

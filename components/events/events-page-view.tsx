@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 
-import { EditorialCtaPanel } from '@/components/shared/editorial-cta-panel'
+import { CorporateBookingForm } from '@/components/events/corporate-booking-form'
 import { EditorialPageHero } from '@/components/shared/editorial-page-hero'
 import { SectionHeading } from '@/components/shared/section-heading'
 import { SiteIcon } from '@/components/shared/site-icon'
@@ -13,7 +13,11 @@ import { eventsPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 import { getHeroImage, type SiteContent } from '@/lib/types'
 
-export function EventsPageView({ siteContent }: { siteContent: SiteContent }) {
+import { useSiteContent } from '@/components/ui/preview-provider'
+
+export function EventsPageView({ siteContent: initialSiteContent, pageData: initialPageData }: { siteContent: SiteContent; pageData?: Record<string, unknown> }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -21,8 +25,12 @@ export function EventsPageView({ siteContent }: { siteContent: SiteContent }) {
   return (
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
-        hero={eventsPage.hero}
-        imageOverride={getHeroImage(siteContent, 'events', '')}
+        hero={{
+          ...eventsPage.hero,
+          title: (pageData.heading as string) || eventsPage.hero.title,
+          subtitle: (pageData.description as string) || eventsPage.hero.subtitle,
+        }}
+        imageOverride={(pageData.hero_image as string) || getHeroImage(siteContent, 'events', '')}
         minHeightClassName="min-h-[70svh]"
         imageAlt="Event celebration setup at Madhuban Garden Resort"
       >
@@ -31,7 +39,7 @@ export function EventsPageView({ siteContent }: { siteContent: SiteContent }) {
           size="lg"
           className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
-          <Link href="/contact#query-form">
+          <Link href="#corporate-booking">
             Plan Your Event
             <SiteIcon icon="ArrowRight" className="size-4" />
           </Link>
@@ -102,14 +110,8 @@ export function EventsPageView({ siteContent }: { siteContent: SiteContent }) {
         variants={sectionVariants}
         className="bg-primary-light py-12 sm:py-16 lg:py-20 lg:py-24"
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <EditorialCtaPanel
-            eyebrow="Event Enquiry"
-            title={eventsPage.ctaTitle}
-            description={eventsPage.ctaDescription}
-            primaryHref="/contact#query-form"
-            primaryLabel="Send Enquiry"
-          />
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8" id="corporate-booking">
+          <CorporateBookingForm />
         </div>
       </motion.section>
     </div>

@@ -13,15 +13,23 @@ import { poolPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 import { getHeroImage, type SiteContent } from '@/lib/types'
 
-export function PoolPageView({ siteContent }: { siteContent: SiteContent }) {
+import { useSiteContent } from '@/components/ui/preview-provider'
+
+export function PoolPageView({ siteContent: initialSiteContent, pageData: initialPageData }: { siteContent: SiteContent; pageData?: Record<string, unknown> }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const { sectionVariants, itemVariants } = createEditorialMotion(reduceMotion)
 
   return (
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
-        hero={poolPage.hero}
-        imageOverride={getHeroImage(siteContent, 'pool', '')}
+        hero={{
+          ...poolPage.hero,
+          title: (pageData.heading as string) || poolPage.hero.title,
+          subtitle: (pageData.description as string) || poolPage.hero.subtitle,
+        }}
+        imageOverride={(pageData.hero_image as string) || getHeroImage(siteContent, 'pool', '')}
         minHeightClassName="min-h-[68svh]"
         imageAlt="Swimming pool and leisure area at Madhuban Garden Resort"
       >
@@ -83,12 +91,12 @@ export function PoolPageView({ siteContent }: { siteContent: SiteContent }) {
                     Timings
                   </p>
                   <p className="mt-4 text-3xl italic text-foreground">
-                    {poolPage.timings}
+                    {(pageData.timings as string) || poolPage.timings}
                   </p>
                 </div>
 
                 <div className="grid gap-3">
-                  {poolPage.rules.map((rule) => (
+                  {(pageData.rules ? (pageData.rules as string).split('\n').filter(Boolean) : poolPage.rules).map((rule) => (
                     <div
                       key={rule}
                       className="flex items-start gap-3 rounded-card-inner bg-warm-gray px-4 py-4"

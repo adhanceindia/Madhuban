@@ -44,7 +44,8 @@ export function BlockRenderer({ blocks, context }: BlockRendererProps) {
   return (
     <>
       {blocks.map((block) => {
-        const Component = BLOCK_COMPONENTS[block.type]
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const Component = BLOCK_COMPONENTS[block.type] as any
         if (!Component) {
           console.warn(`No block component found for type: ${block.type}`)
           return null

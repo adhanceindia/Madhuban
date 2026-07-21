@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { ContactPageView } from '@/components/contact/contact-page-view'
 import { getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -18,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const siteContent = await getSiteContent()
+  const pageData = await getPageContent('contact')
 
-  return <ContactPageView siteContent={siteContent} />
+  return <ContactPageView siteContent={siteContent} pageData={pageData} />
 }

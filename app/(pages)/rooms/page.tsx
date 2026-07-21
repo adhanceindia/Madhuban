@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { RoomsPageView } from '@/components/rooms/rooms-page-view'
 import { getRooms, getSiteContent } from '@/lib/data'
+import { getPageContent } from '@/db/queries/content'
 
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSiteContent()
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-type RoomsPageProps = {
+export type RoomsPageProps = {
   searchParams: Promise<{
     check_in?: string
     check_out?: string
@@ -26,11 +27,15 @@ type RoomsPageProps = {
 
 export default async function RoomsPage({ searchParams }: RoomsPageProps) {
   const rooms = await getRooms()
+  const siteContent = await getSiteContent()
+  const pageData = await getPageContent('rooms')
   const params = await searchParams
 
   return (
     <RoomsPageView
       rooms={rooms}
+      siteContent={siteContent}
+      pageData={pageData}
       initialCheckIn={params.check_in}
       initialCheckOut={params.check_out}
       initialGuests={params.guests ? parseInt(params.guests, 10) : undefined}

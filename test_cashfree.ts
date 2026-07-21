@@ -17,7 +17,7 @@ async function run() {
     })
     console.log("Success:", res)
   } catch(e) {
-    console.error("Error:", e.message)
+    console.error("Error:", (e as Error).message)
   }
 }
 run().then(() => process.exit(0))

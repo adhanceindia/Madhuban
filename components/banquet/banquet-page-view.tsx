@@ -14,7 +14,11 @@ import { banquetPage } from '@/lib/page-content'
 import { createEditorialMotion } from '@/lib/motion'
 import { getHeroImage, type SiteContent } from '@/lib/types'
 
-export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
+import { useSiteContent } from '@/components/ui/preview-provider'
+
+export function BanquetPageView({ siteContent: initialSiteContent, pageData: initialPageData }: { siteContent: SiteContent; pageData?: Record<string, unknown> }) {
+  const siteContent = useSiteContent(initialSiteContent) as SiteContent
+  const pageData = useSiteContent(initialPageData || {}) as Record<string, unknown>
   const reduceMotion = useReducedMotion()
   const { sectionVariants, containerVariants, itemVariants } =
     createEditorialMotion(reduceMotion)
@@ -22,8 +26,12 @@ export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
   return (
     <div className="-mt-navbar overflow-x-clip bg-background">
       <EditorialPageHero
-        hero={banquetPage.hero}
-        imageOverride={getHeroImage(siteContent, 'banquet', '')}
+        hero={{
+          ...banquetPage.hero,
+          title: (pageData.heading as string) || banquetPage.hero.title,
+          subtitle: (pageData.description as string) || banquetPage.hero.subtitle,
+        }}
+        imageOverride={(pageData.hero_image as string) || getHeroImage(siteContent, 'banquet', '')}
         minHeightClassName="min-h-[72svh]"
         imageAlt="Banquet hall at Madhuban Garden Resort"
       >
@@ -78,7 +86,7 @@ export function BanquetPageView({ siteContent }: { siteContent: SiteContent }) {
                       {stat.label}
                     </p>
                     <p className="text-foreground/70 mt-3 text-sm leading-6">
-                      {stat.value}
+                      {stat.label === 'Capacity' && pageData.capacity_info ? (pageData.capacity_info as string) : stat.value}
                     </p>
                   </div>
                 ))}
