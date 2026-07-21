@@ -33,32 +33,29 @@ export function InteractiveMenu() {
   return (
     <div className="relative w-full max-w-6xl mx-auto aspect-square sm:aspect-[4/3] lg:aspect-[16/10] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#fffefa] to-[#f4f1e1] rounded-2xl overflow-hidden border border-[#e8e4d3] shadow-sm">
       <Suspense fallback={null}>
-        <Canvas shadows camera={{ position: [0, 1.2, 3.2], fov: 45 }}>
-          {/* Lighting */}
-          <ambientLight intensity={0.4} />
-          <Environment preset="city" environmentIntensity={0.5} />
-          <directionalLight
-            position={[2, 5, 2]}
-            intensity={1.2}
-            castShadow
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
-            shadow-bias={-0.0001}
-          />
-          
-          {/* Table Surface for Shadow */}
-          <ContactShadows 
-            position={[0, -0.22, 0]} 
-            opacity={0.65} 
-            scale={12} 
-            blur={3} 
-            far={4} 
-            color="#2a2a2a" 
-          />
+        <Canvas shadows camera={{ position: [-0.5, 1, 4], fov: 45 }}>
+          <group position-y={0}>
+            {/* Lighting from original repo */}
+            <Environment preset="studio" />
+            <directionalLight
+              position={[2, 5, 2]}
+              intensity={2.5}
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-bias={-0.0001}
+            />
+            
+            {/* Shadow plane from original repo */}
+            <mesh position-y={-1.5} rotation-x={-Math.PI / 2} receiveShadow>
+              <planeGeometry args={[100, 100]} />
+              <shadowMaterial transparent opacity={0.2} />
+            </mesh>
 
-          {/* The Book */}
-          <group position={[0, -0.2, 0]} scale={1.35}>
-            <MenuBook page={page} setPage={handleBookClick} />
+            {/* The Book (Stationary but tilted like the original Float) */}
+            <group rotation-x={-Math.PI / 4}>
+              <MenuBook page={page} setPage={handleBookClick} />
+            </group>
           </group>
         </Canvas>
       </Suspense>

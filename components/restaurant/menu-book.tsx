@@ -173,7 +173,7 @@ const Page = ({ number, front, back, page, opened, bookClosed, setPage, ...props
       return
     }
 
-    const emissiveIntensity = highlighted ? 0.05 : 0 // subtle hover
+    const emissiveIntensity = highlighted ? 0.22 : 0
     const mat4 = skinnedMeshRef.current.material as MeshStandardMaterial[]
     mat4[4].emissiveIntensity = mat4[5].emissiveIntensity = MathUtils.lerp(
       mat4[4].emissiveIntensity,
