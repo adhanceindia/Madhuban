@@ -23,9 +23,9 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 // ---- Config ----
 const easingFactor = 0.5
 const easingFactorFold = 0.3
-const insideCurveStrength = 0.18
-const outsideCurveStrength = 0.05
-const turningCurveStrength = 0.09
+const insideCurveStrength = 0.04
+const outsideCurveStrength = 0.01
+const turningCurveStrength = 0.05
 
 const PAGE_WIDTH = 1.28
 const PAGE_HEIGHT = 1.71
