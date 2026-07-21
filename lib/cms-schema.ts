@@ -4,7 +4,15 @@
  * add an entry here — no UI changes required.
  */
 
-export type FieldType = 'text' | 'textarea' | 'richtext' | 'image' | 'url' | 'repeater' | 'blocks' | 'menu_builder'
+export type FieldType =
+  | 'text'
+  | 'textarea'
+  | 'richtext'
+  | 'image'
+  | 'url'
+  | 'repeater'
+  | 'blocks'
+  | 'menu_builder'
 
 export type BlockDef = {
   type: string
@@ -47,16 +55,12 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
   rich_text: {
     type: 'rich_text',
     label: 'Rich Text Block',
-    fields: [
-      { field: 'content', label: 'Content', type: 'richtext' },
-    ],
+    fields: [{ field: 'content', label: 'Content', type: 'richtext' }],
   },
   gallery: {
     type: 'gallery',
     label: 'Image Gallery',
-    fields: [
-      { field: 'title', label: 'Gallery Title', type: 'text' },
-    ],
+    fields: [{ field: 'title', label: 'Gallery Title', type: 'text' }],
   },
   features: {
     type: 'features',
@@ -70,7 +74,16 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
     type: 'highlights',
     label: 'Highlights Grid',
     fields: [
-      { field: 'items', label: 'Highlight Items', type: 'repeater', itemFields: [{ field: 'title', label: 'Title', type: 'text' }, { field: 'description', label: 'Description', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+      {
+        field: 'items',
+        label: 'Highlight Items',
+        type: 'repeater',
+        itemFields: [
+          { field: 'title', label: 'Title', type: 'text' },
+          { field: 'description', label: 'Description', type: 'text' },
+          { field: 'icon', label: 'Icon Name', type: 'text' },
+        ],
+      },
     ],
   },
   wedding_feature: {
@@ -82,7 +95,16 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
       { field: 'description', label: 'Description', type: 'textarea' },
       { field: 'image', label: 'Image', type: 'image' },
       { field: 'ctaLabel', label: 'CTA Label', type: 'text' },
-      { field: 'points', label: 'Highlights', type: 'repeater', itemFields: [{ field: 'label', label: 'Label', type: 'text' }, { field: 'value', label: 'Value', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+      {
+        field: 'points',
+        label: 'Highlights',
+        type: 'repeater',
+        itemFields: [
+          { field: 'label', label: 'Label', type: 'text' },
+          { field: 'value', label: 'Value', type: 'text' },
+          { field: 'icon', label: 'Icon Name', type: 'text' },
+        ],
+      },
     ],
   },
   featured_rooms: {
@@ -101,14 +123,31 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
       { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
       { field: 'title', label: 'Title', type: 'text' },
       { field: 'description', label: 'Description', type: 'textarea' },
-      { field: 'items', label: 'Services', type: 'repeater', itemFields: [{ field: 'title', label: 'Title', type: 'text' }, { field: 'description', label: 'Description', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+      {
+        field: 'items',
+        label: 'Services',
+        type: 'repeater',
+        itemFields: [
+          { field: 'title', label: 'Title', type: 'text' },
+          { field: 'description', label: 'Description', type: 'text' },
+          { field: 'icon', label: 'Icon Name', type: 'text' },
+        ],
+      },
     ],
   },
   amenities: {
     type: 'amenities',
     label: 'Amenities Grid',
     fields: [
-      { field: 'items', label: 'Amenities', type: 'repeater', itemFields: [{ field: 'label', label: 'Label', type: 'text' }, { field: 'icon', label: 'Icon Name', type: 'text' }] },
+      {
+        field: 'items',
+        label: 'Amenities',
+        type: 'repeater',
+        itemFields: [
+          { field: 'label', label: 'Label', type: 'text' },
+          { field: 'icon', label: 'Icon Name', type: 'text' },
+        ],
+      },
     ],
   },
   instagram_feed: {
@@ -120,7 +159,15 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
       { field: 'description', label: 'Description', type: 'textarea' },
       { field: 'instagramHandle', label: 'Instagram Handle', type: 'text' },
       { field: 'instagramLink', label: 'Instagram Link', type: 'url' },
-      { field: 'photos', label: 'Photos', type: 'repeater', itemFields: [{ field: 'src', label: 'Image URL', type: 'url' }, { field: 'alt', label: 'Alt Text', type: 'text' }] },
+      {
+        field: 'photos',
+        label: 'Photos',
+        type: 'repeater',
+        itemFields: [
+          { field: 'src', label: 'Image URL', type: 'url' },
+          { field: 'alt', label: 'Alt Text', type: 'text' },
+        ],
+      },
     ],
   },
   reviews: {
@@ -139,7 +186,17 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
       { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
       { field: 'title', label: 'Title', type: 'text' },
       { field: 'description', label: 'Description', type: 'textarea' },
-      { field: 'items', label: 'Attractions', type: 'repeater', itemFields: [{ field: 'name', label: 'Name', type: 'text' }, { field: 'description', label: 'Description', type: 'text' }, { field: 'image', label: 'Image URL', type: 'url' }, { field: 'distance', label: 'Distance', type: 'text' }] },
+      {
+        field: 'items',
+        label: 'Attractions',
+        type: 'repeater',
+        itemFields: [
+          { field: 'name', label: 'Name', type: 'text' },
+          { field: 'description', label: 'Description', type: 'text' },
+          { field: 'image', label: 'Image URL', type: 'url' },
+          { field: 'distance', label: 'Distance', type: 'text' },
+        ],
+      },
     ],
   },
 }
@@ -176,7 +233,11 @@ export const PAGE_SCHEMAS: PageSchema[] = [
           { field: 'page_heading', label: 'Heading', type: 'text' },
           { field: 'page_description', label: 'Description', type: 'richtext' },
           { field: 'seo_title', label: 'SEO title', type: 'text' },
-          { field: 'seo_description', label: 'SEO description', type: 'textarea' },
+          {
+            field: 'seo_description',
+            label: 'SEO description',
+            type: 'textarea',
+          },
         ],
       },
     ],
@@ -190,7 +251,11 @@ export const PAGE_SCHEMAS: PageSchema[] = [
         fields: [
           { field: 'hero_image', label: 'Hero image', type: 'image' },
           { field: 'wedding_heading', label: 'Heading', type: 'text' },
-          { field: 'wedding_description', label: 'Description', type: 'richtext' },
+          {
+            field: 'wedding_description',
+            label: 'Description',
+            type: 'richtext',
+          },
           { field: 'packages_text', label: 'Packages text', type: 'richtext' },
         ],
       },
@@ -291,7 +356,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
       {
         fields: [
           { field: 'logo_url', label: 'Logo image', type: 'image' },
-          { field: 'cta_button_text', label: 'CTA button text', type: 'text', hint: 'e.g. "Book Now"' },
+          {
+            field: 'cta_button_text',
+            label: 'CTA button text',
+            type: 'text',
+            hint: 'e.g. "Book Now"',
+          },
           { field: 'cta_button_link', label: 'CTA button link', type: 'url' },
           {
             field: 'nav_links',
@@ -335,14 +405,11 @@ export const PAGE_SCHEMAS: PageSchema[] = [
   {
     key: 'ical',
     label: 'iCal feeds (internal)',
-    description: 'Managed via Channel Manager — not normally edited here',
+    description:
+      'Managed via the Channel Manager page (Admin → Channel Manager) — supports per-listing → room mapping across Booking.com, MakeMyTrip, Airbnb, Agoda and Goibibo. Editing the raw JSON here is not recommended.',
     sections: [
       {
-        fields: [
-          { field: 'bookingcom_ical_url', label: 'Booking.com iCal URL', type: 'url' },
-          { field: 'mmt_ical_url', label: 'MakeMyTrip iCal URL', type: 'url' },
-          { field: 'goibibo_ical_url', label: 'Goibibo iCal URL', type: 'url' },
-        ],
+        fields: [],
       },
     ],
   },

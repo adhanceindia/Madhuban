@@ -1,6 +1,18 @@
 import { getDb } from '@/db/client'
 import { bookings, rooms, blockedDates } from '@/db/schema'
-import { eq, and, desc, gte, lte, lt, gt, or, ilike, inArray, sql } from 'drizzle-orm'
+import {
+  eq,
+  and,
+  desc,
+  gte,
+  lte,
+  lt,
+  gt,
+  or,
+  ilike,
+  inArray,
+  sql,
+} from 'drizzle-orm'
 import type { NewBooking } from '@/db/schema/bookings'
 
 export type BookingListFilters = {
@@ -31,17 +43,45 @@ export type BookingRow = {
   created_at: Date
 }
 
-export async function listBookings(filters: BookingListFilters = {}): Promise<BookingRow[]> {
+export async function listBookings(
+  filters: BookingListFilters = {},
+): Promise<BookingRow[]> {
   const db = getDb()
   const conditions = []
 
-  if (filters.status) conditions.push(eq(bookings.status, filters.status as 'confirmed' | 'pending' | 'cancelled'))
+  if (filters.status)
+    conditions.push(
+      eq(
+        bookings.status,
+        filters.status as 'confirmed' | 'pending' | 'cancelled',
+      ),
+    )
   if (filters.payment_status)
-    conditions.push(eq(bookings.payment_status, filters.payment_status as 'pending' | 'paid' | 'failed' | 'refunded'))
-  if (filters.source) conditions.push(eq(bookings.source, filters.source as 'website' | 'booking_com' | 'mmt' | 'manual'))
+    conditions.push(
+      eq(
+        bookings.payment_status,
+        filters.payment_status as 'pending' | 'paid' | 'failed' | 'refunded',
+      ),
+    )
+  if (filters.source)
+    conditions.push(
+      eq(
+        bookings.source,
+        filters.source as
+          | 'website'
+          | 'booking_com'
+          | 'mmt'
+          | 'airbnb'
+          | 'agoda'
+          | 'goibibo'
+          | 'manual',
+      ),
+    )
   if (filters.room_id) conditions.push(eq(bookings.room_id, filters.room_id))
-  if (filters.start_date) conditions.push(gte(bookings.check_in, filters.start_date))
-  if (filters.end_date) conditions.push(lte(bookings.check_in, filters.end_date))
+  if (filters.start_date)
+    conditions.push(gte(bookings.check_in, filters.start_date))
+  if (filters.end_date)
+    conditions.push(lte(bookings.check_in, filters.end_date))
   if (filters.search) {
     const q = `%${filters.search}%`
     const searchCondition = or(
@@ -148,7 +188,11 @@ export async function checkRoomAvailability(
     .where(and(...overlapConditions))
     .limit(1)
 
-  if (overlapping.length > 0) return { available: false, reason: 'Room is already booked for these dates' }
+  if (overlapping.length > 0)
+    return {
+      available: false,
+      reason: 'Room is already booked for these dates',
+    }
 
   const blocked = await db
     .select({ id: blockedDates.id })
@@ -162,7 +206,8 @@ export async function checkRoomAvailability(
     )
     .limit(1)
 
-  if (blocked.length > 0) return { available: false, reason: 'Some dates are blocked' }
+  if (blocked.length > 0)
+    return { available: false, reason: 'Some dates are blocked' }
 
   return { available: true }
 }

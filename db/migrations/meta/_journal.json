@@ -22,6 +22,13 @@
       "when": 1784236860990,
       "tag": "0002_odd_manta",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785000000000,
+      "tag": "0003_channel_manager",
+      "breakpoints": true
     }
   ]
 }

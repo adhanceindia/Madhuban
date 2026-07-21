@@ -18,7 +18,10 @@ export async function getDashboardData(startDate: string, endDate: string) {
   const db = getDb()
   const today = new Date().toISOString().split('T')[0]
 
-  const allRooms = await db.select().from(rooms).where(eq(rooms.is_active, true))
+  const allRooms = await db
+    .select()
+    .from(rooms)
+    .where(eq(rooms.is_active, true))
   const totalRooms = allRooms.length
 
   // Bookings in selected period (by creation OR by check-in falling in range)
@@ -26,10 +29,7 @@ export async function getDashboardData(startDate: string, endDate: string) {
     .select()
     .from(bookings)
     .where(
-      and(
-        gte(bookings.check_in, startDate),
-        lte(bookings.check_in, endDate),
-      )
+      and(gte(bookings.check_in, startDate), lte(bookings.check_in, endDate)),
     )
 
   // Previous period (same length window before startDate)
@@ -41,23 +41,21 @@ export async function getDashboardData(startDate: string, endDate: string) {
     .select()
     .from(bookings)
     .where(
-      and(
-        gte(bookings.check_in, prevStart),
-        lte(bookings.check_in, prevEnd),
-      )
+      and(gte(bookings.check_in, prevStart), lte(bookings.check_in, prevEnd)),
     )
 
   // Today's bookings/check-in/out
   const activeToday = periodBookings.filter(
-    (b) => b.check_in <= today && b.check_out > today && b.status !== 'cancelled'
+    (b) =>
+      b.check_in <= today && b.check_out > today && b.status !== 'cancelled',
   )
 
   const todayCheckIns = periodBookings.filter(
-    (b) => b.check_in === today && b.status !== 'cancelled'
+    (b) => b.check_in === today && b.status !== 'cancelled',
   ).length
 
   const todayCheckOuts = periodBookings.filter(
-    (b) => b.check_out === today && b.status !== 'cancelled'
+    (b) => b.check_out === today && b.status !== 'cancelled',
   ).length
 
   // Today's blocked rooms (manual / iCal)
@@ -71,15 +69,22 @@ export async function getDashboardData(startDate: string, endDate: string) {
   const availableToday = Math.max(0, totalRooms - occupiedToday - blockedToday)
 
   // Status counts
-  const confirmed = periodBookings.filter((b) => b.status === 'confirmed').length
+  const confirmed = periodBookings.filter(
+    (b) => b.status === 'confirmed',
+  ).length
   const pending = periodBookings.filter((b) => b.status === 'pending').length
-  const cancelled = periodBookings.filter((b) => b.status === 'cancelled').length
+  const cancelled = periodBookings.filter(
+    (b) => b.status === 'cancelled',
+  ).length
 
   // Revenue
   const paid = periodBookings.filter((b) => b.payment_status === 'paid')
   const totalRevenue = paid.reduce((sum, b) => sum + (b.total_amount || 0), 0)
   const prevPaid = prevPeriodBookings.filter((b) => b.payment_status === 'paid')
-  const prevTotalRevenue = prevPaid.reduce((sum, b) => sum + (b.total_amount || 0), 0)
+  const prevTotalRevenue = prevPaid.reduce(
+    (sum, b) => sum + (b.total_amount || 0),
+    0,
+  )
 
   // Revenue series (daily, grouped by check_in date)
   const revenueByDate = new Map<string, number>()
@@ -89,16 +94,29 @@ export async function getDashboardData(startDate: string, endDate: string) {
   for (const b of paid) {
     const date = b.check_in
     if (revenueByDate.has(date)) {
-      revenueByDate.set(date, (revenueByDate.get(date) || 0) + (b.total_amount || 0))
+      revenueByDate.set(
+        date,
+        (revenueByDate.get(date) || 0) + (b.total_amount || 0),
+      )
     }
   }
-  const revenueSeries = Array.from(revenueByDate.entries()).map(([date, revenue]) => ({
-    date,
-    revenue,
-  }))
+  const revenueSeries = Array.from(revenueByDate.entries()).map(
+    ([date, revenue]) => ({
+      date,
+      revenue,
+    }),
+  )
 
   // Bookings by source
-  const sourceCounts: Record<string, number> = { website: 0, booking_com: 0, mmt: 0, manual: 0 }
+  const sourceCounts: Record<string, number> = {
+    website: 0,
+    booking_com: 0,
+    mmt: 0,
+    airbnb: 0,
+    agoda: 0,
+    goibibo: 0,
+    manual: 0,
+  }
   for (const b of periodBookings) {
     if (b.status === 'cancelled') continue
     const src = b.source || 'website'
@@ -108,6 +126,9 @@ export async function getDashboardData(startDate: string, endDate: string) {
     { label: 'Website', count: sourceCounts.website, color: '#d6ed5e' },
     { label: 'Booking.com', count: sourceCounts.booking_com, color: '#c8d9b0' },
     { label: 'MakeMyTrip', count: sourceCounts.mmt, color: '#ba7517' },
+    { label: 'Airbnb', count: sourceCounts.airbnb, color: '#9c2a2a' },
+    { label: 'Agoda', count: sourceCounts.agoda, color: '#5392f0' },
+    { label: 'Goibibo', count: sourceCounts.goibibo, color: '#e87b3a' },
     { label: 'Manual', count: sourceCounts.manual, color: '#e5e9d8' },
   ]
   const totalSourced = sources.reduce((s, x) => s + x.count, 0)
@@ -120,7 +141,10 @@ export async function getDashboardData(startDate: string, endDate: string) {
 
   // Recent bookings (last 8)
   const recentBookings = [...periodBookings]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    )
     .slice(0, 8)
     .map((b) => {
       const room = allRooms.find((r) => r.id === b.room_id)
@@ -139,7 +163,12 @@ export async function getDashboardData(startDate: string, endDate: string) {
 
   // Upcoming check-ins (next 7 days)
   const upcomingCheckIns = [...periodBookings]
-    .filter((b) => b.check_in >= today && b.check_in <= addDays(today, 7) && b.status !== 'cancelled')
+    .filter(
+      (b) =>
+        b.check_in >= today &&
+        b.check_in <= addDays(today, 7) &&
+        b.status !== 'cancelled',
+    )
     .sort((a, b) => a.check_in.localeCompare(b.check_in))
     .slice(0, 8)
     .map((b) => {
@@ -163,7 +192,8 @@ export async function getDashboardData(startDate: string, endDate: string) {
     occupied_today: occupiedToday,
     blocked_today: blockedToday,
     available_today: availableToday,
-    occupancy_rate: totalRooms > 0 ? Math.round((occupiedToday / totalRooms) * 100) : 0,
+    occupancy_rate:
+      totalRooms > 0 ? Math.round((occupiedToday / totalRooms) * 100) : 0,
 
     total_revenue: totalRevenue,
     prev_total_revenue: prevTotalRevenue,

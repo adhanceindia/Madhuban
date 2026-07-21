@@ -1,41 +1,75 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Radio, AlertTriangle, Copy, ExternalLink, Save } from 'lucide-react'
+import {
+  Radio,
+  AlertTriangle,
+  Copy,
+  ExternalLink,
+  Save,
+  RefreshCw,
+  Plus,
+  Trash2,
+} from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { PageHeader } from '@/components/admin/shared/page-header'
 import { FormCard } from '@/components/admin/shared/form-card'
-import { Field, TextInput } from '@/components/admin/shared/form-field'
+import { Field, Select, TextInput } from '@/components/admin/shared/form-field'
 import { formatRelativeTime, formatDateShort } from '@/lib/format'
+import { SyncLogs } from './SyncLogs'
+import {
+  ICAL_SOURCES,
+  ICAL_SOURCE_META,
+  type IcalFeedConfig,
+  type IcalSource,
+} from '@/lib/ical/types'
+
+type ChannelRoom = { id: number; name: string; slug: string }
 
 type ChannelData = {
-  ical_config: { bookingcom_ical_url?: string; mmt_ical_url?: string; goibibo_ical_url?: string }
+  feeds: IcalFeedConfig[]
+  rooms: ChannelRoom[]
   blocked_counts: { manual: number; ical: number }
   ota_booking_count: number
-  conflicts: { room_id: number; date: string; booking_id: number; guest_name: string }[]
+  conflicts: {
+    room_id: number
+    date: string
+    booking_id: number
+    guest_name: string
+  }[]
   last_sync: string | null
-  bookingcom_count: number | null
-  mmt_count: number | null
+  counts: Record<IcalSource, number | null>
+  recent_logs: Array<{
+    id: number
+    source: IcalSource
+    feed_url: string
+    room_id: number | null
+    started_at: string
+    finished_at: string | null
+    status: 'success' | 'error' | 'partial'
+    synced_count: number
+    removed_count: number
+    error: string | null
+    triggered_by: 'cron' | 'manual'
+  }>
 }
 
 export function ChannelManagerView() {
   const [data, setData] = useState<ChannelData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [urls, setUrls] = useState({ bookingcom_ical_url: '', mmt_ical_url: '', goibibo_ical_url: '' })
+  const [feeds, setFeeds] = useState<IcalFeedConfig[]>([])
   const [saving, setSaving] = useState(false)
+  const [syncing, setSyncing] = useState(false)
 
   function refetch() {
     return fetch('/api/admin/channel-manager')
       .then((r) => r.json())
       .then((d: ChannelData) => {
         setData(d)
-        setUrls({
-          bookingcom_ical_url: d.ical_config?.bookingcom_ical_url || '',
-          mmt_ical_url: d.ical_config?.mmt_ical_url || '',
-          goibibo_ical_url: d.ical_config?.goibibo_ical_url || '',
-        })
+        // Seed local repeater state with server-side feeds (clone to allow editing).
+        setFeeds(d.feeds.length > 0 ? d.feeds.map((f) => ({ ...f })) : [])
       })
   }
 
@@ -44,39 +78,113 @@ export function ChannelManagerView() {
     refetch().finally(() => setLoading(false))
   }, [])
 
-  async function saveUrls() {
+  async function saveFeeds() {
+    // Basic client-side validation before round-tripping.
+    for (const f of feeds) {
+      if (!f.url || !/^https?:\/\//.test(f.url)) {
+        toast.error(`Every feed needs a valid URL starting with http(s)://`)
+        return
+      }
+      if (!f.source) {
+        toast.error('Every feed needs a channel selected')
+        return
+      }
+    }
     setSaving(true)
     try {
-      const res = await fetch('/api/admin/content/ical', {
+      const res = await fetch('/api/admin/channel-manager/feeds', {
         method: 'PUT',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ content: urls }),
+        body: JSON.stringify({ feeds }),
       })
       if (!res.ok) {
         const j = await res.json()
         toast.error(j.error || 'Save failed')
         return
       }
-      toast.success('iCal URLs saved')
+      toast.success('iCal feeds saved')
       refetch()
     } finally {
       setSaving(false)
     }
   }
 
+  async function syncNow() {
+    setSyncing(true)
+    try {
+      const res = await fetch('/api/admin/channel-manager/sync', {
+        method: 'POST',
+      })
+      const j = await res.json()
+      if (!res.ok) {
+        toast.error(j.error || 'Sync failed')
+        return
+      }
+      if (j.status === 'error') {
+        toast.error('Sync completed with errors — see logs below')
+      } else if (j.status === 'partial') {
+        toast(
+          `Synced — some feeds failed (${j.total_synced} added, ${j.total_removed} removed)`,
+        )
+      } else {
+        toast.success(
+          `Synced ${j.total_synced} dates (removed ${j.total_removed})`,
+        )
+      }
+      refetch()
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   function copyExportUrl() {
     const url = `${window.location.origin}/api/ical/export`
     navigator.clipboard.writeText(url)
-    toast.success('Export URL copied to clipboard')
+    toast.success(
+      'Export URL copied — append ?token=… before sharing with an OTA',
+    )
   }
+
+  // ---- feed repeater helpers ---------------------------------------------
+
+  function addFeed() {
+    setFeeds((prev) => [
+      ...prev,
+      {
+        id: `feed_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        source: 'booking_com',
+        url: '',
+        roomId: null,
+      },
+    ])
+  }
+
+  function removeFeed(id: string) {
+    setFeeds((prev) => prev.filter((f) => f.id !== id))
+  }
+
+  function patchFeed(id: string, patch: Partial<IcalFeedConfig>) {
+    setFeeds((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)))
+  }
+
+  // Per-channel "connected" status — derived from saved feeds (server data),
+  // not from local edits, so the card only flips after a Save + refetch.
+  const connectedSources = useMemo(
+    () =>
+      new Set((data?.feeds ?? []).filter((f) => f.url).map((f) => f.source)),
+    [data],
+  )
 
   if (loading || !data) {
     return (
       <div>
         <PageHeader title="Channel Manager" subtitle="Loading..." />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[160px] bg-card rounded-2xl animate-pulse" />
+            <div
+              key={i}
+              className="h-[160px] animate-pulse rounded-2xl bg-card"
+            />
           ))}
         </div>
       </div>
@@ -87,49 +195,60 @@ export function ChannelManagerView() {
     <div className="max-w-[1200px]">
       <PageHeader
         title="Channel Manager"
-        subtitle={data.last_sync ? `Last sync ${formatRelativeTime(data.last_sync)}` : 'No sync yet'}
+        subtitle={
+          data.last_sync
+            ? `Last sync ${formatRelativeTime(data.last_sync)}`
+            : 'No sync yet'
+        }
+        actions={
+          <button
+            type="button"
+            onClick={syncNow}
+            disabled={syncing}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[12px] font-semibold text-foreground transition-colors hover:bg-accent-deep disabled:opacity-50"
+          >
+            <RefreshCw size={13} className={syncing ? 'animate-spin' : ''} />
+            {syncing ? 'Syncing…' : 'Sync now'}
+          </button>
+        }
       />
 
-      {/* Channel status cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
-        <ChannelCard
-          name="Booking.com"
-          url={data.ical_config?.bookingcom_ical_url}
-          syncedCount={data.bookingcom_count}
-          lastSync={data.last_sync}
-        />
-        <ChannelCard
-          name="MakeMyTrip"
-          url={data.ical_config?.mmt_ical_url}
-          syncedCount={data.mmt_count}
-          lastSync={data.last_sync}
-        />
-        <ChannelCard
-          name="Goibibo"
-          url={data.ical_config?.goibibo_ical_url}
-          syncedCount={null}
-          lastSync={null}
-        />
+      {/* Channel status cards — one per OTA */}
+      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+        {ICAL_SOURCES.map((source) => (
+          <ChannelCard
+            key={source}
+            name={ICAL_SOURCE_META[source].label}
+            connected={connectedSources.has(source)}
+            syncedCount={data.counts?.[source] ?? null}
+            lastSync={data.last_sync}
+          />
+        ))}
       </div>
 
       {/* Conflicts */}
       {data.conflicts.length > 0 && (
-        <div className="bg-status-cancelled-bg border border-status-cancelled/30 rounded-2xl p-5 mb-5">
+        <div className="mb-5 rounded-2xl border border-status-cancelled/30 bg-status-cancelled-bg p-5">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={20} className="text-status-cancelled flex-shrink-0 mt-0.5" />
+            <AlertTriangle
+              size={20}
+              className="mt-0.5 flex-shrink-0 text-status-cancelled"
+            />
             <div className="flex-1">
-              <h3 className="text-[14px] font-semibold text-status-cancelled mb-2">
-                {data.conflicts.length} double-booking conflict{data.conflicts.length > 1 ? 's' : ''}
+              <h3 className="mb-2 text-[14px] font-semibold text-status-cancelled">
+                {data.conflicts.length} double-booking conflict
+                {data.conflicts.length > 1 ? 's' : ''}
               </h3>
-              <p className="text-[12px] text-status-cancelled/80 mb-3">
-                These rooms have both a direct booking and an OTA-imported block on the same date:
+              <p className="mb-3 text-[12px] text-status-cancelled/80">
+                These rooms have both a direct booking and an OTA-imported block
+                on the same date:
               </p>
               <div className="space-y-1">
                 {data.conflicts.map((c, i) => (
                   <div key={i} className="text-[12px]">
                     <Link
                       href={`/admin/bookings/${c.booking_id}`}
-                      className="text-foreground font-medium hover:text-sage-deep no-underline"
+                      className="font-medium text-foreground no-underline hover:text-sage-deep"
                     >
                       {c.guest_name}
                     </Link>{' '}
@@ -142,73 +261,129 @@ export function ChannelManagerView() {
         </div>
       )}
 
-      {/* iCal URLs */}
+      {/* iCal feeds repeater */}
       <FormCard
-        title="OTA iCal feeds"
-        description="Paste the iCal URL from each OTA's extranet. We sync these every 30 minutes."
+        title="iCal feeds"
+        description="One row per OTA listing. Map each listing to a specific room, or leave on “All rooms” to block the whole property. We sync every 30 minutes."
       >
-        <Field
-          label="Booking.com iCal URL"
-          hint="Find under Property → Calendar → Sync calendars"
-        >
-          <TextInput
-            type="url"
-            value={urls.bookingcom_ical_url}
-            onChange={(e) => setUrls({ ...urls, bookingcom_ical_url: e.target.value })}
-            placeholder="https://ical.booking.com/v1/export?t=..."
-          />
-        </Field>
+        {feeds.length === 0 && (
+          <p className="text-[12px] italic text-muted-foreground">
+            No feeds configured yet. Click “Add feed” to connect your first OTA
+            listing.
+          </p>
+        )}
 
-        <Field label="MakeMyTrip iCal URL">
-          <TextInput
-            type="url"
-            value={urls.mmt_ical_url}
-            onChange={(e) => setUrls({ ...urls, mmt_ical_url: e.target.value })}
-            placeholder="https://..."
-          />
-        </Field>
+        {feeds.map((feed) => (
+          <div
+            key={feed.id}
+            className="grid grid-cols-1 items-end gap-2 md:grid-cols-[140px_1fr_180px_36px]"
+          >
+            <Field label="Channel">
+              <Select
+                value={feed.source}
+                onChange={(e) =>
+                  patchFeed(feed.id, { source: e.target.value as IcalSource })
+                }
+              >
+                {ICAL_SOURCES.map((s) => (
+                  <option key={s} value={s}>
+                    {ICAL_SOURCE_META[s].label}
+                  </option>
+                ))}
+              </Select>
+            </Field>
 
-        <Field label="Goibibo iCal URL">
-          <TextInput
-            type="url"
-            value={urls.goibibo_ical_url}
-            onChange={(e) => setUrls({ ...urls, goibibo_ical_url: e.target.value })}
-            placeholder="https://..."
-          />
-        </Field>
+            <Field label="iCal URL" hint={ICAL_SOURCE_META[feed.source]?.hint}>
+              <TextInput
+                type="url"
+                value={feed.url}
+                onChange={(e) => patchFeed(feed.id, { url: e.target.value })}
+                placeholder="https://…"
+              />
+            </Field>
 
-        <div className="flex justify-end pt-2">
+            <Field label="Applies to">
+              <Select
+                value={feed.roomId === null ? '' : String(feed.roomId)}
+                onChange={(e) =>
+                  patchFeed(feed.id, {
+                    roomId:
+                      e.target.value === '' ? null : Number(e.target.value),
+                  })
+                }
+              >
+                <option value="">All rooms</option>
+                {data.rooms.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+
+            <button
+              type="button"
+              onClick={() => removeFeed(feed.id)}
+              title="Remove feed"
+              className="mb-0.5 inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-status-cancelled-bg hover:text-status-cancelled"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        ))}
+
+        <div className="flex items-center justify-between pt-2">
           <button
             type="button"
-            onClick={saveUrls}
-            disabled={saving}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[12px] font-semibold bg-accent hover:bg-accent-deep text-foreground rounded-lg transition-colors disabled:opacity-50"
+            onClick={addFeed}
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-semibold text-accent-deep transition-colors hover:bg-sage-soft"
           >
-            <Save size={13} /> {saving ? 'Saving...' : 'Save URLs'}
+            <Plus size={13} /> Add feed
+          </button>
+          <button
+            type="button"
+            onClick={saveFeeds}
+            disabled={saving}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-[12px] font-semibold text-foreground transition-colors hover:bg-accent-deep disabled:opacity-50"
+          >
+            <Save size={13} /> {saving ? 'Saving…' : 'Save feeds'}
           </button>
         </div>
       </FormCard>
 
+      {/* Sync logs */}
+      <div className="mt-5">
+        <FormCard
+          title="Sync history"
+          description="Most recent 20 sync runs. A failed feed does not abort the whole run."
+        >
+          <SyncLogs logs={data.recent_logs} />
+        </FormCard>
+      </div>
+
+      {/* Export URL */}
       <div className="mt-5">
         <FormCard
           title="Madhuban's iCal export"
-          description="Paste this URL into each OTA's calendar import to push our bookings out to them."
+          description="Paste this URL into each OTA's calendar import to push our bookings out to them. The OTA must append the secret token (see ICAL_EXPORT_TOKEN in .env)."
         >
-          <div className="flex items-center gap-2 bg-sage-soft/40 rounded-lg p-3">
-            <code className="text-[12px] text-foreground font-admin-mono flex-1 truncate">
-              {typeof window !== 'undefined' ? `${window.location.origin}/api/ical/export` : '/api/ical/export'}
+          <div className="flex items-center gap-2 rounded-lg bg-sage-soft/40 p-3">
+            <code className="flex-1 truncate font-admin-mono text-[12px] text-foreground">
+              {typeof window !== 'undefined'
+                ? `${window.location.origin}/api/ical/export?token=…`
+                : '/api/ical/export?token=…'}
             </code>
             <button
               type="button"
               onClick={copyExportUrl}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-[12px] font-semibold bg-card hover:bg-sage text-foreground border border-border rounded-md transition-colors"
+              className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-[12px] font-semibold text-foreground transition-colors hover:bg-sage"
             >
               <Copy size={12} /> Copy
             </button>
             <Link
               href="/api/ical/export"
               target="_blank"
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-[12px] font-semibold bg-card hover:bg-sage text-foreground border border-border rounded-md no-underline transition-colors"
+              className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-[12px] font-semibold text-foreground no-underline transition-colors hover:bg-sage"
             >
               <ExternalLink size={12} /> Open
             </Link>
@@ -221,42 +396,49 @@ export function ChannelManagerView() {
 
 function ChannelCard({
   name,
-  url,
+  connected,
   syncedCount,
   lastSync,
 }: {
   name: string
-  url: string | undefined
+  connected: boolean
   syncedCount: number | null
   lastSync: string | null
 }) {
-  const configured = !!url
   return (
-    <div className="bg-card rounded-2xl p-5 shadow-[0_1px_2px_rgba(45,55,30,0.04)]">
-      <div className="flex items-start justify-between mb-3">
-        <div className="w-10 h-10 rounded-xl bg-sage-soft flex items-center justify-center">
-          <Radio size={18} className="text-sage-deep" />
+    <div className="rounded-2xl bg-card p-4 shadow-[0_1px_2px_rgba(45,55,30,0.04)]">
+      <div className="mb-2 flex items-start justify-between">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sage-soft">
+          <Radio size={16} className="text-sage-deep" />
         </div>
         <span
-          className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${
-            configured ? 'bg-status-confirmed-bg text-status-confirmed' : 'bg-status-blocked-bg text-status-blocked'
+          className={`rounded-md px-2 py-0.5 text-[10px] font-semibold ${
+            connected
+              ? 'bg-status-confirmed-bg text-status-confirmed'
+              : 'bg-status-blocked-bg text-status-blocked'
           }`}
         >
-          {configured ? 'CONNECTED' : 'NOT CONNECTED'}
+          {connected ? 'ON' : 'OFF'}
         </span>
       </div>
-      <div className="text-[15px] font-semibold text-foreground mb-1">{name}</div>
-      {configured ? (
+      <div className="mb-0.5 text-[13px] font-semibold text-foreground">
+        {name}
+      </div>
+      {connected ? (
         <>
           <div className="text-[11px] text-muted-foreground">
-            {syncedCount !== null && `${syncedCount} blocked dates synced`}
+            {syncedCount !== null
+              ? `${syncedCount} dates synced`
+              : 'No counts yet'}
           </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">
-            {lastSync ? `Last sync ${formatRelativeTime(lastSync)}` : 'Awaiting first sync'}
+          <div className="mt-0.5 text-[11px] text-muted-foreground/80">
+            {lastSync ? formatRelativeTime(lastSync) : 'Awaiting first sync'}
           </div>
         </>
       ) : (
-        <div className="text-[11px] text-muted-foreground">Add iCal URL below to connect</div>
+        <div className="text-[11px] text-muted-foreground">
+          Add a feed below
+        </div>
       )}
     </div>
   )

@@ -49,3 +49,14 @@ curl -X POST http://localhost:3000/api/cron/sync-ical
 
 In production, all calls go through QStash and the signature is verified automatically
 by `verifySignatureAppRouter` from `@upstash/qstash/nextjs`.
+
+---
+
+## Manual sync (admin UI)
+
+The Channel Manager page (`/admin/channel-manager`) also has a **Sync now** button
+that runs the same engine on demand. It does **not** go through QStash — it calls
+`POST /api/admin/channel-manager/sync`, which is protected by the normal admin
+session + `channel-manager` RBAC module (super_admin / resort_manager) instead
+of QStash signature verification. Both paths run the exact same code
+(`lib/ical/sync.ts`), so results are identical.

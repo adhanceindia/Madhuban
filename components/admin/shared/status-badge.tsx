@@ -18,13 +18,19 @@ const variants: Record<string, string> = {
   website: 'bg-sage-soft text-sage-deep',
   booking_com: 'bg-status-checked-in-bg text-status-checked-in',
   mmt: 'bg-status-maintenance-bg text-status-maintenance',
+  airbnb: 'bg-status-cancelled-bg text-status-cancelled',
+  agoda: 'bg-status-pending-bg text-status-pending',
+  goibibo: 'bg-sage-soft text-accent-deep',
   manual: 'bg-status-blocked-bg text-status-blocked',
 }
 
 export function StatusBadge({ value }: { value: string }) {
-  const cls = variants[value.toLowerCase()] || 'bg-sage-soft text-muted-foreground'
+  const cls =
+    variants[value.toLowerCase()] || 'bg-sage-soft text-muted-foreground'
   return (
-    <span className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold capitalize ${cls} font-admin`}>
+    <span
+      className={`inline-block rounded-md px-2 py-0.5 text-[11px] font-semibold capitalize ${cls} font-admin`}
+    >
       {value.replace(/_/g, ' ').replace(/-/g, ' ')}
     </span>
   )

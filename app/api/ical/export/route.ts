@@ -1,12 +1,15 @@
 import { NextRequest } from 'next/server'
 import { getDb } from '@/db/client'
 import { bookings } from '@/db/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import ical, { ICalCalendarMethod } from 'ical-generator'
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token')
-  if (!process.env.ICAL_EXPORT_TOKEN || token !== process.env.ICAL_EXPORT_TOKEN) {
+  if (
+    !process.env.ICAL_EXPORT_TOKEN ||
+    token !== process.env.ICAL_EXPORT_TOKEN
+  ) {
     return new Response('Not found', { status: 404 })
   }
 
@@ -15,7 +18,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = request.nextUrl
     const roomId = searchParams.get('room_id')
 
-    const conditions = [eq(bookings.status, 'confirmed')]
+    // Both confirmed and pending bookings occupy inventory (matches the
+    // conflict-detection logic), so both are pushed to the OTAs.
+    const conditions = [inArray(bookings.status, ['confirmed', 'pending'])]
     if (roomId) {
       conditions.push(eq(bookings.room_id, parseInt(roomId)))
     }

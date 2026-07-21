@@ -4,15 +4,22 @@ import { getDb } from '@/db/client'
 import { bookings, blockedDates, rooms } from '@/db/schema'
 import { and, eq, lt, gt, gte, inArray } from 'drizzle-orm'
 import { getRedis } from '@/lib/redis'
+import { invalidateRoomAvailability } from '@/lib/ical/cache'
 import { resolveActiveGateway } from '@/lib/payments/resolve-gateway'
 
 const orderSchema = z.object({
   room_id: z.string().min(1, 'room_id is required'),
   guest_name: z.string().min(2, 'Name must be at least 2 characters'),
-  guest_phone: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian phone number'),
+  guest_phone: z
+    .string()
+    .regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian phone number'),
   guest_email: z.string().email('Enter a valid email address'),
-  check_in: z.string().refine((v) => !isNaN(Date.parse(v)), 'Invalid check-in date'),
-  check_out: z.string().refine((v) => !isNaN(Date.parse(v)), 'Invalid check-out date'),
+  check_in: z
+    .string()
+    .refine((v) => !isNaN(Date.parse(v)), 'Invalid check-in date'),
+  check_out: z
+    .string()
+    .refine((v) => !isNaN(Date.parse(v)), 'Invalid check-out date'),
   guests_count: z.number().int().min(1, 'At least 1 guest required'),
 })
 
@@ -38,7 +45,10 @@ export async function POST(request: NextRequest) {
 
     if (await isRateLimited(ip)) {
       return NextResponse.json(
-        { error: 'Too many requests. Please try again later.', code: 'RATE_LIMITED' },
+        {
+          error: 'Too many requests. Please try again later.',
+          code: 'RATE_LIMITED',
+        },
         { status: 429 },
       )
     }
@@ -48,34 +58,49 @@ export async function POST(request: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: parsed.error.issues[0]?.message || 'Invalid input', code: 'VALIDATION_ERROR' },
+        {
+          error: parsed.error.issues[0]?.message || 'Invalid input',
+          code: 'VALIDATION_ERROR',
+        },
         { status: 400 },
       )
     }
 
-    const { room_id, guest_name, guest_phone, guest_email, check_in, check_out, guests_count } = parsed.data
+    const {
+      room_id,
+      guest_name,
+      guest_phone,
+      guest_email,
+      check_in,
+      check_out,
+      guests_count,
+    } = parsed.data
     const roomIdNum = parseInt(room_id)
     const db = getDb()
 
     const overlapping = await db
       .select({ id: bookings.id })
       .from(bookings)
-      .where(and(
-        eq(bookings.room_id, roomIdNum),
-        inArray(bookings.status, ['confirmed', 'pending']),
-        lt(bookings.check_in, check_out),
-        gt(bookings.check_out, check_in),
-      ))
+      .where(
+        and(
+          eq(bookings.room_id, roomIdNum),
+          inArray(bookings.status, ['confirmed', 'pending']),
+          lt(bookings.check_in, check_out),
+          gt(bookings.check_out, check_in),
+        ),
+      )
       .limit(1)
 
     const blocked = await db
       .select({ id: blockedDates.id })
       .from(blockedDates)
-      .where(and(
-        eq(blockedDates.room_id, roomIdNum),
-        gte(blockedDates.date, check_in),
-        lt(blockedDates.date, check_out),
-      ))
+      .where(
+        and(
+          eq(blockedDates.room_id, roomIdNum),
+          gte(blockedDates.date, check_in),
+          lt(blockedDates.date, check_out),
+        ),
+      )
       .limit(1)
 
     if (overlapping.length > 0 || blocked.length > 0) {
@@ -85,14 +110,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const [room] = await db.select().from(rooms).where(eq(rooms.id, roomIdNum)).limit(1)
+    const [room] = await db
+      .select()
+      .from(rooms)
+      .where(eq(rooms.id, roomIdNum))
+      .limit(1)
     if (!room) {
-      return NextResponse.json({ error: 'Room not found', code: 'NOT_FOUND' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Room not found', code: 'NOT_FOUND' },
+        { status: 404 },
+      )
     }
 
     const checkInDate = new Date(check_in)
     const checkOutDate = new Date(check_out)
-    const nights = Math.max(1, Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000))
+    const nights = Math.max(
+      1,
+      Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / 86400000),
+    )
     const subtotal = room.price_per_night * nights
     const gst = Math.round(subtotal * 0.12)
     const totalAmount = subtotal + gst
@@ -102,26 +137,32 @@ export async function POST(request: NextRequest) {
       gateway = await resolveActiveGateway()
     } catch (err) {
       return NextResponse.json(
-        { error: (err as Error).message || 'Payment gateway is not configured', code: 'GATEWAY_ERROR' },
+        {
+          error: (err as Error).message || 'Payment gateway is not configured',
+          code: 'GATEWAY_ERROR',
+        },
         { status: 503 },
       )
     }
 
-    const [booking] = await db.insert(bookings).values({
-      room_id: roomIdNum,
-      guest_name,
-      guest_phone,
-      guest_email,
-      check_in,
-      check_out,
-      guests_count,
-      payment_method: 'online',
-      payment_status: 'pending',
-      status: 'pending',
-      source: 'website',
-      total_amount: totalAmount,
-      gateway_used: gateway.name,
-    }).returning()
+    const [booking] = await db
+      .insert(bookings)
+      .values({
+        room_id: roomIdNum,
+        guest_name,
+        guest_phone,
+        guest_email,
+        check_in,
+        check_out,
+        guests_count,
+        payment_method: 'online',
+        payment_status: 'pending',
+        status: 'pending',
+        source: 'website',
+        total_amount: totalAmount,
+        gateway_used: gateway.name,
+      })
+      .returning()
 
     const siteUrl = new URL(request.url).origin
 
@@ -139,7 +180,10 @@ export async function POST(request: NextRequest) {
     } catch {
       await db.delete(bookings).where(eq(bookings.id, booking.id))
       return NextResponse.json(
-        { error: 'Failed to create payment order. Please try again.', code: 'GATEWAY_ERROR' },
+        {
+          error: 'Failed to create payment order. Please try again.',
+          code: 'GATEWAY_ERROR',
+        },
         { status: 502 },
       )
     }
@@ -149,12 +193,8 @@ export async function POST(request: NextRequest) {
       .set({ gateway_order_id: orderResult.gateway_order_id })
       .where(eq(bookings.id, booking.id))
 
-    const redisClient = getRedis()
-    if (redisClient) {
-      try {
-        await redisClient.del(`avail:${room_id}:${check_in}:${check_out}`)
-      } catch { /* non-critical */ }
-    }
+    // Invalidate every overlapping cached availability query for this room.
+    await invalidateRoomAvailability(roomIdNum)
 
     return NextResponse.json({
       success: true,
@@ -171,7 +211,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[api/payments/order] Error:', error)
     return NextResponse.json(
-      { error: 'Something went wrong. Please try again.', code: 'INTERNAL_ERROR' },
+      {
+        error: 'Something went wrong. Please try again.',
+        code: 'INTERNAL_ERROR',
+      },
       { status: 500 },
     )
   }

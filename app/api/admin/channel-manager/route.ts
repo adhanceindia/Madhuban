@@ -1,45 +1,68 @@
 import { apiHandler } from '@/lib/api-handler'
-import { getBlockedCountsBySource, getOtaBookingCount, getConflicts } from '@/db/queries/channel-manager'
+import {
+  getBlockedCountsBySource,
+  getOtaBookingCount,
+  getConflicts,
+  getRecentSyncLogs,
+} from '@/db/queries/channel-manager'
+import { getActiveRooms } from '@/db/queries/rooms'
 import { getRedis } from '@/lib/redis'
-import { getPageContentAdmin } from '@/db/queries/content-admin'
+import { getIcalConfig } from '@/lib/ical/config'
+import { ICAL_SOURCES } from '@/lib/ical/types'
+import type { IcalSource } from '@/lib/ical/types'
 
 export const GET = apiHandler({
   module: 'channel-manager',
   handler: async () => {
     const redis = getRedis()
-    const [counts, otaBookings, conflicts, icalConfig] = await Promise.all([
+    const [
+      counts,
+      otaBookings,
+      conflicts,
+      icalConfig,
+      activeRooms,
+      recentLogs,
+    ] = await Promise.all([
       getBlockedCountsBySource(),
       getOtaBookingCount(),
       getConflicts(),
-      getPageContentAdmin('ical'),
+      getIcalConfig(),
+      getActiveRooms(),
+      getRecentSyncLogs(20),
     ])
 
     let lastSync: string | null = null
-    let bookingcomCount: number | null = null
-    let mmtCount: number | null = null
+    const perSourceCount: Record<IcalSource, number | null> = {
+      booking_com: null,
+      mmt: null,
+      airbnb: null,
+      agoda: null,
+      goibibo: null,
+    }
     if (redis) {
       try {
-        const [ls, bc, mc] = await Promise.all([
+        const [ls, ...sourceCounts] = await Promise.all([
           redis.get<string>('ical:last_sync'),
-          redis.get<number>('ical:bookingcom_count'),
-          redis.get<number>('ical:mmt_count'),
+          ...ICAL_SOURCES.map((s) => redis.get<number>(`ical:count:${s}`)),
         ])
         lastSync = ls
-        bookingcomCount = bc
-        mmtCount = mc
+        ICAL_SOURCES.forEach((s, i) => {
+          perSourceCount[s] = sourceCounts[i]
+        })
       } catch {
-        // Redis unavailable
+        // Redis unavailable — counts stay null, UI handles gracefully.
       }
     }
 
     return {
-      ical_config: icalConfig,
+      feeds: icalConfig.feeds,
+      rooms: activeRooms.map((r) => ({ id: r.id, name: r.name, slug: r.slug })),
       blocked_counts: counts,
       ota_booking_count: otaBookings,
       conflicts,
       last_sync: lastSync,
-      bookingcom_count: bookingcomCount,
-      mmt_count: mmtCount,
+      counts: perSourceCount,
+      recent_logs: recentLogs,
     }
   },
 })

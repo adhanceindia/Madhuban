@@ -1,7 +1,7 @@
 import { getDb } from '@/db/client'
 import { bookings, rooms } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { getRedis } from '@/lib/redis'
+import { invalidateRoomAvailability } from '@/lib/ical/cache'
 import { sendBookingConfirmationEmail } from '@/lib/email'
 
 export async function confirmBookingPayment(opts: {
@@ -19,7 +19,9 @@ export async function confirmBookingPayment(opts: {
     .limit(1)
 
   if (!booking) {
-    console.error(`[payments] No booking found for gateway_order_id=${opts.gateway_order_id}`)
+    console.error(
+      `[payments] No booking found for gateway_order_id=${opts.gateway_order_id}`,
+    )
     return null
   }
 
@@ -50,18 +52,16 @@ export async function confirmBookingPayment(opts: {
     })
     .where(eq(bookings.id, booking.id))
 
-  const redis = getRedis()
-  if (redis) {
-    try {
-      const cacheKey = `avail:${booking.room_id}:${booking.check_in}:${booking.check_out}`
-      await redis.del(cacheKey)
-    } catch {
-      // Non-critical
-    }
-  }
+  // Invalidate every overlapping cached availability query for this room,
+  // not just the booking's own date key.
+  await invalidateRoomAvailability(booking.room_id)
 
   try {
-    const [room] = await db.select().from(rooms).where(eq(rooms.id, booking.room_id)).limit(1)
+    const [room] = await db
+      .select()
+      .from(rooms)
+      .where(eq(rooms.id, booking.room_id))
+      .limit(1)
     const roomName = room?.name || 'Room'
 
     const checkIn = booking.check_in

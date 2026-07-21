@@ -7,7 +7,10 @@ import { type ColumnDef } from '@tanstack/react-table'
 
 import { PageHeader } from '@/components/admin/shared/page-header'
 import { DataTable } from '@/components/admin/shared/data-table'
-import { FilterBar, type FilterConfig } from '@/components/admin/shared/filter-bar'
+import {
+  FilterBar,
+  type FilterConfig,
+} from '@/components/admin/shared/filter-bar'
 import { EmptyState } from '@/components/admin/shared/empty-state'
 import { StatusBadge } from '@/components/admin/shared/status-badge'
 import { formatINR, formatDateShort } from '@/lib/format'
@@ -47,6 +50,9 @@ const FILTER_CONFIG: FilterConfig[] = [
       { value: 'website', label: 'Website' },
       { value: 'booking_com', label: 'Booking.com' },
       { value: 'mmt', label: 'MakeMyTrip' },
+      { value: 'airbnb', label: 'Airbnb' },
+      { value: 'agoda', label: 'Agoda' },
+      { value: 'goibibo', label: 'Goibibo' },
       { value: 'manual', label: 'Manual' },
     ],
   },
@@ -90,7 +96,7 @@ export function BookingsList() {
         cell: ({ row }) => (
           <Link
             href={`/admin/bookings/${row.original.id}`}
-            className="text-foreground font-medium no-underline hover:text-sage-deep"
+            className="font-medium text-foreground no-underline hover:text-sage-deep"
           >
             {row.original.guest_name}
           </Link>
@@ -99,27 +105,35 @@ export function BookingsList() {
       {
         accessorKey: 'room_name',
         header: 'Room',
-        cell: ({ getValue }) => <span className="text-[12px] text-foreground">{getValue() as string}</span>,
+        cell: ({ getValue }) => (
+          <span className="text-[12px] text-foreground">
+            {getValue() as string}
+          </span>
+        ),
       },
       {
         accessorKey: 'check_in',
         header: 'Check-in',
         cell: ({ getValue }) => (
-          <span className="text-[12px] text-muted-foreground">{formatDateShort(getValue() as string)}</span>
+          <span className="text-[12px] text-muted-foreground">
+            {formatDateShort(getValue() as string)}
+          </span>
         ),
       },
       {
         accessorKey: 'check_out',
         header: 'Check-out',
         cell: ({ getValue }) => (
-          <span className="text-[12px] text-muted-foreground">{formatDateShort(getValue() as string)}</span>
+          <span className="text-[12px] text-muted-foreground">
+            {formatDateShort(getValue() as string)}
+          </span>
         ),
       },
       {
         accessorKey: 'total_amount',
         header: 'Amount',
         cell: ({ getValue }) => (
-          <span className="font-semibold font-admin-mono text-foreground">
+          <span className="font-admin-mono font-semibold text-foreground">
             {formatINR(getValue() as number | null)}
           </span>
         ),
@@ -144,7 +158,19 @@ export function BookingsList() {
   )
 
   function exportRows(): (string | number)[][] {
-    const headers = ['ID', 'Guest', 'Email', 'Phone', 'Room', 'Check-in', 'Check-out', 'Amount', 'Status', 'Payment', 'Source']
+    const headers = [
+      'ID',
+      'Guest',
+      'Email',
+      'Phone',
+      'Room',
+      'Check-in',
+      'Check-out',
+      'Amount',
+      'Status',
+      'Payment',
+      'Source',
+    ]
     const rows = bookings.map((b) => [
       b.id,
       b.guest_name,
@@ -169,7 +195,7 @@ export function BookingsList() {
         actions={
           <Link
             href="/admin/bookings/new"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold bg-accent hover:bg-accent-deep text-foreground rounded-lg no-underline transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-[13px] font-semibold text-foreground no-underline transition-colors hover:bg-accent-deep"
           >
             <Plus size={16} /> New Booking
           </Link>
@@ -177,7 +203,11 @@ export function BookingsList() {
       />
 
       <div className="mb-3">
-        <FilterBar filters={filters} onChange={setFilters} config={FILTER_CONFIG} />
+        <FilterBar
+          filters={filters}
+          onChange={setFilters}
+          config={FILTER_CONFIG}
+        />
       </div>
 
       <DataTable
