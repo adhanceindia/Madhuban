@@ -40,7 +40,7 @@ export function AttractionsPageView({ siteContent: initialSiteContent, pageData:
           className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="/rooms">
-            Plan Your Stay
+            {(pageData.cta_button as string) || "Plan Your Stay"}
             <SiteIcon icon="ArrowRight" className="size-4" />
           </Link>
         </Button>
@@ -55,9 +55,9 @@ export function AttractionsPageView({ siteContent: initialSiteContent, pageData:
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Spiritual Day Trips"
-            title="Temple destinations often paired with a peaceful Madhuban stay."
-            description="These nearby attractions give guests an easy way to combine a quiet resort base with meaningful family travel across the region."
+            eyebrow={(pageData.trips_eyebrow as string) || "Spiritual Day Trips"}
+            title={(pageData.trips_title as string) || "Temple destinations often paired with a peaceful Madhuban stay."}
+            description={(pageData.trips_description as string) || "These nearby attractions give guests an easy way to combine a quiet resort base with meaningful family travel across the region."}
             centered
           />
 
@@ -85,7 +85,7 @@ export function AttractionsPageView({ siteContent: initialSiteContent, pageData:
                     className={cn('px-2 py-2', index % 2 === 1 && 'lg:order-1')}
                   >
                     <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
-                      Nearby Attraction
+                      {(pageData.card_eyebrow as string) || "Nearby Attraction"}
                     </p>
                     <h2 className="mt-4 text-balance text-4xl italic leading-tight text-foreground sm:text-5xl">
                       {attraction.name}
@@ -114,7 +114,7 @@ export function AttractionsPageView({ siteContent: initialSiteContent, pageData:
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <EditorialCtaPanel
-            eyebrow="Plan Your Visit"
+            eyebrow={(pageData.plan_visit_eyebrow as string) || "Plan Your Visit"}
             title={attractionsPage.visitPlanTitle}
             description={attractionsPage.visitPlanDescription}
             primaryHref="/rooms"

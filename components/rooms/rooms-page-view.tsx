@@ -118,7 +118,7 @@ export function RoomsPageView({
       >
         <div className="absolute inset-0">
           <Image
-            src={(pageData.hero_image as string) || getHeroImage(siteContent, 'rooms', rooms[0]?.images?.[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80')}
+            src={(pageData.banner_image as string) || getHeroImage(siteContent, 'rooms', rooms[0]?.images?.[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80')}
             alt="Luxury room interiors at Madhuban Garden Resort"
             fill
             priority
@@ -130,12 +130,12 @@ export function RoomsPageView({
 
         <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-center justify-center px-4 pb-20 pt-36 text-center text-white sm:px-6 lg:px-8">
           <p className="pointer-events-none absolute inset-x-0 top-1/2 hidden -translate-y-1/2 select-none font-display text-[clamp(5rem,18vw,12rem)] italic leading-none text-white/10 sm:block">
-            Comfort
+            {(pageData.hero_background_text as string) || 'Comfort'}
           </p>
 
           <div className="relative z-10 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-eyebrow text-white/80">
-              Peaceful resort stays in Agar Malwa
+              {(pageData.hero_eyebrow as string) || 'Peaceful resort stays in Agar Malwa'}
             </p>
             <h1 className="mt-6 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl">
               {(pageData.page_heading as string) || 'Our Rooms & Suites'}
@@ -264,10 +264,10 @@ export function RoomsPageView({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-semibold uppercase tracking-eyebrow text-gold">
-              Included With Every Stay
+              {(pageData.amenities_eyebrow as string) || 'Included With Every Stay'}
             </p>
             <h2 className="mt-4 text-4xl italic leading-tight text-primary-deep sm:text-5xl">
-              Thoughtful comforts come standard across the resort.
+              {(pageData.amenities_heading as string) || 'Thoughtful comforts come standard across the resort.'}
             </h2>
           </div>
 

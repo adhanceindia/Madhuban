@@ -159,7 +159,7 @@ export function WeddingPageView({ siteContent: initialSiteContent, pageData: ini
               {weddingPage.hero.eyebrow}
             </p>
             <p className="pointer-events-none mt-2 hidden select-none font-display text-[clamp(4.5rem,14vw,9rem)] italic leading-none text-white/10 lg:block">
-              Forever
+              {(pageData.hero_background_text as string) || 'Forever'}
             </p>
             <h1 className="mt-4 text-balance text-5xl italic leading-tight text-white sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
               {(pageData.wedding_heading as string) || siteContent.wedding_heading || weddingPage.hero.title}
@@ -183,7 +183,7 @@ export function WeddingPageView({ siteContent: initialSiteContent, pageData: ini
                 </Link>
               </Button>
               <div className="rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm text-white/80 backdrop-blur">
-                Wedding venue in Agar Malwa District, Madhya Pradesh
+                {(pageData.hero_badge as string) || 'Wedding venue in Agar Malwa District, Madhya Pradesh'}
               </div>
             </div>
           </div>
@@ -275,9 +275,9 @@ export function WeddingPageView({ siteContent: initialSiteContent, pageData: ini
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="What We Offer"
-            title="Wedding services thoughtfully layered around your celebration."
-            description="Every function can be supported with venue planning, styling, guest comfort, and coordination help under one roof."
+            eyebrow={(pageData.offer_eyebrow as string) || "What We Offer"}
+            title={(pageData.offer_title as string) || "Wedding services thoughtfully layered around your celebration."}
+            description={(pageData.offer_description as string) || "Every function can be supported with venue planning, styling, guest comfort, and coordination help under one roof."}
             centered
           />
 
@@ -321,8 +321,8 @@ export function WeddingPageView({ siteContent: initialSiteContent, pageData: ini
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Photo Gallery Strip"
-            title="A glimpse into the mood, light, and beauty families can expect."
+            eyebrow={(pageData.gallery_eyebrow as string) || "Photo Gallery Strip"}
+            title={(pageData.gallery_title as string) || "A glimpse into the mood, light, and beauty families can expect."}
           />
 
           <div className="relative mt-10">
@@ -370,8 +370,7 @@ export function WeddingPageView({ siteContent: initialSiteContent, pageData: ini
                   View Full Gallery
                 </h3>
                 <p className="text-foreground/70 mt-3 text-sm leading-7">
-                  Scroll through the strip for more visual references from the
-                  celebration atmosphere we are building around Madhuban.
+                  {(pageData.gallery_description as string) || "Scroll through the strip for more visual references from the celebration atmosphere we are building around Madhuban."}
                 </p>
                 <Button
                   type="button"
@@ -405,8 +404,8 @@ export function WeddingPageView({ siteContent: initialSiteContent, pageData: ini
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Why Madhuban Garden"
-            title="The venue families choose when they want lush beauty and dependable execution."
+            eyebrow={(pageData.why_eyebrow as string) || "Why Madhuban Garden"}
+            title={(pageData.why_title as string) || "The venue families choose when they want lush beauty and dependable execution."}
             centered
           />
 

@@ -40,7 +40,7 @@ export function EventsPageView({ siteContent: initialSiteContent, pageData: init
           className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="#corporate-booking">
-            Plan Your Event
+            {(pageData.cta_button as string) || "Plan Your Event"}
             <SiteIcon icon="ArrowRight" className="size-4" />
           </Link>
         </Button>
@@ -57,7 +57,7 @@ export function EventsPageView({ siteContent: initialSiteContent, pageData: init
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-16">
             <motion.div variants={itemVariants}>
               <SectionHeading
-                eyebrow="Event Services"
+                eyebrow={(pageData.services_eyebrow as string) || "Event Services"}
                 title={eventsPage.introTitle}
                 description={eventsPage.introDescription}
               />

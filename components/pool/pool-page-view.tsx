@@ -39,7 +39,7 @@ export function PoolPageView({ siteContent: initialSiteContent, pageData: initia
           className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="/rooms">
-            Plan A Stay
+            {(pageData.cta_button as string) || "Plan A Stay"}
             <SiteIcon icon="ArrowRight" className="size-4" />
           </Link>
         </Button>
@@ -70,7 +70,7 @@ export function PoolPageView({ siteContent: initialSiteContent, pageData: initia
 
             <motion.div variants={itemVariants}>
               <SectionHeading
-                eyebrow="Pool Overview"
+                eyebrow={(pageData.overview_eyebrow as string) || "Pool Overview"}
                 title={poolPage.overviewTitle}
               />
 
@@ -88,7 +88,7 @@ export function PoolPageView({ siteContent: initialSiteContent, pageData: initia
               <div className="mt-8 grid gap-5 xl:grid-cols-[0.38fr_0.62fr]">
                 <div className="rounded-card-md bg-primary-light p-5">
                   <p className="text-xs font-semibold uppercase tracking-label text-gold">
-                    Timings
+                    {(pageData.timings_label as string) || "Timings"}
                   </p>
                   <p className="mt-4 text-3xl italic text-foreground">
                     {(pageData.timings as string) || poolPage.timings}
@@ -125,9 +125,9 @@ export function PoolPageView({ siteContent: initialSiteContent, pageData: initia
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Pool Moments"
-            title="A relaxed visual strip of the water, deck, and surrounding resort atmosphere."
-            description="This section is intentionally light and image-led, matching the way the pool complements the wider resort rather than competing with the main accommodation and wedding experiences."
+            eyebrow={(pageData.gallery_eyebrow as string) || "Pool Moments"}
+            title={(pageData.gallery_title as string) || "A relaxed visual strip of the water, deck, and surrounding resort atmosphere."}
+            description={(pageData.gallery_description as string) || "This section is intentionally light and image-led, matching the way the pool complements the wider resort rather than competing with the main accommodation and wedding experiences."}
           />
           <div className="mt-10">
             <EditorialPhotoStrip items={poolPage.photos} />

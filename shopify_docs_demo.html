@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopify Dev Docs Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================
+       1. CSS Variables (Dark Mode Default)
+       ========================================= */
+    :root {
+      --color-bg-base: #000000;        /* Main background */
+      --color-bg-header: #000000;
+      --color-bg-surface: #121212;     /* Cards */
+      --color-bg-surface-hover: #1e1e1e;
+      --color-bg-subnav: #0a0a0a;      /* Secondary header */
+      
+      --color-text-primary: #f5f5f5;
+      --color-text-secondary: #a3a3a3;
+      --color-text-tertiary: #737373;
+      --color-text-accent: #ffffff;    /* White links */
+      
+      --color-border: #333333;
+      --color-border-subtle: #262626;
+      --color-border-hover: #404040;
+      
+      --color-primary: #ffffff;        /* White accents */
+      --color-primary-bright: #ffffff; /* Bright white active indicator */
+      --color-primary-text: #000000;   /* Black text on white buttons */
+
+      --color-code-bg: #0a0a0a;
+      --color-code-text: #e5e5e5;
+      --color-code-border: #262626;
+
+      /* Typography */
+      --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-family-mono: 'JetBrains Mono', SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      
+      --font-size-xs: 0.75rem;     /* 12px */
+      --font-size-sm: 0.875rem;    /* 14px */
+      --font-size-base: 0.9375rem; /* 15px */
+      --font-size-lg: 1.125rem;    /* 18px */
+      --font-size-xl: 1.25rem;     /* 20px */
+      --font-size-2xl: 1.5rem;     /* 24px */
+      --font-size-3xl: 2rem;       /* 32px */
+      
+      --space-1: 0.25rem;   /* 4px */
+      --space-2: 0.5rem;    /* 8px */
+      --space-3: 0.75rem;   /* 12px */
+      --space-4: 1rem;      /* 16px */
+      --space-5: 1.25rem;   /* 20px */
+      --space-6: 1.5rem;    /* 24px */
+      --space-8: 2rem;      /* 32px */
+      --space-10: 2.5rem;   /* 40px */
+      --space-12: 3rem;     /* 48px */
+      
+      --header-height: 56px;
+      --subnav-height: 48px;
+      --sidebar-width: 260px;
+      --toc-width: 240px;
+    }
+
+    /* =========================================
+       2. Reset & Base Styles
+       ========================================= */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: var(--font-family-body);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--color-text-primary);
+      background-color: var(--color-bg-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--color-text-accent);
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul { list-style: none; }
+
+    /* =========================================
+       3. Header & Navigation
+       ========================================= */
+    .docs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-height);
+      background-color: var(--color-bg-header);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+    }
+
+    .docs-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+    }
+
+    .docs-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      color: #fff;
+      text-decoration: none !important;
+    }
+
+    .docs-logo-icon {
+      width: 20px;
+      height: 20px;
+      background-color: var(--color-primary-bright);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .top-nav {
+      display: flex;
+      gap: var(--space-4);
+    }
+
+    .top-nav a {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      text-decoration: none !important;
+      padding: var(--space-2) 0;
+    }
+
+    .top-nav a:hover, .top-nav a.active {
+      color: var(--color-text-primary);
+    }
+
+    .docs-header-right {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .btn-assistant {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #1a1a1a; 
+      border: 1px solid #333333;
+      color: #e5e5e5; 
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-assistant:hover {
+      background-color: #262626;
+    }
+
+    /* Sub Navigation */
+    .docs-subnav {
+      position: sticky;
+      top: var(--header-height);
+      z-index: 99;
+      height: var(--subnav-height);
+      background-color: var(--color-bg-subnav);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-4);
+      gap: var(--space-6);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+    }
+
+    .docs-subnav .section-title {
+      font-weight: 600;
+      color: var(--color-text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: var(--font-size-xs);
+    }
+    
+    .docs-subnav .divider {
+      color: var(--color-border);
+    }
+
+    .docs-subnav a {
+      color: var(--color-text-secondary);
+      text-decoration: none !important;
+      font-weight: 500;
+    }
+    
+    .docs-subnav a.active, .docs-subnav a:hover {
+      color: var(--color-text-primary);
+    }
+
+    /* =========================================
+       4. Layout Grid
+       ========================================= */
+    .docs-layout {
+      display: flex;
+      max-width: 1440px;
+      margin: 0 auto;
+      min-height: calc(100vh - var(--header-height) - var(--subnav-height));
+    }
+
+    .docs-sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      border-right: 1px solid var(--color-border);
+      padding: var(--space-4) 0;
+      position: sticky;
+      top: calc(var(--header-height) + var(--subnav-height));
+      height: calc(100vh - var(--header-height) - var(--subnav-height));
+      overflow-y: auto;
+    }
+
+    .docs-main {
+      flex: 1;
+      min-width: 0;
+      padding: var(--space-10) var(--space-12);
+    }
+
+    .docs-toc {
+      width: var(--toc-width);
+      flex-shrink: 0;
+      padding: var(--space-10) var(--space-6);
+      position: sticky;
+      top: calc(var(--header-height) + var(--subnav-height));
+      height: calc(100vh - var(--header-height) - var(--subnav-height));
+      overflow-y: auto;
+    }
+
+    /* =========================================
+       5. Sidebar Navigation
+       ========================================= */
+    .sidebar-filter {
+      padding: 0 var(--space-4) var(--space-4);
+    }
+
+    .sidebar-filter input {
+      width: 100%;
+      background-color: var(--color-bg-base);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: var(--space-2) var(--space-3);
+      border-radius: 4px;
+      font-size: var(--font-size-sm);
+    }
+
+    .sidebar-filter input:focus {
+      outline: none;
+      border-color: var(--color-text-accent);
+    }
+
+    .sidebar-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .sidebar-heading {
+      font-size: 0.6875rem; /* ~11px */
+      font-weight: 700;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0 var(--space-4);
+      margin-bottom: var(--space-2);
+    }
+
+    .sidebar-nav li a {
+      display: flex;
+      align-items: center;
+      padding: 6px var(--space-4);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+      text-decoration: none !important;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar-nav li a:hover {
+      color: var(--color-text-primary);
+    }
+
+    .sidebar-nav li a.active {
+      color: var(--color-text-primary);
+      background-color: #121212;
+      border-left-color: var(--color-primary-bright);
+      font-weight: 500;
+    }
+
+    /* =========================================
+       6. Main Content & Cards
+       ========================================= */
+    .page-eyebrow {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-2);
+    }
+
+    h1 {
+      font-size: var(--font-size-3xl);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-4);
+      color: #fff;
+    }
+
+    h2 {
+      font-size: var(--font-size-xl);
+      font-weight: 600;
+      margin-top: var(--space-12);
+      margin-bottom: var(--space-6);
+      color: #fff;
+    }
+
+    p.lead-text {
+      font-size: 1.05rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 720px;
+    }
+    
+    p {
+      margin-bottom: var(--space-4);
+      color: var(--color-text-secondary);
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-10);
+    }
+
+    /* Surface Card */
+    .surface-card {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: var(--space-5);
+      transition: border-color 0.2s, background-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none !important;
+    }
+
+    .surface-card:hover {
+      background-color: var(--color-bg-surface-hover);
+      border-color: var(--color-border-hover);
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-3);
+    }
+
+    .surface-card h3 {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .surface-card p {
+      font-size: 0.8125rem; /* ~13px */
+      color: var(--color-text-secondary);
+      margin-bottom: 0;
+      line-height: 1.4;
+    }
+
+    /* =========================================
+       7. Table of Contents
+       ========================================= */
+    .toc-heading {
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-3);
+    }
+
+    .toc-nav {
+      border-left: 1px solid var(--color-border);
+      padding-left: 0;
+    }
+
+    .toc-nav a {
+      display: block;
+      padding: 4px 0 4px var(--space-3);
+      font-size: 0.8125rem;
+      color: var(--color-text-secondary);
+      text-decoration: none !important;
+      position: relative;
+      left: -1px;
+      border-left: 2px solid transparent;
+    }
+
+    .toc-nav a:hover {
+      color: var(--color-text-primary);
+    }
+
+    .toc-nav a.active {
+      color: var(--color-text-accent);
+      border-left-color: var(--color-text-accent);
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="docs-header">
+    <div class="docs-header-left">
+      <a href="#" class="docs-logo">
+        <span class="docs-logo-icon"></span>
+        dev docs
+      </a>
+      <nav class="top-nav">
+        <a href="#" class="active">Apps</a>
+        <a href="#">Storefronts</a>
+        <a href="#">Agents</a>
+        <a href="#">References ▾</a>
+        <a href="#">Changelog</a>
+      </nav>
+    </div>
+    <div class="docs-header-right">
+      <button class="btn-assistant">✨ Ask assistant /</button>
+      <!-- Placeholders for icons -->
+      <span style="color: var(--color-text-secondary); cursor: pointer;">🔍</span>
+      <span style="color: var(--color-text-secondary); cursor: pointer;">☀️</span>
+      <a href="#" style="color: var(--color-text-secondary); font-size: 14px;">Help</a>
+      <a href="#" style="color: var(--color-text-secondary); font-size: 14px;">Log in</a>
+    </div>
+  </header>
+
+  <!-- Sub Navigation -->
+  <div class="docs-subnav">
+    <span class="section-title">APPS</span>
+    <span class="divider">|</span>
+    <a href="#" class="active">Build</a>
+    <a href="#">Design</a>
+    <a href="#">Launch</a>
+  </div>
+
+  <div class="docs-layout">
+    <!-- Left Sidebar -->
+    <aside class="docs-sidebar">
+      <div class="sidebar-filter">
+        <input type="text" placeholder="Filter">
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">GETTING STARTED</div>
+        <ul class="sidebar-nav">
+          <li><a href="#" class="active">Build apps for Shopify</a></li>
+          <li><a href="#">Scaffold an app</a></li>
+          <li><a href="#">Build an app</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">DEV TOOLS</div>
+        <ul class="sidebar-nav">
+          <li><a href="#">Shopify AI Toolkit</a></li>
+          <li><a href="#">Shopify CLI for apps</a></li>
+          <li><a href="#">Dev Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">EXTENDING SHOPIFY</div>
+        <ul class="sidebar-nav">
+          <li><a href="#">App surfaces</a></li>
+          <li><a href="#">Admin</a></li>
+          <li><a href="#">App Home</a></li>
+          <li><a href="#">Checkout</a></li>
+          <li><a href="#">Customer accounts</a></li>
+          <li><a href="#">Flow</a></li>
+          <li><a href="#">Online store</a></li>
+          <li><a href="#">Point of Sale</a></li>
+          <li><a href="#">Sidekick</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-main">
+      <div class="page-eyebrow">EXTENDING SHOPIFY</div>
+      <h1>Build across every surface</h1>
+      <p class="lead-text">
+        Extend multiple Shopify surfaces from a single app, from pages in the admin to checkout customizations, storefront themes, and automation workflows.
+        <br><br>
+        All UI surfaces share Polaris, Shopify's unified system for building app interfaces.
+      </p>
+
+      <div class="grid-2">
+        <a href="#" class="surface-card">
+          <div class="card-icon">🧩</div>
+          <h3>App Home</h3>
+          <p>Build your app's main interface in the Shopify admin with React Router and App Bridge, or as a Shopify-hosted UI extension.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">🗃️</div>
+          <h3>Admin</h3>
+          <p>Add actions, blocks, and print functionality to resource pages in the Shopify admin.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">🛒</div>
+          <h3>Checkout</h3>
+          <p>Customize the checkout experience with UI extensions and backend logic.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">❤️</div>
+          <h3>Customer accounts</h3>
+          <p>Extend order status pages and the logged-in customer experience.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">⚡</div>
+          <h3>Flow</h3>
+          <p>Integrate triggers, actions, and templates into Shopify's automation platform.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">🛍️</div>
+          <h3>Online store</h3>
+          <p>Add dynamic functionality to merchants' storefront themes.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">🛍️</div>
+          <h3>Point of Sale</h3>
+          <p>Add custom functionality to Shopify POS on iOS and Android.</p>
+        </a>
+
+        <a href="#" class="surface-card">
+          <div class="card-icon">⭐</div>
+          <h3>Sidekick</h3>
+          <p>Use app extensions to integrate your app with Sidekick.</p>
+        </a>
+      </div>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="docs-toc">
+      <div class="toc-heading">ON THIS PAGE</div>
+      <ul class="toc-nav">
+        <li><a href="#" class="active">Overview</a></li>
+        <li><a href="#">App Home</a></li>
+        <li><a href="#">Admin</a></li>
+        <li><a href="#">Checkout</a></li>
+        <li><a href="#">Customer accounts</a></li>
+      </ul>
+    </aside>
+  </div>
+
+</body>
+</html>

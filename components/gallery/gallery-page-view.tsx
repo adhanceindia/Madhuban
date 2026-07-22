@@ -130,7 +130,7 @@ export function GalleryPageView({ galleryItems, siteContent: initialSiteContent,
           size="lg"
           className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
-          <a href="#gallery-grid">Browse Gallery</a>
+          <a href="#gallery-grid">{(pageData.cta_button as string) || "Browse Gallery"}</a>
         </Button>
       </EditorialPageHero>
 
@@ -143,8 +143,8 @@ export function GalleryPageView({ galleryItems, siteContent: initialSiteContent,
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Resort Imagery"
-            title="A visual look at rooms, celebrations, leisure, and the slower rhythm of Madhuban."
+            eyebrow={(pageData.imagery_eyebrow as string) || "Resort Imagery"}
+            title={(pageData.imagery_title as string) || "A visual look at rooms, celebrations, leisure, and the slower rhythm of Madhuban."}
             description={galleryPage.description}
             centered
           />

@@ -41,7 +41,7 @@ export function BanquetPageView({ siteContent: initialSiteContent, pageData: ini
           className="h-auto rounded-full bg-gold px-8 py-4 text-sm font-semibold uppercase tracking-label text-white hover:bg-gold-dark"
         >
           <Link href="/contact#query-form">
-            Enquire Now
+            {(pageData.cta_button as string) || "Enquire Now"}
             <SiteIcon icon="ArrowRight" className="size-4" />
           </Link>
         </Button>
@@ -72,7 +72,7 @@ export function BanquetPageView({ siteContent: initialSiteContent, pageData: ini
 
             <motion.div variants={itemVariants}>
               <SectionHeading
-                eyebrow="Hall Overview"
+                eyebrow={(pageData.overview_eyebrow as string) || "Hall Overview"}
                 title={banquetPage.overviewTitle}
               />
 
@@ -132,9 +132,9 @@ export function BanquetPageView({ siteContent: initialSiteContent, pageData: ini
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Use Cases"
-            title="A versatile indoor venue for celebrations, formal gatherings, and hosted social events."
-            description="The hall adapts well to wedding functions, business formats, and milestone celebrations without losing the calm resort hospitality that surrounds it."
+            eyebrow={(pageData.use_cases_eyebrow as string) || "Use Cases"}
+            title={(pageData.use_cases_title as string) || "A versatile indoor venue for celebrations, formal gatherings, and hosted social events."}
+            description={(pageData.use_cases_description as string) || "The hall adapts well to wedding functions, business formats, and milestone celebrations without losing the calm resort hospitality that surrounds it."}
             centered
           />
 
@@ -172,9 +172,9 @@ export function BanquetPageView({ siteContent: initialSiteContent, pageData: ini
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Photo Strip"
-            title="A quick visual sense of the banquet atmosphere."
-            description="Elegantly appointed interiors that set the tone for every celebration."
+            eyebrow={(pageData.gallery_eyebrow as string) || "Photo Strip"}
+            title={(pageData.gallery_title as string) || "A quick visual sense of the banquet atmosphere."}
+            description={(pageData.gallery_description as string) || "Elegantly appointed interiors that set the tone for every celebration."}
           />
           <div className="mt-10">
             <EditorialPhotoStrip items={banquetPage.photos} />
@@ -191,7 +191,7 @@ export function BanquetPageView({ siteContent: initialSiteContent, pageData: ini
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <EditorialCtaPanel
-            eyebrow="Banquet Enquiry"
+            eyebrow={(pageData.enquiry_cta_eyebrow as string) || "Banquet Enquiry"}
             title={banquetPage.ctaTitle}
             description={banquetPage.ctaDescription}
             primaryHref="/contact#query-form"
