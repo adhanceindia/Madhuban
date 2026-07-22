@@ -23,7 +23,7 @@ import type { SiteContent } from '@/lib/types'
 export function SiteNavbar({ siteContent }: { siteContent: SiteContent }) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [, setScrolled] = useState(false)
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
 

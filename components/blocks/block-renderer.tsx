@@ -10,6 +10,15 @@ import { AmenitiesBlock } from './amenities-block'
 import { InstagramFeedBlock } from './instagram-feed-block'
 import { ReviewsBlock } from './reviews-block'
 import { AttractionsBlock } from './attractions-block'
+import { EditorialHeroBlock } from './editorial-hero-block'
+import { EditorialOverviewBlock } from './editorial-overview-block'
+import { IconFeaturesGridBlock } from './icon-features-grid-block'
+import { EditorialGalleryBlock } from './editorial-gallery-block'
+import { EditorialCtaBlock } from './editorial-cta-block'
+import { CorporateBookingFormBlock } from './corporate-booking-form-block'
+import { ContactFormBlock } from './contact-form-block'
+import { RoomsListingBlock } from './rooms-listing-block'
+
 
 type BlockData = {
   id: string
@@ -36,6 +45,15 @@ const BLOCK_COMPONENTS: Record<string, React.ElementType<any>> = {
   instagram_feed: InstagramFeedBlock,
   reviews: ReviewsBlock,
   attractions: AttractionsBlock,
+  editorial_hero: EditorialHeroBlock,
+  editorial_overview: EditorialOverviewBlock,
+  icon_features_grid: IconFeaturesGridBlock,
+  editorial_gallery: EditorialGalleryBlock,
+  editorial_cta: EditorialCtaBlock,
+  corporate_booking_form: CorporateBookingFormBlock,
+  contact_form: ContactFormBlock,
+  rooms_listing: RoomsListingBlock,
+
 }
 
 export function BlockRenderer({ blocks, context }: BlockRendererProps) {

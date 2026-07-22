@@ -199,6 +199,122 @@ export const BLOCKS_REGISTRY: Record<string, BlockDef> = {
       },
     ],
   },
+  editorial_hero: {
+    type: 'editorial_hero',
+    label: 'Editorial Hero',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'subtitle', label: 'Subtitle', type: 'textarea' },
+      { field: 'image', label: 'Background Image', type: 'image' },
+      { field: 'overlayWord', label: 'Background Text', type: 'text' },
+      { field: 'chip', label: 'Badge/Chip', type: 'text' },
+      { field: 'ctaText', label: 'CTA Text', type: 'text' },
+      { field: 'ctaLink', label: 'CTA Link', type: 'url' },
+      { field: 'minHeightClassName', label: 'Min Height Class', type: 'text' },
+    ],
+  },
+  editorial_overview: {
+    type: 'editorial_overview',
+    label: 'Editorial Overview',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'image', label: 'Image', type: 'image' },
+      { field: 'description1', label: 'Description 1', type: 'textarea' },
+      { field: 'description2', label: 'Description 2', type: 'textarea' },
+      {
+        field: 'stats',
+        label: 'Stats',
+        type: 'repeater',
+        itemFields: [
+          { field: 'label', label: 'Label', type: 'text' },
+          { field: 'value', label: 'Value', type: 'text' },
+        ],
+      },
+      {
+        field: 'points',
+        label: 'Highlights (Points)',
+        type: 'repeater',
+        itemFields: [
+          { field: 'value', label: 'Point', type: 'text' },
+        ],
+      },
+      { field: 'layout', label: 'Layout (image-left or image-right)', type: 'text' },
+    ],
+  },
+  icon_features_grid: {
+    type: 'icon_features_grid',
+    label: 'Icon Features Grid',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'columns', label: 'Columns (2, 3, or 4)', type: 'text' },
+      {
+        field: 'features',
+        label: 'Features',
+        type: 'repeater',
+        itemFields: [
+          { field: 'title', label: 'Title', type: 'text' },
+          { field: 'description', label: 'Description', type: 'textarea' },
+          { field: 'icon', label: 'Icon', type: 'text' },
+        ],
+      },
+    ],
+  },
+  editorial_gallery: {
+    type: 'editorial_gallery',
+    label: 'Editorial Gallery',
+    fields: [
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'layout', label: 'Layout (strip or grid)', type: 'text' },
+      {
+        field: 'images',
+        label: 'Images',
+        type: 'repeater',
+        itemFields: [
+          { field: 'src', label: 'Image URL', type: 'image' },
+        ],
+      },
+    ],
+  },
+  editorial_cta: {
+    type: 'editorial_cta',
+    label: 'Editorial CTA',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+      { field: 'primaryLabel', label: 'Primary Button Label', type: 'text' },
+      { field: 'primaryHref', label: 'Primary Button URL', type: 'url' },
+      { field: 'secondaryLabel', label: 'Secondary Button Label', type: 'text' },
+      { field: 'secondaryHref', label: 'Secondary Button URL', type: 'url' },
+    ],
+  },
+  corporate_booking_form: {
+    type: 'corporate_booking_form',
+    label: 'Corporate Booking Form',
+    fields: [
+      { field: 'eyebrow', label: 'Eyebrow', type: 'text' },
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+    ],
+  },
+  contact_form: {
+    type: 'contact_form',
+    label: 'Contact Form',
+    fields: [
+      { field: 'title', label: 'Title', type: 'text' },
+      { field: 'description', label: 'Description', type: 'textarea' },
+    ],
+  },
+  rooms_listing: {
+    type: 'rooms_listing',
+    label: 'Rooms Listing Grid',
+    fields: [],
+  },
 }
 
 export const PAGE_SCHEMAS: PageSchema[] = [
@@ -229,19 +345,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'banner_image', label: 'Banner image', type: 'image' },
-          { field: 'hero_background_text', label: 'Hero Background Text', type: 'text' },
-          { field: 'hero_eyebrow', label: 'Hero Eyebrow', type: 'text' },
-          { field: 'page_heading', label: 'Heading', type: 'text' },
-          { field: 'page_description', label: 'Description', type: 'richtext' },
-          { field: 'amenities_eyebrow', label: 'Amenities Eyebrow', type: 'text' },
-          { field: 'amenities_heading', label: 'Amenities Heading', type: 'text' },
-          { field: 'seo_title', label: 'SEO title', type: 'text' },
           {
-            field: 'seo_description',
-            label: 'SEO description',
-            type: 'textarea',
-          },
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -253,24 +362,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'hero_background_text', label: 'Hero Background Text', type: 'text' },
-          { field: 'hero_badge', label: 'Hero Badge', type: 'text' },
-          { field: 'wedding_heading', label: 'Heading', type: 'text' },
           {
-            field: 'wedding_description',
-            label: 'Description',
-            type: 'richtext',
-          },
-          { field: 'offer_eyebrow', label: 'Offer Eyebrow', type: 'text' },
-          { field: 'offer_title', label: 'Offer Title', type: 'text' },
-          { field: 'offer_description', label: 'Offer Description', type: 'textarea' },
-          { field: 'gallery_eyebrow', label: 'Gallery Eyebrow', type: 'text' },
-          { field: 'gallery_title', label: 'Gallery Title', type: 'text' },
-          { field: 'gallery_description', label: 'Gallery Description', type: 'textarea' },
-          { field: 'why_eyebrow', label: 'Why Madhuban Eyebrow', type: 'text' },
-          { field: 'why_title', label: 'Why Madhuban Title', type: 'text' },
-          { field: 'packages_text', label: 'Packages text', type: 'richtext' },
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -282,19 +379,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'richtext' },
-          { field: 'capacity_info', label: 'Capacity info', type: 'text' },
-          { field: 'cta_button', label: 'CTA Button Text', type: 'text' },
-          { field: 'overview_eyebrow', label: 'Overview Eyebrow', type: 'text' },
-          { field: 'use_cases_eyebrow', label: 'Use Cases Eyebrow', type: 'text' },
-          { field: 'use_cases_title', label: 'Use Cases Title', type: 'text' },
-          { field: 'use_cases_description', label: 'Use Cases Description', type: 'textarea' },
-          { field: 'gallery_eyebrow', label: 'Gallery Eyebrow', type: 'text' },
-          { field: 'gallery_title', label: 'Gallery Title', type: 'text' },
-          { field: 'gallery_description', label: 'Gallery Description', type: 'textarea' },
-          { field: 'enquiry_cta_eyebrow', label: 'Enquiry CTA Eyebrow', type: 'text' },
+          {
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -306,17 +396,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'richtext' },
-          { field: 'timings', label: 'Timings', type: 'text' },
-          { field: 'rules', label: 'Rules', type: 'textarea' },
-          { field: 'cta_button', label: 'CTA Button Text', type: 'text' },
-          { field: 'overview_eyebrow', label: 'Overview Eyebrow', type: 'text' },
-          { field: 'timings_label', label: 'Timings Label', type: 'text' },
-          { field: 'gallery_eyebrow', label: 'Gallery Eyebrow', type: 'text' },
-          { field: 'gallery_title', label: 'Gallery Title', type: 'text' },
-          { field: 'gallery_description', label: 'Gallery Description', type: 'textarea' },
+          {
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -328,11 +413,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'richtext' },
-          { field: 'cta_button', label: 'CTA Button Text', type: 'text' },
-          { field: 'services_eyebrow', label: 'Services Eyebrow', type: 'text' },
+          {
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -344,15 +430,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'richtext' },
-          { field: 'cta_button', label: 'CTA Button Text', type: 'text' },
-          { field: 'trips_eyebrow', label: 'Trips Eyebrow', type: 'text' },
-          { field: 'trips_title', label: 'Trips Title', type: 'text' },
-          { field: 'trips_description', label: 'Trips Description', type: 'textarea' },
-          { field: 'card_eyebrow', label: 'Card Eyebrow', type: 'text' },
-          { field: 'plan_visit_eyebrow', label: 'Plan Visit Eyebrow', type: 'text' },
+          {
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -364,12 +447,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'description', label: 'Description', type: 'richtext' },
-          { field: 'cta_button', label: 'CTA Button Text', type: 'text' },
-          { field: 'imagery_eyebrow', label: 'Imagery Eyebrow', type: 'text' },
-          { field: 'imagery_title', label: 'Imagery Title', type: 'text' },
+          {
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],
@@ -382,9 +465,12 @@ export const PAGE_SCHEMAS: PageSchema[] = [
     sections: [
       {
         fields: [
-          { field: 'hero_image', label: 'Hero image', type: 'image' },
-          { field: 'heading', label: 'Heading', type: 'text' },
-          { field: 'map_embed', label: 'Google Maps embed URL', type: 'url' },
+          {
+            field: 'page_blocks',
+            label: 'Page Blocks',
+            type: 'blocks',
+            availableBlocks: Object.values(BLOCKS_REGISTRY),
+          }
         ],
       },
     ],

@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { CheckCircle2, Loader2, CalendarIcon } from 'lucide-react'
+import { CheckCircle2, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 import { Button } from '@/components/ui/button'
 import { SiteIcon } from '@/components/shared/site-icon'
 import { SectionHeading } from '@/components/shared/section-heading'
-import { cn } from '@/lib/utils'
 
 type CorporateFormState = {
   name: string
@@ -30,7 +29,13 @@ const defaultFormState: CorporateFormState = {
 const fieldClassName =
   'w-full rounded-card-inner border border-[#cfd5c6]/70 bg-white px-4 py-3.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15'
 
-export function CorporateBookingForm() {
+type CorporateBookingFormProps = {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+};
+
+export function CorporateBookingForm({ eyebrow, title, description }: CorporateBookingFormProps) {
   const [formState, setFormState] = useState<CorporateFormState>(defaultFormState)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submittedName, setSubmittedName] = useState('')
@@ -107,9 +112,9 @@ export function CorporateBookingForm() {
   return (
     <div className="rounded-card bg-white/90 p-6 shadow-[0_28px_80px_rgba(27,28,25,0.08)] backdrop-blur sm:p-8 lg:p-10">
       <SectionHeading
-        eyebrow="Corporate Booking"
-        title="Plan your corporate meet"
-        description="Fill out the form below with your event details, and we'll help you organize the perfect corporate gathering."
+        eyebrow={eyebrow || "Corporate Booking"}
+        title={title || "Plan your corporate meet"}
+        description={description || "Fill out the form below with your event details, and we'll help you organize the perfect corporate gathering."}
       />
 
       <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
