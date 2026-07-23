@@ -1,0 +1,65 @@
+name: Playwright Staging Tests
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+# We use a GLOBAL lock across all branches.
+# Why: Our tests hit a shared staging environment (Supabase Database + Redis Rate Limiters).
+# If two branches run tests concurrently, they will pollute the database (e.g. creating/deleting shared users)
+# and trip the Redis rate limits, causing flaky cross-branch failures.
+concurrency:
+  group: playwright-staging
+  cancel-in-progress: true
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for Vercel Preview Deployment
+        id: vercel_preview
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 300
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ steps.vercel_preview.outputs.url }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+          
+      - name: Post Job Summary
+        if: always()
+        run: |
+          echo "## Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Target URL: ${{ steps.vercel_preview.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "See the uploaded \`playwright-report\` artifact for full details." >> $GITHUB_STEP_SUMMARY
