@@ -13,7 +13,7 @@ export interface EditorialGalleryBlockProps {
   title?: string
   description?: string
   layout?: 'strip' | 'grid'
-  images: string[]
+  images: (string | { src: string; alt?: string })[]
 }
 
 export function EditorialGalleryBlock({
@@ -27,7 +27,12 @@ export function EditorialGalleryBlock({
   const { sectionVariants, itemVariants, containerVariants } =
     createEditorialMotion(reduceMotion)
 
-  const mediaAssets = images.map((src) => ({ src, alt: title || 'Gallery Image' }))
+  const mediaAssets = images.map((img) => {
+    if (typeof img === 'string') {
+      return { src: img, alt: title || 'Gallery Image' }
+    }
+    return { src: img.src, alt: img.alt || title || 'Gallery Image' }
+  })
 
   return (
     <motion.section
@@ -54,7 +59,7 @@ export function EditorialGalleryBlock({
               variants={containerVariants}
               className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6"
             >
-              {images.map((src, index) => (
+              {mediaAssets.map((img, index) => (
                 <motion.div
                   key={index}
                   variants={itemVariants}
@@ -64,8 +69,8 @@ export function EditorialGalleryBlock({
                   )}
                 >
                   <Image
-                    src={src}
-                    alt={title || 'Gallery image'}
+                    src={img.src}
+                    alt={img.alt}
                     fill
                     sizes="(min-width: 640px) 33vw, 50vw"
                     className="object-cover"

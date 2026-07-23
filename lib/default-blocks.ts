@@ -223,7 +223,7 @@ export const defaultAttractionsBlocks = [
     props: {
       title: attractionsPage.hero.title,
       subtitle: attractionsPage.hero.subtitle,
-      image: 'https://images.unsplash.com/photo-1626240209268-dfc6fcf3f7fc?auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
       overlayWord: 'Explore',
       minHeightClassName: 'min-h-[70svh]',
     }
@@ -250,7 +250,7 @@ export const defaultGalleryBlocks = [
     props: {
       title: galleryPage.hero.title,
       subtitle: galleryPage.hero.subtitle,
-      image: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=80',
       overlayWord: 'Visuals',
       minHeightClassName: 'min-h-[60svh]',
     }
@@ -263,7 +263,7 @@ export const defaultGalleryBlocks = [
       description: galleryPage.description,
       layout: 'grid',
       images: [
-        { src: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=1200&q=80', alt: 'Pool' }
+        { src: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=80', alt: 'Pool' }
       ]
     }
   }
@@ -276,7 +276,7 @@ export const defaultContactBlocks = [
     props: {
       title: contactPage.hero.title,
       subtitle: contactPage.hero.subtitle,
-      image: 'https://images.unsplash.com/photo-1542314831-c53cd3816002?auto=format&fit=crop&w=1200&q=80',
+      image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80',
       overlayWord: 'Connect',
       minHeightClassName: 'min-h-[60svh]',
     }
@@ -299,7 +299,7 @@ export const defaultRoomsBlocks = [
       eyebrow: 'Peaceful resort stays in Agar Malwa',
       title: 'Our Rooms & Suites',
       subtitle: 'Discover six thoughtfully styled rooms built around restful comfort, lush views, and the calm, premium atmosphere that defines Madhuban Garden Resort.',
-      image: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80',
       overlayWord: 'Comfort',
       minHeightClassName: 'min-h-[70svh]',
     }

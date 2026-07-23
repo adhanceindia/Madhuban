@@ -619,7 +619,7 @@ export const poolPage: PoolPage = {
     title: 'Swimming Pool',
     subtitle:
       'A calm open-air pool zone that adds relaxation, family leisure, and easy downtime to the Madhuban Garden Resort experience.',
-    image: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=1600&q=80',
+    image: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1600&q=80',
     overlayWord: 'Leisure',
     chip: 'Open daily from 8:00 AM to 8:00 PM',
   },
@@ -639,7 +639,7 @@ export const poolPage: PoolPage = {
   ],
   photos: [
     {
-      src: 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80',
+      src: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80',
       alt: 'Swimming pool at Madhuban Garden Resort',
       title: 'Pool View',
       caption: 'An open resort leisure zone surrounded by greenery.',

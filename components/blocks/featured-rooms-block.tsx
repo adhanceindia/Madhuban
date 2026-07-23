@@ -104,7 +104,7 @@ export function FeaturedRoomsBlock({ eyebrow, title, description, featuredRooms 
                   >
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image
-                        src={room.images[0] || 'https://images.unsplash.com/photo-1572331165267-854da2b021b1?auto=format&fit=crop&w=800&q=80'}
+                        src={room.images[0] || 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80'}
                         alt={room.name}
                         fill
                         sizes="(min-width: 1024px) 30vw, 100vw"
