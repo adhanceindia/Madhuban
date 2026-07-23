@@ -83,3 +83,11 @@ fix_images.mjs
 run_tests.sh
 update-homepage-content.mjs
 test-switch.html
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -56,8 +56,13 @@ function LoginForm() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {searchParams.get('reason') === 'inactivity' && !error && (
+            <div className="p-3 rounded-lg bg-yellow-500/10 text-yellow-600 border border-yellow-500/20 text-sm">
+              You were logged out due to inactivity.
+            </div>
+          )}
           {error && (
-            <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+            <div role="alert" className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
               {error}
             </div>
           )}

@@ -1,5 +1,14 @@
 import type { UserRole } from '@/db/schema/users'
 
+export const ADMIN_ROLES: UserRole[] = [
+  'super_admin',
+  'resort_manager',
+  'front_desk',
+  'event_manager',
+  'accountant',
+  'content_manager',
+]
+
 export function hasRole(userRole: UserRole, allowedRoles: UserRole[]): boolean {
   return allowedRoles.includes(userRole)
 }

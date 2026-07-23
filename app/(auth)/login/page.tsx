@@ -194,7 +194,7 @@ function LoginContent() {
 
   const renderError = () => (
     error && (
-      <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl text-center">
+      <div role="alert" className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl text-center">
         {error}
       </div>
     )

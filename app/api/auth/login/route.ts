@@ -65,8 +65,16 @@ export async function POST(request: NextRequest) {
   // Best-effort: resolve the now-authenticated staff row to attribute the audit
   // entry. Falls back to null user_id if the user has no matching/active row.
   const session = await getSession('admin')
+
+  const { ADMIN_ROLES } = await import('@/lib/permissions')
+
+  if (!session || !ADMIN_ROLES.includes(session.role)) {
+    await supabase.auth.signOut()
+    return NextResponse.json({ error: 'Unauthorized access' }, { status: 403 })
+  }
+
   await logAudit({
-    user_id: session?.id ?? null,
+    user_id: session.id,
     action: 'auth.login',
     entity_type: 'auth',
     new_value: { email },
